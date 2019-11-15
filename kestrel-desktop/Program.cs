@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Diagnostics;
+using System.Numerics;
 using System.Text;
 using Veldrid;
 using Veldrid.Sdl2;
@@ -43,7 +45,7 @@ void main()
 
         static void Main()
         {
-            WindowCreateInfo windowCI = new WindowCreateInfo()
+            WindowCreateInfo windowCi = new WindowCreateInfo()
             {
                 X = 100,
                 Y = 100,
@@ -51,29 +53,31 @@ void main()
                 WindowHeight = 540,
                 WindowTitle = "Veldrid Tutorial"
             };
-            Sdl2Window window = VeldridStartup.CreateWindow(ref windowCI);
+            Sdl2Window window = VeldridStartup.CreateWindow(ref windowCi);
 
-            _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window);
+            _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window, new GraphicsDeviceOptions(true));
 
             CreateResources();
+            
+            Stopwatch sw = Stopwatch.StartNew();
+            double previousTime = sw.Elapsed.TotalSeconds;
 
             while (window.Exists)
             {
-                window.PumpEvents();
+                //InputSnapshot snapshot = window.PumpEvents();
+                //Input.UpdateFrameInput(snapshot);
+                var newTime = sw.Elapsed.TotalSeconds;
+                var elapsed = newTime - previousTime;
+                previousTime = newTime;
+                Update(elapsed);
                 Draw();
             }
             DisposeResources();
         }
         
-        private static void DisposeResources()
+        private static void Update(double deltaSeconds)
         {
-            _pipeline.Dispose();
-            _shaders[0].Dispose();
-            _shaders[1].Dispose();
-            _commandList.Dispose();
-            _vertexBuffer.Dispose();
-            _indexBuffer.Dispose();
-            _graphicsDevice.Dispose();
+            // game logic update
         }
 
         private static void Draw()
@@ -84,8 +88,9 @@ void main()
             _commandList.SetVertexBuffer(0, _vertexBuffer);
             _commandList.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
             _commandList.SetPipeline(_pipeline);
+          
             _commandList.DrawIndexed(
-                indexCount: 4,
+                indexCount: (uint)_quadVertices.Length,
                 instanceCount: 1,
                 indexStart: 0,
                 vertexOffset: 0,
@@ -95,25 +100,28 @@ void main()
             _graphicsDevice.SwapBuffers();
         }
 
+        private static VertexPositionColor[] _quadVertices;
+        private static ushort[] _quadIndices;
+        
         private static void CreateResources()
         {
             ResourceFactory factory = _graphicsDevice.ResourceFactory;
 
-            VertexPositionColor[] quadVertices =
+            _quadVertices =new []
             {
                 new VertexPositionColor(new Vector2(-.75f, .75f), RgbaFloat.Red),
-                new VertexPositionColor(new Vector2(.75f, .75f), RgbaFloat.Green),
+                new VertexPositionColor(new Vector2(-.5f, .75f), RgbaFloat.Green),
                 new VertexPositionColor(new Vector2(-.75f, -.75f), RgbaFloat.Blue),
-                new VertexPositionColor(new Vector2(.75f, -.75f), RgbaFloat.Yellow)
+                new VertexPositionColor(new Vector2(.0f, -.50f), RgbaFloat.Yellow)
             };
 
-            ushort[] quadIndices = { 0, 1, 2, 3 };
+            _quadIndices = new ushort[] { 0, 1, 2, 3};
 
-            _vertexBuffer = factory.CreateBuffer(new BufferDescription(4 * VertexPositionColor.SizeInBytes, BufferUsage.VertexBuffer));
-            _indexBuffer = factory.CreateBuffer(new BufferDescription(4 * sizeof(ushort), BufferUsage.IndexBuffer));
+            _vertexBuffer = factory.CreateBuffer(new BufferDescription((uint)_quadVertices.Length * VertexPositionColor.SizeInBytes, BufferUsage.VertexBuffer));
+            _indexBuffer = factory.CreateBuffer(new BufferDescription((uint)_quadIndices.Length * sizeof(ushort), BufferUsage.IndexBuffer));
 
-            _graphicsDevice.UpdateBuffer(_vertexBuffer, 0, quadVertices);
-            _graphicsDevice.UpdateBuffer(_indexBuffer, 0, quadIndices);
+            _graphicsDevice.UpdateBuffer(_vertexBuffer, 0, _quadVertices);
+            _graphicsDevice.UpdateBuffer(_indexBuffer, 0, _quadIndices);
 
             VertexLayoutDescription vertexLayout = new VertexLayoutDescription(
                 new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
@@ -130,35 +138,44 @@ void main()
 
             _shaders = factory.CreateFromSpirv(vertexShaderDesc, fragmentShaderDesc);
 
-            GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription();
-            pipelineDescription.BlendState = BlendStateDescription.SingleOverrideBlend;
+            GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription
+            {
+                BlendState = BlendStateDescription.SingleOverrideBlend,
+                DepthStencilState = new DepthStencilStateDescription(
+                    depthTestEnabled: true,
+                    depthWriteEnabled: true,
+                    comparisonKind: ComparisonKind.LessEqual),
+                RasterizerState = new RasterizerStateDescription(
+                    cullMode: FaceCullMode.Back,
+                    fillMode: PolygonFillMode.Solid,
+                    frontFace: FrontFace.Clockwise,
+                    depthClipEnabled: true,
+                    scissorTestEnabled: false),
+                PrimitiveTopology = PrimitiveTopology.TriangleStrip, // this is good!
+                ResourceLayouts = Array.Empty<ResourceLayout>(),
+                ShaderSet = new ShaderSetDescription(
+                    vertexLayouts: new[] {vertexLayout},
+                    shaders: _shaders),
+                Outputs = _graphicsDevice.SwapchainFramebuffer.OutputDescription
+            };
 
-            pipelineDescription.DepthStencilState = new DepthStencilStateDescription(
-                depthTestEnabled: true,
-                depthWriteEnabled: true,
-                comparisonKind: ComparisonKind.LessEqual);
-
-            pipelineDescription.RasterizerState = new RasterizerStateDescription(
-                cullMode: FaceCullMode.Back,
-                fillMode: PolygonFillMode.Solid,
-                frontFace: FrontFace.Clockwise,
-                depthClipEnabled: true,
-                scissorTestEnabled: false);
-
-            pipelineDescription.PrimitiveTopology = PrimitiveTopology.TriangleStrip;
-            pipelineDescription.ResourceLayouts = System.Array.Empty<ResourceLayout>();
-
-            pipelineDescription.ShaderSet = new ShaderSetDescription(
-                vertexLayouts: new VertexLayoutDescription[] { vertexLayout },
-                shaders: _shaders);
-
-            pipelineDescription.Outputs = _graphicsDevice.SwapchainFramebuffer.OutputDescription;
             _pipeline = factory.CreateGraphicsPipeline(pipelineDescription);
 
             _commandList = factory.CreateCommandList();
         }
+        
+        private static void DisposeResources()
+        {
+            _pipeline.Dispose();
+            _shaders[0].Dispose();
+            _shaders[1].Dispose();
+            _commandList.Dispose();
+            _vertexBuffer.Dispose();
+            _indexBuffer.Dispose();
+            _graphicsDevice.Dispose();
+        }
     }
-
+    
     struct VertexPositionColor
     {
         public Vector2 Position; // This is the position, in normalized device coordinates.
