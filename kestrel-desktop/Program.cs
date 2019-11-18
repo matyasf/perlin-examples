@@ -12,36 +12,32 @@ namespace Snake
     class Program
     {
         
-        [Range(10, 100)]
-        public int Width { get; } = 32;
+        [Range(10, 100)] private int Width { get; } = 32;
         
-        [Range(10, 100)]
-        public int Height { get; } = 24;
+        [Range(10, 100)] private int Height { get; } = 24;
 
-        private GraphicsDevice _gd;
-        private Sdl2Window _window;
-        private CommandList _cl;
-        private RgbaFloat _clearColor = new RgbaFloat(0, 0, 0.2f, 1f);
-        private SpriteRenderer _spriteRenderer;
-        private World _world;
-        private Snake _snake;
-        private TextRenderer _textRenderer;
+        private readonly GraphicsDevice _gd;
+        private readonly Sdl2Window _window;
+        private readonly CommandList _cl;
+        private readonly RgbaFloat _clearColor = new RgbaFloat(0, 0, 0.2f, 1f);
+        private readonly SpriteRenderer _spriteRenderer;
+        private readonly World _world;
+        private readonly Snake _snake;
+        private readonly TextRenderer _textRenderer;
         private float _cellSize = 32;
-        private Vector2 _worldSize;
         private int _highScore;
 
-        public static void Main(string[] args)
+        public static void Main()
         { 
             new Program();
         }
         
         public Program() {
-            _worldSize = new Vector2(Width, Height);
+            var worldSize = new Vector2(Width, Height);
 
             Configuration.Default.MemoryAllocator = new SixLabors.Memory.SimpleGcMemoryAllocator();
-            int width = (int)(_worldSize.X * _cellSize);
-            int height = (int)(_worldSize.Y * _cellSize);
-            WindowCreateInfo wci = new WindowCreateInfo(50, 50, width, height, WindowState.Normal, "Snake");
+            var width = (int)(worldSize.X * _cellSize);
+            var height = (int)(worldSize.Y * _cellSize);
             GraphicsDeviceOptions options = new GraphicsDeviceOptions();
             _window = new Sdl2Window("Snake", 50, 50, width, height, SDL_WindowFlags.OpenGL, false);
 #if DEBUG
@@ -55,7 +51,7 @@ namespace Snake
 
             _window.Resized += () => _gd.ResizeMainWindow((uint)_window.Width, (uint)_window.Height);
             
-            _world = new World(_worldSize, _cellSize);
+            _world = new World(worldSize, _cellSize);
             _snake = new Snake(_world);
             _textRenderer = new TextRenderer(_gd);
             _textRenderer.DrawText("0");
