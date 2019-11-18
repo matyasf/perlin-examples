@@ -1,190 +1,120 @@
-﻿using System;
+using SixLabors.ImageSharp;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Numerics;
-using System.Text;
 using Veldrid;
 using Veldrid.Sdl2;
-using Veldrid.SPIRV;
 using Veldrid.StartupUtilities;
 
-namespace GettingStarted
+namespace Snake
 {
     class Program
     {
-        private static GraphicsDevice _graphicsDevice;
-        private static CommandList _commandList;
-        private static DeviceBuffer _vertexBuffer;
-        private static DeviceBuffer _indexBuffer;
-        private static Shader[] _shaders;
-        private static Pipeline _pipeline;
+        
+        [Range(10, 100)]
+        public int Width { get; } = 32;
+        
+        [Range(10, 100)]
+        public int Height { get; } = 24;
 
-        private const string VertexCode = @"
-#version 450
+        private GraphicsDevice _gd;
+        private Sdl2Window _window;
+        private CommandList _cl;
+        private RgbaFloat _clearColor = new RgbaFloat(0, 0, 0.2f, 1f);
+        private SpriteRenderer _spriteRenderer;
+        private World _world;
+        private Snake _snake;
+        private TextRenderer _textRenderer;
+        private float _cellSize = 32;
+        private Vector2 _worldSize;
+        private int _highScore;
 
-layout(location = 0) in vec2 Position;
-layout(location = 1) in vec4 Color;
+        public static void Main(string[] args)
+        { 
+            new Program();
+        }
+        
+        public Program() {
+            _worldSize = new Vector2(Width, Height);
 
-layout(location = 0) out vec4 fsin_Color;
+            Configuration.Default.MemoryAllocator = new SixLabors.Memory.SimpleGcMemoryAllocator();
+            int width = (int)(_worldSize.X * _cellSize);
+            int height = (int)(_worldSize.Y * _cellSize);
+            WindowCreateInfo wci = new WindowCreateInfo(50, 50, width, height, WindowState.Normal, "Snake");
+            GraphicsDeviceOptions options = new GraphicsDeviceOptions();
+            _window = new Sdl2Window("Snake", 50, 50, width, height, SDL_WindowFlags.OpenGL, false);
+#if DEBUG
+            options.Debug = true;
+#endif
+            options.SyncToVerticalBlank = true;
+            options.ResourceBindingModel = ResourceBindingModel.Improved;
+            _gd = VeldridStartup.CreateGraphicsDevice(_window, options);
+            _cl = _gd.ResourceFactory.CreateCommandList();
+            _spriteRenderer = new SpriteRenderer(_gd);
 
-void main()
-{
-    gl_Position = vec4(Position, 0, 1);
-    fsin_Color = Color;
-}";
-
-        private const string FragmentCode = @"
-#version 450
-
-layout(location = 0) in vec4 fsin_Color;
-layout(location = 0) out vec4 fsout_Color;
-
-void main()
-{
-    fsout_Color = fsin_Color;
-}";
-
-        static void Main()
-        {
-            WindowCreateInfo windowCi = new WindowCreateInfo()
-            {
-                X = 100,
-                Y = 100,
-                WindowWidth = 960,
-                WindowHeight = 540,
-                WindowTitle = "Veldrid Tutorial"
-            };
-            Sdl2Window window = VeldridStartup.CreateWindow(ref windowCi);
-
-            _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window, new GraphicsDeviceOptions(true));
-
-            CreateResources();
+            _window.Resized += () => _gd.ResizeMainWindow((uint)_window.Width, (uint)_window.Height);
             
+            _world = new World(_worldSize, _cellSize);
+            _snake = new Snake(_world);
+            _textRenderer = new TextRenderer(_gd);
+            _textRenderer.DrawText("0");
+            _snake.ScoreChanged += () => _textRenderer.DrawText(_snake.Score.ToString());
+            _snake.ScoreChanged += () => _highScore = Math.Max(_highScore, _snake.Score);
+
             Stopwatch sw = Stopwatch.StartNew();
             double previousTime = sw.Elapsed.TotalSeconds;
-
-            while (window.Exists)
+            while (_window.Exists)
             {
-                //InputSnapshot snapshot = window.PumpEvents();
-                //Input.UpdateFrameInput(snapshot);
-                var newTime = sw.Elapsed.TotalSeconds;
-                var elapsed = newTime - previousTime;
+                InputSnapshot snapshot = _window.PumpEvents();
+                Input.UpdateFrameInput(snapshot);
+
+                double newTime = sw.Elapsed.TotalSeconds;
+                double elapsed = newTime - previousTime;
                 previousTime = newTime;
                 Update(elapsed);
-                Draw();
+
+                if (_window.Exists)
+                {
+                    DrawFrame();
+                }
             }
-            DisposeResources();
-        }
-        
-        private static void Update(double deltaSeconds)
-        {
-            // game logic update
+
+            _gd.Dispose();
+
+            Console.WriteLine($"Thanks for playing! Your high score was {_highScore}.");
         }
 
-        private static void Draw()
+        private void Update(double deltaSeconds)
         {
-            _commandList.Begin();
-            _commandList.SetFramebuffer(_graphicsDevice.SwapchainFramebuffer);
-            _commandList.ClearColorTarget(0, RgbaFloat.Black);
-            _commandList.SetVertexBuffer(0, _vertexBuffer);
-            _commandList.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
-            _commandList.SetPipeline(_pipeline);
-          
-            _commandList.DrawIndexed(
-                indexCount: (uint)_quadVertices.Length,
-                instanceCount: 1,
-                indexStart: 0,
-                vertexOffset: 0,
-                instanceStart: 0);
-            _commandList.End();
-            _graphicsDevice.SubmitCommands(_commandList);
-            _graphicsDevice.SwapBuffers();
-        }
+            _snake.Update(deltaSeconds);
 
-        private static VertexPositionColor[] _quadVertices;
-        private static ushort[] _quadIndices;
-        
-        private static void CreateResources()
-        {
-            ResourceFactory factory = _graphicsDevice.ResourceFactory;
-
-            _quadVertices =new []
+            if (_snake.Dead && Input.GetKeyDown(Key.Space))
             {
-                new VertexPositionColor(new Vector2(-.75f, .75f), RgbaFloat.Red),
-                new VertexPositionColor(new Vector2(-.5f, .75f), RgbaFloat.Green),
-                new VertexPositionColor(new Vector2(-.75f, -.75f), RgbaFloat.Blue),
-                new VertexPositionColor(new Vector2(.0f, -.50f), RgbaFloat.Yellow)
-            };
-
-            _quadIndices = new ushort[] { 0, 1, 2, 3};
-
-            _vertexBuffer = factory.CreateBuffer(new BufferDescription((uint)_quadVertices.Length * VertexPositionColor.SizeInBytes, BufferUsage.VertexBuffer));
-            _indexBuffer = factory.CreateBuffer(new BufferDescription((uint)_quadIndices.Length * sizeof(ushort), BufferUsage.IndexBuffer));
-
-            _graphicsDevice.UpdateBuffer(_vertexBuffer, 0, _quadVertices);
-            _graphicsDevice.UpdateBuffer(_indexBuffer, 0, _quadIndices);
-
-            VertexLayoutDescription vertexLayout = new VertexLayoutDescription(
-                new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                new VertexElementDescription("Color", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float4));
-
-            ShaderDescription vertexShaderDesc = new ShaderDescription(
-                ShaderStages.Vertex,
-                Encoding.UTF8.GetBytes(VertexCode),
-                "main");
-            ShaderDescription fragmentShaderDesc = new ShaderDescription(
-                ShaderStages.Fragment,
-                Encoding.UTF8.GetBytes(FragmentCode),
-                "main");
-
-            _shaders = factory.CreateFromSpirv(vertexShaderDesc, fragmentShaderDesc);
-
-            GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription
-            {
-                BlendState = BlendStateDescription.SingleOverrideBlend,
-                DepthStencilState = new DepthStencilStateDescription(
-                    depthTestEnabled: true,
-                    depthWriteEnabled: true,
-                    comparisonKind: ComparisonKind.LessEqual),
-                RasterizerState = new RasterizerStateDescription(
-                    cullMode: FaceCullMode.Back,
-                    fillMode: PolygonFillMode.Solid,
-                    frontFace: FrontFace.Clockwise,
-                    depthClipEnabled: true,
-                    scissorTestEnabled: false),
-                PrimitiveTopology = PrimitiveTopology.TriangleStrip, // this is good!
-                ResourceLayouts = Array.Empty<ResourceLayout>(),
-                ShaderSet = new ShaderSetDescription(
-                    vertexLayouts: new[] {vertexLayout},
-                    shaders: _shaders),
-                Outputs = _graphicsDevice.SwapchainFramebuffer.OutputDescription
-            };
-
-            _pipeline = factory.CreateGraphicsPipeline(pipelineDescription);
-
-            _commandList = factory.CreateCommandList();
+                _snake.Revive();
+                _world.CollectFood();
+            }
         }
-        
-        private static void DisposeResources()
+
+        private void DrawFrame()
         {
-            _pipeline.Dispose();
-            _shaders[0].Dispose();
-            _shaders[1].Dispose();
-            _commandList.Dispose();
-            _vertexBuffer.Dispose();
-            _indexBuffer.Dispose();
-            _graphicsDevice.Dispose();
+            _cl.Begin();
+            _cl.SetFramebuffer(_gd.MainSwapchain.Framebuffer);
+            _cl.ClearColorTarget(0, _clearColor);
+
+            _snake.Render(_spriteRenderer);
+            _world.Render(_spriteRenderer);
+            _spriteRenderer.Draw(_gd, _cl);
+            Texture targetTex = _textRenderer.TextureView.Target;
+            Vector2 textPos = new Vector2(
+                (_window.Width / 2f) - targetTex.Width / 2f,
+                _window.Height - targetTex.Height - 10f);
+
+            _spriteRenderer.RenderText(_gd, _cl, _textRenderer.TextureView, textPos);
+
+            _cl.End();
+            _gd.SubmitCommands(_cl);
+            _gd.SwapBuffers(_gd.MainSwapchain);
         }
-    }
-    
-    struct VertexPositionColor
-    {
-        public Vector2 Position; // This is the position, in normalized device coordinates.
-        public RgbaFloat Color; // This is the color of the vertex.
-        public VertexPositionColor(Vector2 position, RgbaFloat color)
-        {
-            Position = position;
-            Color = color;
-        }
-        public const uint SizeInBytes = 24;
     }
 }
