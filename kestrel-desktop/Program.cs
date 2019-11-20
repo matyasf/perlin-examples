@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Numerics;
+using Display;
 using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
