@@ -25,6 +25,7 @@ namespace Snake
                 Height = CellSize,
                 Image = "food.png"
             };
+            KestrelApp.Stage.AddChild(FoodSprite);
         }
 
         public void CollectFood()

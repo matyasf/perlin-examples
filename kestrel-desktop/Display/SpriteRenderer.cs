@@ -28,7 +28,7 @@ namespace Display
             ResourceFactory factory = gd.ResourceFactory;
 
             _vertexBuffer = factory.CreateBuffer(new BufferDescription(1000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
-            _textBuffer = factory.CreateBuffer(new BufferDescription(Sprite.QuadVertex.VertexSize, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
+            _textBuffer = factory.CreateBuffer(new BufferDescription(DisplayObject.QuadVertex.VertexSize, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
             _orthoBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
 
             var orthoLayout = factory.CreateResourceLayout(
@@ -50,7 +50,7 @@ namespace Display
                     new[]
                     {
                         new VertexLayoutDescription(
-                            Sprite.QuadVertex.VertexSize,
+                            DisplayObject.QuadVertex.VertexSize,
                             1,
                             new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
                             new VertexElementDescription("Size", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
@@ -89,8 +89,8 @@ namespace Display
                 0,
                 Matrix4x4.CreateOrthographicOffCenter(0, width, 0, height, 0, 1));
 
-            EnsureBufferSize(gd, (uint)_draws.Count * Sprite.QuadVertex.VertexSize);
-            MappedResourceView<Sprite.QuadVertex> writemap = gd.Map<Sprite.QuadVertex>(_vertexBuffer, MapMode.Write);
+            EnsureBufferSize(gd, (uint)_draws.Count * DisplayObject.QuadVertex.VertexSize);
+            MappedResourceView<DisplayObject.QuadVertex> writemap = gd.Map<DisplayObject.QuadVertex>(_vertexBuffer, MapMode.Write);
             for (int i = 0; i < _draws.Count; i++)
             {
                 writemap[i] = _draws[i].GpuVertex;
@@ -121,6 +121,7 @@ namespace Display
             _draws.Clear();
         }
         
+        // combine this with TextRenderer constructor?
         private ResourceSet Load(GraphicsDevice gd, string spriteName)
         {
             if (!_loadedImages.TryGetValue(spriteName, out (Texture, TextureView, ResourceSet) ret))
@@ -146,7 +147,10 @@ namespace Display
             cl.SetGraphicsResourceSet(0, _orthoSet);
             if (_textSet == null)
             {
-                _textSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(_texLayout, textureView, gd.PointSampler));
+                _textSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
+                    _texLayout,
+                    textureView,
+                    gd.PointSampler));
             }
             cl.SetGraphicsResourceSet(1, _textSet);
             cl.UpdateBuffer(_textBuffer, 0, tf.GpuVertex);

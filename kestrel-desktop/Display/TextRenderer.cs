@@ -23,7 +23,7 @@ namespace Snake
         private readonly Font _font;
         private readonly Image<Rgba32> _image;
 
-        public TextRenderer(GraphicsDevice gd, TextField textField)
+        public TextRenderer(GraphicsDevice gd)
         {
             _gd = gd;
             _texture = gd.ResourceFactory.CreateTexture(
@@ -37,7 +37,7 @@ namespace Snake
             _image = new Image<Rgba32>((int)textField.Width, (int)textField.Height); // TODO move this to TextField
         }
 
-        public unsafe void DrawText(string text)
+        public unsafe void DrawText(string text) // called when text changes
         {
             fixed (void* data = &MemoryMarshal.GetReference(_image.GetPixelSpan()))
             {
@@ -45,7 +45,6 @@ namespace Snake
             }
             _image.Mutate(ctx =>
             {
-                
                 ctx.DrawText(
                     new TextGraphicsOptions
                     {

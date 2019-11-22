@@ -3,7 +3,7 @@ using Veldrid;
 
 namespace Display
 {
-    public class DisplayObject
+    public class DisplayObject : UIContainer
     {
         internal QuadVertex GpuVertex;
         

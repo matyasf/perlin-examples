@@ -50,13 +50,15 @@ namespace Snake
             for (int i = 0; i < InitialSize; i++)
             {
                 float rotation = GetRotation(_direction);
-                _positions.Add(new Sprite
+                var sp = new Sprite
                 {
-                    X = (3 + i) * _world.CellSize, Y = 3 * _world.CellSize, 
+                    X = (3 + i) * _world.CellSize, Y = 3 * _world.CellSize,
                     Rotation = rotation,
                     Width = _world.CellSize, Height = _world.CellSize,
                     Image = BodySprite
-                });
+                };
+                _positions.Add(sp);
+                KestrelApp.Stage.AddChild(sp);
             }
             _positions.Last().Image = HeadSprite;
         }
@@ -182,7 +184,7 @@ namespace Snake
             }
         }
 
-        public void Render(SpriteRenderer sr)
+        public void Render(SpriteRenderer sr) // TODO move this to some renderer, make Stage class
         {
             foreach (var sprite in _positions)
             {
