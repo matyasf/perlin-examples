@@ -139,7 +139,7 @@ namespace Display
             return ret.Item3;
         }
 
-        internal void RenderText(GraphicsDevice gd, CommandList cl, TextureView textureView, Vector2 pos)
+        internal void RenderText(GraphicsDevice gd, CommandList cl, TextureView textureView, TextField tf)
         {
             cl.SetPipeline(_pipeline);
             cl.SetVertexBuffer(0, _textBuffer);
@@ -149,9 +149,7 @@ namespace Display
                 _textSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(_texLayout, textureView, gd.PointSampler));
             }
             cl.SetGraphicsResourceSet(1, _textSet);
-            Texture target = textureView.Target;
-            cl.UpdateBuffer(_textBuffer, 0, 
-                new Sprite.QuadVertex(pos, new Vector2(target.Width, target.Height)));
+            cl.UpdateBuffer(_textBuffer, 0, tf.GpuVertex);
             cl.Draw(4, 1, 0, 0);
         }
 

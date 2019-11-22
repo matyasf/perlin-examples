@@ -25,6 +25,7 @@ namespace Snake
         private readonly World _world;
         private readonly Snake _snake;
         private readonly TextRenderer _textRenderer;
+        private readonly TextField _scoreTextField;
         private float _cellSize = 32;
         private int _highScore;
 
@@ -54,8 +55,11 @@ namespace Snake
             
             _world = new World(worldSize, _cellSize);
             _snake = new Snake(_world);
-            _textRenderer = new TextRenderer(_gd);
-            _textRenderer.DrawText("0");
+            _scoreTextField = new TextField {text = "0", Width = 250, Height = 100};
+            _scoreTextField.X = (_window.Width / 2f) - _scoreTextField.Width / 2f;
+            _scoreTextField.Y = _window.Height - _scoreTextField.Height - 10f;
+            _textRenderer = new TextRenderer(_gd, _scoreTextField);
+            _textRenderer.DrawText(_scoreTextField.text);
             _snake.ScoreChanged += () => _textRenderer.DrawText(_snake.Score.ToString());
             _snake.ScoreChanged += () => _highScore = Math.Max(_highScore, _snake.Score);
 
@@ -102,13 +106,8 @@ namespace Snake
             _snake.Render(_spriteRenderer);
             _world.Render(_spriteRenderer);
             _spriteRenderer.Draw(_gd, _cl);
-            Texture targetTex = _textRenderer.TextureView.Target;
-            Vector2 textPos = new Vector2(
-                (_window.Width / 2f) - targetTex.Width / 2f,
-                _window.Height - targetTex.Height - 10f);
-
-            _spriteRenderer.RenderText(_gd, _cl, _textRenderer.TextureView, textPos);
-
+            _spriteRenderer.RenderText(_gd, _cl, _textRenderer.TextureView, _scoreTextField);
+            
             _cl.End();
             _gd.SubmitCommands(_cl);
             _gd.SwapBuffers(_gd.MainSwapchain);
