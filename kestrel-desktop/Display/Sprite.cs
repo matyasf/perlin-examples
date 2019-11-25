@@ -5,10 +5,10 @@ namespace Display
     {
         public string Image; // TODO if null draws just the tint color
 
-        public override void Render()
+        public override void Render(double elapsedTimems)
         {
-//            _spriteRenderer.Draw(_gd, _cl);
-            base.Render();
+            KestrelApp.SpriteRenderer.RenderSprite(this);
+            base.Render(elapsedTimems);
         }
     }
 }

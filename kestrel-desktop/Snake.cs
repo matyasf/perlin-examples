@@ -37,6 +37,7 @@ namespace Snake
         {
             _world = world;
             Revive();
+            KestrelApp.Stage.EnterFrameEvent += Update;
         }
 
         public void Revive()
@@ -45,6 +46,10 @@ namespace Snake
             _updatePeriod = InitialUpdatePeriod;
             _currentFood = 0;
             _direction = Vector2.UnitX;
+            foreach (var sprite in _positions)
+            {
+                sprite.RemoveFromParent();
+            }
             _positions.Clear();
             SetScore(0);
             for (int i = 0; i < InitialSize; i++)
@@ -79,6 +84,11 @@ namespace Snake
 
         public void Update(double deltaSeconds)
         {
+            if (Dead && Input.GetKeyDown(Key.Space))
+            {
+                Revive();
+                _world.CollectFood();
+            }
             if (_dead)
             {
                 return;
@@ -132,11 +142,15 @@ namespace Snake
 
             _previousDir = _direction;
             _positions.Last().Image = BodySprite;
-            _positions.Add(new Sprite {X = newX, Y = newY, 
-                                       Rotation = GetRotation(_direction),
-                                       Width = _world.CellSize, Height = _world.CellSize,
-                                       Image = HeadSprite
-            });
+            var sp = new Sprite
+            {
+                X = newX, Y = newY,
+                Rotation = GetRotation(_direction),
+                Width = _world.CellSize, Height = _world.CellSize,
+                Image = HeadSprite
+            };
+            KestrelApp.Stage.AddChild(sp);
+            _positions.Add(sp);
 
             if (_currentFood > 0)
             {
@@ -145,6 +159,7 @@ namespace Snake
 
             if (_currentFood == 0)
             {
+                _positions.First().RemoveFromParent();
                 _positions.RemoveAt(0);
             }
         }
@@ -181,14 +196,6 @@ namespace Snake
             foreach (var sprite in _positions)
             {
                 sprite.Tint = new RgbaByte(255, 100, 100, 180);
-            }
-        }
-
-        public void Render(SpriteRenderer sr) // TODO move this to some renderer, make Stage class
-        {
-            foreach (var sprite in _positions)
-            {
-                sr.RenderSprite(sprite);
             }
         }
     }

@@ -9,7 +9,6 @@ using SixLabors.Primitives;
 using System.Runtime.CompilerServices;
 using System.IO;
 using System.Runtime.InteropServices;
-using Display;
 
 namespace Snake
 {
@@ -25,7 +24,7 @@ namespace Snake
 
         public TextRenderer(GraphicsDevice gd)
         {
-            _gd = gd;
+            /*_gd = gd;
             _texture = gd.ResourceFactory.CreateTexture(
                 TextureDescription.Texture2D((uint)textField.Width, (uint)textField.Height, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Sampled));
             TextureView = gd.ResourceFactory.CreateTextureView(_texture);
@@ -35,6 +34,7 @@ namespace Snake
             _font = family.CreateFont(28);
                 
             _image = new Image<Rgba32>((int)textField.Width, (int)textField.Height); // TODO move this to TextField
+        */
         }
 
         public unsafe void DrawText(string text) // called when text changes

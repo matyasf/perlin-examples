@@ -5,6 +5,12 @@ namespace Display
 {
     public class DisplayObject : UIContainer
     {
+        public delegate void EnterFrame(double elapsed);
+
+        public event EnterFrame EnterFrameEvent;
+        
+        public bool IsOnStage { get; internal set; }
+        
         internal QuadVertex GpuVertex;
         
         public DisplayObject()
@@ -12,6 +18,26 @@ namespace Display
             GpuVertex.Tint = RgbaByte.White;
         }
         
+        public void RemoveFromParent()
+        {
+            if (Parent != null)
+            {
+                Parent.RemoveChild(this);
+                Parent = null;
+                IsOnStage = false;
+            }
+        }
+
+        public override void Render(double elapsedTimems)
+        {
+            if (IsOnStage)
+            {
+                EnterFrameEvent?.Invoke(elapsedTimems);
+            }
+            base.Render(elapsedTimems);
+        }
+
+        public UIContainer Parent { get; internal set; }
         public float X
         {
             get => GpuVertex.Position.X;

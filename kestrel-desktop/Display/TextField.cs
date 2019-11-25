@@ -8,10 +8,10 @@ namespace Display
 
         //public Font Font;
 
-        public override void Render()
+        public override void Render(double elapsedTimems)
         {
             //_spriteRenderer.RenderText(_gd, _cl, _textRenderer.TextureView, _scoreTextField);
-            base.Render();
+            base.Render(elapsedTimems);
         }
     }
 }
