@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Display
@@ -10,7 +9,7 @@ namespace Display
         public virtual void AddChild(DisplayObject child)
         {
             _children.Add(child);
-            if (this is Stage || (this is DisplayObject && ((DisplayObject) this).IsOnStage))
+            if (this is Stage || this is DisplayObject && ((DisplayObject) this).IsOnStage)
             {
                 child.IsOnStage = true;
             }

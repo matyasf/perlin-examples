@@ -19,7 +19,8 @@ namespace Snake
         {
             KestrelApp.Start(
                 (int)(Width *_cellSize),
-                (int)(Height * _cellSize), OnInit);
+                (int)(Height * _cellSize), 
+                OnInit);
         }
 
         private void OnInit()

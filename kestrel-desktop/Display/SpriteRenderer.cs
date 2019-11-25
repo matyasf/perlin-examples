@@ -13,24 +13,21 @@ namespace Display
         private readonly List<Sprite> _draws = new List<Sprite>();
 
         private DeviceBuffer _vertexBuffer;
-        private readonly DeviceBuffer _textBuffer;
         private readonly DeviceBuffer _orthoBuffer;
-        private readonly ResourceSet _orthoSet;
-        private readonly ResourceLayout _texLayout;
-        private readonly Pipeline _pipeline;
+//        private readonly ResourceSet _orthoSet;
+//        private readonly ResourceLayout _texLayout;
+//        private readonly Pipeline _pipeline;
 
         private readonly Dictionary<string, (Texture, TextureView, ResourceSet)> _loadedImages
             = new Dictionary<string, (Texture, TextureView, ResourceSet)>();
-        private ResourceSet _textSet;
 
         public SpriteRenderer(GraphicsDevice gd)
         {
             ResourceFactory factory = gd.ResourceFactory;
 
             _vertexBuffer = factory.CreateBuffer(new BufferDescription(1000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
-            _textBuffer = factory.CreateBuffer(new BufferDescription(DisplayObject.QuadVertex.VertexSize, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
             _orthoBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
-
+/*
             var orthoLayout = factory.CreateResourceLayout(
                 new ResourceLayoutDescription(
                     new ResourceLayoutElementDescription("OrthographicProjection", ResourceKind.UniformBuffer, ShaderStages.Vertex)));
@@ -63,14 +60,18 @@ namespace Display
                         new CrossCompileOptions(false, false, new SpecializationConstant(0, false)))),
                 new[] { orthoLayout, _texLayout },
                 gd.MainSwapchain.Framebuffer.OutputDescription));
+*/
         }
-        
+        /*
         private byte[] LoadShaderBytes(string name)
         {
             return File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Assets", "Shaders", name));
         }
-        
-        public void RenderSprite(Sprite sp)
+        */
+        /// <summary>
+        /// Adds the Sprite to the list of things to render
+        /// </summary>
+        public void BatchSprite(Sprite sp)
         {
             _draws.Add(sp);
         }
@@ -138,23 +139,6 @@ namespace Display
                 _loadedImages.Add(spriteName, ret);
             }
             return ret.Item3;
-        }
-
-        internal void RenderText(GraphicsDevice gd, CommandList cl, TextureView textureView, TextField tf)
-        {
-            cl.SetPipeline(_pipeline);
-            cl.SetVertexBuffer(0, _textBuffer);
-            cl.SetGraphicsResourceSet(0, _orthoSet);
-            if (_textSet == null)
-            {
-                _textSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
-                    _texLayout,
-                    textureView,
-                    gd.PointSampler));
-            }
-            cl.SetGraphicsResourceSet(1, _textSet);
-            cl.UpdateBuffer(_textBuffer, 0, tf.GpuVertex);
-            cl.Draw(4, 1, 0, 0);
         }
 
         private void EnsureBufferSize(GraphicsDevice gd, uint size)

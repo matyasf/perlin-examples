@@ -18,9 +18,7 @@ namespace Snake
 
         private readonly World _world;
 
-        // pos, rotation
         private readonly List<Sprite> _positions = new List<Sprite>();
-        //private readonly List<(Vector2, float)> _positions = new List<(Vector2, float)>();
         private Vector2 _direction;
         private Vector2 _previousDir;
         private double _updateTimer;

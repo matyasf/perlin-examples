@@ -39,10 +39,5 @@ namespace Snake
         {
             return new Vector2((int)(_random.NextDouble() * Size.X), (int)(_random.NextDouble() * Size.Y));
         }
-
-        public void Render(SpriteRenderer sr)
-        {
-            sr.RenderSprite(FoodSprite);
-        }
     }
 }
