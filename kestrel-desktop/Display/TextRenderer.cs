@@ -15,53 +15,49 @@ namespace Snake
 {
     public class TextRenderer
     {
+        private readonly KestrelPipeline _kestrelPipeline;
         private readonly GraphicsDevice _gd;
-        private readonly Texture _texture;
         private ResourceSet _textSet;
-
         private readonly DeviceBuffer _textBuffer;
-
-        public TextureView TextureView { get; }
-
         private readonly Font _font;
-        private readonly Image<Rgba32> _image;
 
-        public TextRenderer(GraphicsDevice gd)
-        {
+        public TextRenderer(GraphicsDevice gd, KestrelPipeline kestrelPipeline)
+        { 
+            _gd = gd;
+            _kestrelPipeline = kestrelPipeline;
             ResourceFactory factory = gd.ResourceFactory;
             _textBuffer = factory.CreateBuffer(new BufferDescription(DisplayObject.QuadVertex.VertexSize, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
-            /*
-            _gd = gd;
-            _texture = gd.ResourceFactory.CreateTexture(
-                TextureDescription.Texture2D((uint)textField.Width, (uint)textField.Height, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Sampled));
-            TextureView = gd.ResourceFactory.CreateTextureView(_texture);
-
-            FontCollection fc = new FontCollection();
+            
+            FontCollection fc = new FontCollection(); // todo move this to a font class
             FontFamily family = fc.Install(Path.Combine(AppContext.BaseDirectory, "Assets", "Fonts", "Sunflower-Medium.ttf"));
-            _font = family.CreateFont(28);
-                
-            _image = new Image<Rgba32>((int)textField.Width, (int)textField.Height); // TODO move this to TextField
-            */
+            _font = family.CreateFont(28); // needs to cache somehow?
         }
         
-        internal void RenderText(GraphicsDevice gd, CommandList cl, TextureView textureView, TextField tf)
+        /// <summary>
+        /// call on each frame
+        /// </summary>
+        internal void Draw(TextureView textureView, DisplayObject.QuadVertex vertex)
         {
-            cl.SetPipeline(_pipeline);
+            var cl = KestrelApp.CommandList;
+            cl.SetPipeline(_kestrelPipeline.Pipeline);
             cl.SetVertexBuffer(0, _textBuffer);
-            cl.SetGraphicsResourceSet(0, _orthoSet);
+            cl.SetGraphicsResourceSet(0, _kestrelPipeline.OrthoSet);
             if (_textSet == null)
             {
-                _textSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
-                    _texLayout,
+                _textSet = _gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
+                    _kestrelPipeline.TexLayout,
                     textureView,
-                    gd.PointSampler));
+                    _gd.PointSampler));
             }
             cl.SetGraphicsResourceSet(1, _textSet);
-            cl.UpdateBuffer(_textBuffer, 0, tf.GpuVertex);
+            cl.UpdateBuffer(_textBuffer, 0, vertex);
             cl.Draw(4, 1, 0, 0);
         }
 
-        public unsafe void DrawText(string text) // called when text changes
+        /// <summary>
+        /// Called when text changes
+        /// </summary>
+        public unsafe void DrawText(string text, Image<Rgba32> _image, Texture _texture)
         {
             fixed (void* data = &MemoryMarshal.GetReference(_image.GetPixelSpan()))
             {

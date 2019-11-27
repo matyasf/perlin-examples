@@ -50,13 +50,13 @@ namespace Display
             set => GpuVertex.Position.Y = value;
         }
 
-        public float Width
+        public virtual float Width
         {
             get => GpuVertex.Size.X;
             set => GpuVertex.Size.X = value;
         }
 
-        public float Height
+        public virtual float Height
         {
             get => GpuVertex.Size.Y;
             set => GpuVertex.Size.Y = value;

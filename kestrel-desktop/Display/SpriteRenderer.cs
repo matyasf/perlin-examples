@@ -4,70 +4,27 @@ using System.IO;
 using System.Numerics;
 using Veldrid;
 using Veldrid.ImageSharp;
-using Veldrid.SPIRV;
 
 namespace Display
 {
     public class SpriteRenderer
     {
+        private readonly KestrelPipeline _kestrelPipeline;
         private readonly List<Sprite> _draws = new List<Sprite>();
 
         private DeviceBuffer _vertexBuffer;
-        private readonly DeviceBuffer _orthoBuffer;
-//        private readonly ResourceSet _orthoSet;
-//        private readonly ResourceLayout _texLayout;
-//        private readonly Pipeline _pipeline;
 
         private readonly Dictionary<string, (Texture, TextureView, ResourceSet)> _loadedImages
             = new Dictionary<string, (Texture, TextureView, ResourceSet)>();
 
-        public SpriteRenderer(GraphicsDevice gd)
+        public SpriteRenderer(GraphicsDevice gd, KestrelPipeline kestrelPipeline)
         {
+            _kestrelPipeline = kestrelPipeline;
             ResourceFactory factory = gd.ResourceFactory;
 
             _vertexBuffer = factory.CreateBuffer(new BufferDescription(1000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
-            _orthoBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
-/*
-            var orthoLayout = factory.CreateResourceLayout(
-                new ResourceLayoutDescription(
-                    new ResourceLayoutElementDescription("OrthographicProjection", ResourceKind.UniformBuffer, ShaderStages.Vertex)));
-            _orthoSet = factory.CreateResourceSet(new ResourceSetDescription(orthoLayout, _orthoBuffer));
-
-            _texLayout = factory.CreateResourceLayout(
-                new ResourceLayoutDescription(
-                    new ResourceLayoutElementDescription("SpriteTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-                    new ResourceLayoutElementDescription("SpriteSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
-
-            _pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
-                BlendStateDescription.SingleAlphaBlend,
-                DepthStencilStateDescription.Disabled,
-                RasterizerStateDescription.CullNone,
-                PrimitiveTopology.TriangleStrip,
-                new ShaderSetDescription(
-                    new[]
-                    {
-                        new VertexLayoutDescription(
-                            DisplayObject.QuadVertex.VertexSize,
-                            1,
-                            new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                            new VertexElementDescription("Size", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                            new VertexElementDescription("Tint", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Byte4_Norm),
-                            new VertexElementDescription("Rotation", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float1))
-                    },
-                    factory.CreateFromSpirv(
-                        new ShaderDescription(ShaderStages.Vertex, LoadShaderBytes("sprite.vert.spv"), "main"),
-                        new ShaderDescription(ShaderStages.Fragment, LoadShaderBytes("sprite.frag.spv"), "main"),
-                        new CrossCompileOptions(false, false, new SpecializationConstant(0, false)))),
-                new[] { orthoLayout, _texLayout },
-                gd.MainSwapchain.Framebuffer.OutputDescription));
-*/
         }
-        /*
-        private byte[] LoadShaderBytes(string name)
-        {
-            return File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Assets", "Shaders", name));
-        }
-        */
+        
         /// <summary>
         /// Adds the Sprite to the list of things to render
         /// </summary>
@@ -82,11 +39,10 @@ namespace Display
             {
                 return;
             }
-
             float width = gd.MainSwapchain.Framebuffer.Width;
             float height = gd.MainSwapchain.Framebuffer.Height;
             gd.UpdateBuffer(
-                _orthoBuffer,
+                _kestrelPipeline.OrthoBuffer,
                 0,
                 Matrix4x4.CreateOrthographicOffCenter(0, width, 0, height, 0, 1));
 
@@ -98,9 +54,9 @@ namespace Display
             }
             gd.Unmap(_vertexBuffer);
 
-            cl.SetPipeline(_pipeline);
+            cl.SetPipeline(_kestrelPipeline.Pipeline);
             cl.SetVertexBuffer(0, _vertexBuffer);
-            cl.SetGraphicsResourceSet(0, _orthoSet);
+            cl.SetGraphicsResourceSet(0, _kestrelPipeline.OrthoSet);
 
             for (int i = 0; i < _draws.Count;)
             {
@@ -118,7 +74,6 @@ namespace Display
 
                 cl.Draw(4, batchSize, 0, batchStart);
             }
-
             _draws.Clear();
         }
         
@@ -132,7 +87,7 @@ namespace Display
                 var tex = imTex.CreateDeviceTexture(gd, gd.ResourceFactory);
                 TextureView view = gd.ResourceFactory.CreateTextureView(tex);
                 ResourceSet set = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
-                    _texLayout,
+                    _kestrelPipeline.TexLayout,
                     view,
                     gd.PointSampler));
                 ret = (tex, view, set);

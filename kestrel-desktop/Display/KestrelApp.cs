@@ -12,12 +12,13 @@ namespace Display
     {
         public static Stage Stage { get; private set; }
         public static SpriteRenderer SpriteRenderer { get; private set; }
-        
-        private static GraphicsDevice _gd;
+        public static TextRenderer TextRenderer { get; private set; }
+        public static KestrelPipeline KestrelPipeline { get; private set; }
+
+        public static GraphicsDevice DefaultGraphicsDevice { get; private set; }
         private static Sdl2Window _window;
-        private static CommandList _cl;
+        public static CommandList CommandList { get; private set; }
         private static RgbaFloat _clearColor = new RgbaFloat(0, 0, 0.2f, 1f);
-        private static TextRenderer _textRenderer;
         
         public static void Start(int width, int height, Action onInit = null)
         {
@@ -29,11 +30,12 @@ namespace Display
 #endif
             options.SyncToVerticalBlank = true;
             options.ResourceBindingModel = ResourceBindingModel.Improved;
-            _gd = VeldridStartup.CreateGraphicsDevice(_window, options);
-            _cl = _gd.ResourceFactory.CreateCommandList();
-            _window.Resized += () => _gd.ResizeMainWindow((uint)_window.Width, (uint)_window.Height);
-            _textRenderer = new TextRenderer(_gd);
-            SpriteRenderer = new SpriteRenderer(_gd);
+            DefaultGraphicsDevice = VeldridStartup.CreateGraphicsDevice(_window, options);
+            CommandList = DefaultGraphicsDevice.ResourceFactory.CreateCommandList();
+            _window.Resized += () => DefaultGraphicsDevice.ResizeMainWindow((uint)_window.Width, (uint)_window.Height);
+            KestrelPipeline = new KestrelPipeline(DefaultGraphicsDevice);
+            TextRenderer = new TextRenderer(DefaultGraphicsDevice, KestrelPipeline);
+            SpriteRenderer = new SpriteRenderer(DefaultGraphicsDevice, KestrelPipeline);
             Stopwatch sw = Stopwatch.StartNew();
             double previousTime = sw.Elapsed.TotalSeconds;
             Stage = new Stage(width, height);
@@ -48,17 +50,17 @@ namespace Display
                 previousTime = newTime;
                 if (_window.Exists)
                 {
-                    _cl.Begin();
-                    _cl.SetFramebuffer(_gd.MainSwapchain.Framebuffer);
-                    _cl.ClearColorTarget(0, _clearColor);
+                    CommandList.Begin();
+                    CommandList.SetFramebuffer(DefaultGraphicsDevice.MainSwapchain.Framebuffer);
+                    CommandList.ClearColorTarget(0, _clearColor);
                     Stage.Render(elapsed);
-                    SpriteRenderer.Draw(_gd, _cl);
-                    _cl.End();
-                    _gd.SubmitCommands(_cl);
-                    _gd.SwapBuffers(_gd.MainSwapchain);
+                    SpriteRenderer.Draw(DefaultGraphicsDevice, CommandList);
+                    CommandList.End();
+                    DefaultGraphicsDevice.SubmitCommands(CommandList);
+                    DefaultGraphicsDevice.SwapBuffers(DefaultGraphicsDevice.MainSwapchain);
                 }
             }
-            _gd.Dispose();
+            DefaultGraphicsDevice.Dispose();
             Console.WriteLine($"program end");
         }
     }

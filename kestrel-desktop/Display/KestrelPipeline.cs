@@ -7,25 +7,27 @@ namespace Display
 {
     public class KestrelPipeline
     {
-        private Pipeline _pipeline;
-        private ResourceLayout _texLayout;
-        private ResourceSet _orthoSet;
-
-        public void CreatePipeline(GraphicsDevice gd)
+        public Pipeline Pipeline { get; private set; }
+        public ResourceLayout TexLayout { get; private set; }
+        public ResourceSet OrthoSet { get; private set; }
+        public DeviceBuffer OrthoBuffer { get; private set; }
+        
+        public KestrelPipeline(GraphicsDevice gd)
         {
             ResourceFactory factory = gd.ResourceFactory;
-            
+            OrthoBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
+
             var orthoLayout = factory.CreateResourceLayout(
                 new ResourceLayoutDescription(
                     new ResourceLayoutElementDescription("OrthographicProjection", ResourceKind.UniformBuffer, ShaderStages.Vertex)));
-            _orthoSet = factory.CreateResourceSet(new ResourceSetDescription(orthoLayout, _orthoBuffer));
+            OrthoSet = factory.CreateResourceSet(new ResourceSetDescription(orthoLayout, OrthoBuffer));
 
-            _texLayout = factory.CreateResourceLayout(
+            TexLayout = factory.CreateResourceLayout(
                 new ResourceLayoutDescription(
                     new ResourceLayoutElementDescription("SpriteTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
                     new ResourceLayoutElementDescription("SpriteSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
 
-            _pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
+            Pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
                 BlendStateDescription.SingleAlphaBlend,
                 DepthStencilStateDescription.Disabled,
                 RasterizerStateDescription.CullNone,
@@ -45,7 +47,7 @@ namespace Display
                         new ShaderDescription(ShaderStages.Vertex, LoadShaderBytes("sprite.vert.spv"), "main"),
                         new ShaderDescription(ShaderStages.Fragment, LoadShaderBytes("sprite.frag.spv"), "main"),
                         new CrossCompileOptions(false, false, new SpecializationConstant(0, false)))),
-                new[] { orthoLayout, _texLayout },
+                new[] { orthoLayout, TexLayout },
                 gd.MainSwapchain.Framebuffer.OutputDescription));
         }
         

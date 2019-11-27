@@ -33,9 +33,7 @@ namespace Snake
             _scoreTextField.X = KestrelApp.Stage.Width / 2f - _scoreTextField.Width / 2f;
             _scoreTextField.Y = KestrelApp.Stage.Height - _scoreTextField.Height - 10f;
             
-            //KestrelApp.Stage.AddChild(_scoreTextField);
-            //_textRenderer.DrawText(_scoreTextField.Text);
-            //_snake.ScoreChanged += () => _textRenderer.DrawText(_snake.Score.ToString());
+            KestrelApp.Stage.AddChild(_scoreTextField);
             _snake.ScoreChanged += () => _scoreTextField.Text =_snake.Score.ToString();
             _snake.ScoreChanged += () => highScore = Math.Max(highScore, _snake.Score);
 
