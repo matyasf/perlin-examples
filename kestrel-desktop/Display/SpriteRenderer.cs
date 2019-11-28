@@ -71,7 +71,6 @@ namespace Display
                     batchSize += 1;
                 }
                 while (i < _draws.Count && _draws[i].Image == spriteName);
-
                 cl.Draw(4, batchSize, 0, batchStart);
             }
             _draws.Clear();

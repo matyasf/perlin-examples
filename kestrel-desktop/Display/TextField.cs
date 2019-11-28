@@ -7,18 +7,26 @@ namespace Display
 {
     public class TextField : DisplayObject
     {
+        private Texture _texture;
+        private Image<Rgba32> _image;
+        private TextureView _textureView;
+        private ResourceSet _textSet;
+        // + set font here
         private string _text;
+        private bool _textInvalid;
+        private bool _sizeInvalid;
         public string Text
         {
             get => _text;
             set
             {
-                // calculate width and height automatically here
-                _text = value;
-                if (_image != null && _texture != null)
+                if (_text == value)
                 {
-                    KestrelApp.TextRenderer.DrawText(_text, _image, _texture);   
+                    return;
                 }
+                // +calculate width and height automatically here if not set
+                _text = value;
+                _textInvalid = true;
             }
         }
 
@@ -27,9 +35,12 @@ namespace Display
             get => base.Width;
             set
             {
+                if (value == base.Width)
+                {
+                    return;
+                }
                 base.Width = value;
-                // make some invalidation logic here in the future
-                RecreateTexture();
+                _sizeInvalid = true;
             }
         }
 
@@ -38,9 +49,12 @@ namespace Display
             get => base.Height;
             set
             {
+                if (value == base.Height)
+                {
+                    return;
+                }
                 base.Height = value;
-                // make some invalidation logic here in the future
-                RecreateTexture();
+                _sizeInvalid = true;
             }
         }
         
@@ -54,19 +68,30 @@ namespace Display
             _texture?.Dispose();
             _textureView?.Dispose();
             _image?.Dispose();
+            _textSet?.Dispose();
             _texture = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateTexture(
                 TextureDescription.Texture2D((uint)Width, (uint)Height, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Sampled));
             _textureView = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateTextureView(_texture); // needed for TextRenderer.Render
-            _image = new Image<Rgba32>((int)Width, (int)Height);            
+            _textSet = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
+                    KestrelApp.KestrelPipeline.TexLayout,
+                    _textureView,
+                    KestrelApp.DefaultGraphicsDevice.PointSampler));
+            _image = new Image<Rgba32>((int)Width, (int)Height);
         }
-
-        private Texture _texture;
-        private Image<Rgba32> _image;
-        private TextureView _textureView;
 
         public override void Render(double elapsedTimems)
         {
-            KestrelApp.TextRenderer.Draw(_textureView, GpuVertex);
+            if (_sizeInvalid)
+            {
+                RecreateTexture();
+                _sizeInvalid = false;
+            }
+            if (_textInvalid)
+            {
+                KestrelApp.TextRenderer.DrawText(_text, _image, _texture);
+                _textInvalid = false;
+            }
+            KestrelApp.TextRenderer.Draw(_textSet, GpuVertex);
             base.Render(elapsedTimems);
         }
     }

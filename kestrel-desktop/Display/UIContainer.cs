@@ -8,6 +8,10 @@ namespace Display
         
         public virtual void AddChild(DisplayObject child)
         {
+            if (child.Parent != null)
+            {
+                child.RemoveFromParent();
+            }
             _children.Add(child);
             if (this is Stage || this is DisplayObject && ((DisplayObject) this).IsOnStage)
             {

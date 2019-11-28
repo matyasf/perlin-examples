@@ -17,7 +17,6 @@ namespace Snake
     {
         private readonly KestrelPipeline _kestrelPipeline;
         private readonly GraphicsDevice _gd;
-        private ResourceSet _textSet;
         private readonly DeviceBuffer _textBuffer;
         private readonly Font _font;
 
@@ -36,20 +35,13 @@ namespace Snake
         /// <summary>
         /// call on each frame
         /// </summary>
-        internal void Draw(TextureView textureView, DisplayObject.QuadVertex vertex)
+        internal void Draw(ResourceSet textSet, DisplayObject.QuadVertex vertex)
         {
             var cl = KestrelApp.CommandList;
             cl.SetPipeline(_kestrelPipeline.Pipeline);
             cl.SetVertexBuffer(0, _textBuffer);
             cl.SetGraphicsResourceSet(0, _kestrelPipeline.OrthoSet);
-            if (_textSet == null)
-            {
-                _textSet = _gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
-                    _kestrelPipeline.TexLayout,
-                    textureView,
-                    _gd.PointSampler));
-            }
-            cl.SetGraphicsResourceSet(1, _textSet);
+            cl.SetGraphicsResourceSet(1, textSet);
             cl.UpdateBuffer(_textBuffer, 0, vertex);
             cl.Draw(4, 1, 0, 0);
         }
@@ -57,18 +49,27 @@ namespace Snake
         /// <summary>
         /// Called when text changes
         /// </summary>
-        public unsafe void DrawText(string text, Image<Rgba32> _image, Texture _texture)
+        public unsafe void DrawText(string text, Image<Rgba32> image, Texture texture)
         {
-            fixed (void* data = &MemoryMarshal.GetReference(_image.GetPixelSpan()))
+            // ImageSharp bug: if text overflows it'll throw an exception                
+            SizeF txtSize = TextMeasurer.Measure(text, new RendererOptions(_font));
+            if (txtSize.Width > image.Width || txtSize.Height > image.Height)
             {
-                Unsafe.InitBlock(data, 0, (uint)(_image.Width * _image.Height * 4));
+                Console.WriteLine("Cannot render text '" + text + "', it would take up " +
+                                  txtSize + " and the textField is smaller. (" + image.Width + 
+                                  "x" + image.Height + ")");
+                return;
             }
-            _image.Mutate(ctx =>
+            fixed (void* data = &MemoryMarshal.GetReference(image.GetPixelSpan()))
+            {
+                Unsafe.InitBlock(data, 0, (uint)(image.Width * image.Height * 4));
+            }
+            image.Mutate(ctx =>
             {
                 ctx.DrawText(
                     new TextGraphicsOptions
                     {
-                        WrapTextWidth = _image.Width,
+                        WrapTextWidth = image.Width,
                         Antialias = true,
                         HorizontalAlignment = HorizontalAlignment.Center
                     },
@@ -77,11 +78,10 @@ namespace Snake
                     Rgba32.White,
                     new PointF());
             });
-
-            fixed (void* data = &MemoryMarshal.GetReference(_image.GetPixelSpan()))
+            fixed (void* data = &MemoryMarshal.GetReference(image.GetPixelSpan()))
             {
-                uint size = (uint)(_image.Width * _image.Height * 4);
-                _gd.UpdateTexture(_texture, (IntPtr)data, size, 0, 0, 0, _texture.Width, _texture.Height, 1, 0, 0);
+                uint size = (uint)(image.Width * image.Height * 4);
+                _gd.UpdateTexture(texture, (IntPtr)data, size, 0, 0, 0, texture.Width, texture.Height, 1, 0, 0);
             }
         }
     }
