@@ -19,6 +19,7 @@ namespace Display
         private static Sdl2Window _window;
         public static CommandList CommandList { get; private set; }
         private static RgbaFloat _clearColor = new RgbaFloat(0, 0, 0.2f, 1f);
+        public static readonly ImageManager ImageManager = new ImageManager();
         
         public static void Start(int width, int height, Action onInit = null)
         {
@@ -34,8 +35,8 @@ namespace Display
             CommandList = DefaultGraphicsDevice.ResourceFactory.CreateCommandList();
             _window.Resized += () => DefaultGraphicsDevice.ResizeMainWindow((uint)_window.Width, (uint)_window.Height);
             KestrelPipeline = new KestrelPipeline(DefaultGraphicsDevice);
-            TextRenderer = new TextRenderer(DefaultGraphicsDevice, KestrelPipeline);
-            SpriteRenderer = new SpriteRenderer(DefaultGraphicsDevice, KestrelPipeline);
+            TextRenderer = new TextRenderer();
+            SpriteRenderer = new SpriteRenderer();
             Stopwatch sw = Stopwatch.StartNew();
             double previousTime = sw.Elapsed.TotalSeconds;
             Stage = new Stage(width, height);
@@ -54,7 +55,7 @@ namespace Display
                     CommandList.SetFramebuffer(DefaultGraphicsDevice.MainSwapchain.Framebuffer);
                     CommandList.ClearColorTarget(0, _clearColor);
                     Stage.Render(elapsed);
-                    SpriteRenderer.Draw(DefaultGraphicsDevice, CommandList);
+                    SpriteRenderer.Draw(CommandList); // not good, will always render above text
                     CommandList.End();
                     DefaultGraphicsDevice.SubmitCommands(CommandList);
                     DefaultGraphicsDevice.SwapBuffers(DefaultGraphicsDevice.MainSwapchain);

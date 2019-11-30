@@ -8,6 +8,7 @@ namespace Display
         public override void Render(double elapsedTimems)
         {
             KestrelApp.SpriteRenderer.BatchSprite(this);
+          //  KestrelApp.SpriteRenderer.Draw(KestrelApp.DefaultGraphicsDevice, KestrelApp.CommandList);
             base.Render(elapsedTimems);
         }
     }

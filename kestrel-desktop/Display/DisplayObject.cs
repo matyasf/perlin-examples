@@ -9,6 +9,8 @@ namespace Display
 
         public event EnterFrame EnterFrameEvent;
         
+        public Texture Texture { get; internal set; }
+
         public bool IsOnStage { get; internal set; }
         
         internal QuadVertex GpuVertex;

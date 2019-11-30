@@ -15,17 +15,14 @@ namespace Snake
 {
     public class TextRenderer
     {
-        private readonly KestrelPipeline _kestrelPipeline;
-        private readonly GraphicsDevice _gd;
         private readonly DeviceBuffer _textBuffer;
         private readonly Font _font;
 
-        public TextRenderer(GraphicsDevice gd, KestrelPipeline kestrelPipeline)
-        { 
-            _gd = gd;
-            _kestrelPipeline = kestrelPipeline;
-            ResourceFactory factory = gd.ResourceFactory;
-            _textBuffer = factory.CreateBuffer(new BufferDescription(DisplayObject.QuadVertex.VertexSize, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
+        public TextRenderer()
+        {
+            _textBuffer = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateBuffer(
+                new BufferDescription(DisplayObject.QuadVertex.VertexSize,
+                        BufferUsage.VertexBuffer | BufferUsage.Dynamic));
             
             FontCollection fc = new FontCollection(); // todo move this to a font class
             FontFamily family = fc.Install(Path.Combine(AppContext.BaseDirectory, "Assets", "Fonts", "Sunflower-Medium.ttf"));
@@ -38,9 +35,9 @@ namespace Snake
         internal void Draw(ResourceSet textSet, DisplayObject.QuadVertex vertex)
         {
             var cl = KestrelApp.CommandList;
-            cl.SetPipeline(_kestrelPipeline.Pipeline);
+            cl.SetPipeline(KestrelApp.KestrelPipeline.Pipeline);
             cl.SetVertexBuffer(0, _textBuffer);
-            cl.SetGraphicsResourceSet(0, _kestrelPipeline.OrthoSet);
+            cl.SetGraphicsResourceSet(0, KestrelApp.KestrelPipeline.OrthoSet);
             cl.SetGraphicsResourceSet(1, textSet);
             cl.UpdateBuffer(_textBuffer, 0, vertex);
             cl.Draw(4, 1, 0, 0);
@@ -51,7 +48,7 @@ namespace Snake
         /// </summary>
         public unsafe void DrawText(string text, Image<Rgba32> image, Texture texture)
         {
-            // ImageSharp bug: if text overflows it'll throw an exception                
+            // ImageSharp bug (beta6): if text overflows it'll throw an exception                
             SizeF txtSize = TextMeasurer.Measure(text, new RendererOptions(_font));
             if (txtSize.Width > image.Width || txtSize.Height > image.Height)
             {
@@ -81,7 +78,7 @@ namespace Snake
             fixed (void* data = &MemoryMarshal.GetReference(image.GetPixelSpan()))
             {
                 uint size = (uint)(image.Width * image.Height * 4);
-                _gd.UpdateTexture(texture, (IntPtr)data, size, 0, 0, 0, texture.Width, texture.Height, 1, 0, 0);
+                KestrelApp.DefaultGraphicsDevice.UpdateTexture(texture, (IntPtr)data, size, 0, 0, 0, texture.Width, texture.Height, 1, 0, 0);
             }
         }
     }

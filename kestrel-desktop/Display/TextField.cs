@@ -7,7 +7,6 @@ namespace Display
 {
     public class TextField : DisplayObject
     {
-        private Texture _texture;
         private Image<Rgba32> _image;
         private TextureView _textureView;
         private ResourceSet _textSet;
@@ -65,14 +64,16 @@ namespace Display
                 Console.WriteLine("Warning: TextField size is 0 or less " + this._text);
                 return;
             }
-            _texture?.Dispose();
+            Texture?.Dispose();
             _textureView?.Dispose();
             _image?.Dispose();
             _textSet?.Dispose();
-            _texture = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateTexture(
-                TextureDescription.Texture2D((uint)Width, (uint)Height, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Sampled));
-            _textureView = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateTextureView(_texture); // needed for TextRenderer.Render
-            _textSet = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
+            Texture = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateTexture(
+                TextureDescription.Texture2D((uint)Width, (uint)Height, 1, 1, 
+                    PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Sampled));
+            _textureView = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateTextureView(Texture);
+            _textSet = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateResourceSet(
+                new ResourceSetDescription(
                     KestrelApp.KestrelPipeline.TexLayout,
                     _textureView,
                     KestrelApp.DefaultGraphicsDevice.PointSampler));
@@ -88,7 +89,7 @@ namespace Display
             }
             if (_textInvalid)
             {
-                KestrelApp.TextRenderer.DrawText(_text, _image, _texture);
+                KestrelApp.TextRenderer.DrawText(_text, _image, Texture);
                 _textInvalid = false;
             }
             KestrelApp.TextRenderer.Draw(_textSet, GpuVertex);
