@@ -1,27 +1,27 @@
 using System;
 using System.Diagnostics;
+using Display;
+using Engine.Display;
 using SixLabors.ImageSharp;
 using Snake;
 using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
 
-namespace Display
+namespace Engine
 {
     public class KestrelApp
     {
         public static Stage Stage { get; private set; }
-        public static SpriteRenderer SpriteRenderer { get; private set; }
         public static TextRenderer TextRenderer { get; private set; }
         public static KestrelPipeline KestrelPipeline { get; private set; }
-
+        internal static BatchRenderer Renderer { get; private set; }
         public static GraphicsDevice DefaultGraphicsDevice { get; private set; }
         private static Sdl2Window _window;
         public static CommandList CommandList { get; private set; }
-        private static RgbaFloat _clearColor = new RgbaFloat(0, 0, 0.2f, 1f);
         public static readonly ImageManager ImageManager = new ImageManager();
         
-        public static void Start(int width, int height, Action onInit = null)
+        public static void Start(int width, int height, Action onInit)
         {
             Configuration.Default.MemoryAllocator = new SixLabors.Memory.SimpleGcMemoryAllocator();
             GraphicsDeviceOptions options = new GraphicsDeviceOptions();
@@ -36,11 +36,11 @@ namespace Display
             _window.Resized += () => DefaultGraphicsDevice.ResizeMainWindow((uint)_window.Width, (uint)_window.Height);
             KestrelPipeline = new KestrelPipeline(DefaultGraphicsDevice);
             TextRenderer = new TextRenderer();
-            SpriteRenderer = new SpriteRenderer();
+            Renderer = new BatchRenderer();
             Stopwatch sw = Stopwatch.StartNew();
             double previousTime = sw.Elapsed.TotalSeconds;
             Stage = new Stage(width, height);
-            onInit?.Invoke();
+            onInit.Invoke();
             while (_window.Exists)
             {
                 InputSnapshot snapshot = _window.PumpEvents();
@@ -53,9 +53,9 @@ namespace Display
                 {
                     CommandList.Begin();
                     CommandList.SetFramebuffer(DefaultGraphicsDevice.MainSwapchain.Framebuffer);
-                    CommandList.ClearColorTarget(0, _clearColor);
+                    CommandList.ClearColorTarget(0, Stage.BackgroundColor);
                     Stage.Render(elapsed);
-                    SpriteRenderer.Draw(CommandList); // not good, will always render above text
+                    Renderer.RenderQueue();
                     CommandList.End();
                     DefaultGraphicsDevice.SubmitCommands(CommandList);
                     DefaultGraphicsDevice.SwapBuffers(DefaultGraphicsDevice.MainSwapchain);

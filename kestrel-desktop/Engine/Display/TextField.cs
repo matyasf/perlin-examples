@@ -1,19 +1,40 @@
 using System;
+using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Veldrid;
 
-namespace Display
+namespace Engine.Display
 {
+    /// <summary>
+    /// TextField is used to render text. Make sure its big enough for your text otherwise it will not show!
+    /// </summary>
     public class TextField : DisplayObject
     {
         private Image<Rgba32> _image;
         private TextureView _textureView;
-        private ResourceSet _textSet;
-        // + set font here
         private string _text;
         private bool _textInvalid;
         private bool _sizeInvalid;
+        public Font Font;
+        public Rgba32 FontColor = Rgba32.White;
+
+        internal Texture Texture { get; set; }
+
+        /// <summary>
+        /// Creates a new TextField instance.
+        /// </summary>
+        /// <param name="font">The font to use. An example to load one:
+        /// <code>
+        /// var fc = new FontCollection();
+        /// var family = fc.Install(Path.Combine(AppContext.BaseDirectory, "Assets", "Fonts", "Sunflower-Medium.ttf"));
+        /// var font = family.CreateFont(28);
+        /// </code>
+        /// </param>
+        public TextField(Font font)
+        {
+            Font = font;
+        }
         public string Text
         {
             get => _text;
@@ -23,7 +44,7 @@ namespace Display
                 {
                     return;
                 }
-                // +calculate width and height automatically here if not set
+                // TODO Calculate width and height automatically here if not set
                 _text = value;
                 _textInvalid = true;
             }
@@ -56,7 +77,7 @@ namespace Display
                 _sizeInvalid = true;
             }
         }
-        
+
         private void RecreateTexture()
         {
             if (Width <= 0f || Height <= 0f)
@@ -67,16 +88,17 @@ namespace Display
             Texture?.Dispose();
             _textureView?.Dispose();
             _image?.Dispose();
-            _textSet?.Dispose();
-            Texture = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateTexture(
+            ResSet?.Dispose();
+            GraphicsDevice gd = KestrelApp.DefaultGraphicsDevice;
+            Texture = gd.ResourceFactory.CreateTexture(
                 TextureDescription.Texture2D((uint)Width, (uint)Height, 1, 1, 
                     PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Sampled));
-            _textureView = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateTextureView(Texture);
-            _textSet = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateResourceSet(
+            _textureView = gd.ResourceFactory.CreateTextureView(Texture);
+            ResSet = gd.ResourceFactory.CreateResourceSet(
                 new ResourceSetDescription(
                     KestrelApp.KestrelPipeline.TexLayout,
                     _textureView,
-                    KestrelApp.DefaultGraphicsDevice.PointSampler));
+                    gd.PointSampler));
             _image = new Image<Rgba32>((int)Width, (int)Height);
         }
 
@@ -89,10 +111,9 @@ namespace Display
             }
             if (_textInvalid)
             {
-                KestrelApp.TextRenderer.DrawText(_text, _image, Texture);
+                KestrelApp.TextRenderer.DrawText(_text, _image, Texture, Font, FontColor);
                 _textInvalid = false;
             }
-            KestrelApp.TextRenderer.Draw(_textSet, GpuVertex);
             base.Render(elapsedTimems);
         }
     }

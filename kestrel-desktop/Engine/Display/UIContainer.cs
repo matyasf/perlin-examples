@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 
-namespace Display
+namespace Engine.Display
 {
+    /// <summary>
+    /// The base class for every UI element.
+    /// </summary>
     public abstract class UIContainer
     {
         private readonly List<DisplayObject> _children = new List<DisplayObject>();

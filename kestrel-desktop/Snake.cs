@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Display;
+using Engine;
 using Veldrid;
 
 namespace Snake
@@ -53,17 +54,16 @@ namespace Snake
             for (int i = 0; i < InitialSize; i++)
             {
                 float rotation = GetRotation(_direction);
-                var sp = new Sprite
+                var sp = new Sprite(BodySprite)
                 {
                     X = (3 + i) * _world.CellSize, Y = 3 * _world.CellSize,
                     Rotation = rotation,
-                    Width = _world.CellSize, Height = _world.CellSize,
-                    Image = BodySprite
+                    Width = _world.CellSize, Height = _world.CellSize
                 };
                 _positions.Add(sp);
                 KestrelApp.Stage.AddChild(sp);
             }
-            _positions.Last().Image = HeadSprite;
+            _positions.Last().ImagePath = HeadSprite;
         }
 
         private void SetScore(int newScore)
@@ -139,13 +139,12 @@ namespace Snake
             }
 
             _previousDir = _direction;
-            _positions.Last().Image = BodySprite;
-            var sp = new Sprite
+            _positions.Last().ImagePath = BodySprite;
+            var sp = new Sprite(HeadSprite)
             {
                 X = newX, Y = newY,
                 Rotation = GetRotation(_direction),
-                Width = _world.CellSize, Height = _world.CellSize,
-                Image = HeadSprite
+                Width = _world.CellSize, Height = _world.CellSize
             };
             KestrelApp.Stage.AddChild(sp);
             _positions.Add(sp);

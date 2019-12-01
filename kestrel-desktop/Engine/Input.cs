@@ -2,7 +2,7 @@
 using System.Numerics;
 using Veldrid;
 
-namespace Snake
+namespace Engine
 {
     public static class Input
     {

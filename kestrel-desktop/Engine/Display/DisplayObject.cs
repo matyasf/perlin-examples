@@ -1,18 +1,28 @@
 using System.Numerics;
+using Display;
 using Veldrid;
 
-namespace Display
+namespace Engine.Display
 {
-    public class DisplayObject : UIContainer
+    /// <summary>
+    /// DisplayObject is the base class for every renderable object.
+    /// </summary>
+    public abstract class DisplayObject : UIContainer
     {
         public delegate void EnterFrame(double elapsed);
 
         public event EnterFrame EnterFrameEvent;
-        
-        public Texture Texture { get; internal set; }
 
+        /// <summary>
+        /// Whether this instance is on the Stage. If something is not on the Stage, it will not render.
+        /// </summary>
         public bool IsOnStage { get; internal set; }
         
+        /// <summary>
+        /// The GPU resource set for this object. Its the same object for objects with the same image.
+        /// </summary>
+        internal ResourceSet ResSet;
+
         internal QuadVertex GpuVertex;
         
         public DisplayObject()
@@ -36,6 +46,7 @@ namespace Display
             {
                 EnterFrameEvent?.Invoke(elapsedTimems);
             }
+            KestrelApp.Renderer.AddToRenderQueue(this);
             base.Render(elapsedTimems);
         }
 
@@ -64,7 +75,9 @@ namespace Display
             set => GpuVertex.Size.Y = value;
         }
         
-        // in radians
+        /// <summary>
+        /// Rotation in Radians.
+        /// </summary>
         public float Rotation
         {
             get => GpuVertex.Rotation;
@@ -86,5 +99,6 @@ namespace Display
             public RgbaByte Tint;
             public float Rotation; // in radians
         }
+        
     }
 }

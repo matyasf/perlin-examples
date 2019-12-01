@@ -1,33 +1,37 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Numerics;
+using Engine.Display;
 using Veldrid;
 
-namespace Display
+namespace Engine
 {
-    public class SpriteRenderer
+    /// <summary>
+    /// Internal class used in rendering.
+    /// </summary>
+    internal class BatchRenderer
     {
-        private readonly List<Sprite> _draws = new List<Sprite>();
         private DeviceBuffer _vertexBuffer;
+        private readonly List<DisplayObject> _drawQueue = new List<DisplayObject>();
 
-        public SpriteRenderer()
+        public BatchRenderer()
         {
-            _vertexBuffer = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateBuffer(new BufferDescription(1000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
+            _vertexBuffer = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateBuffer(
+                new BufferDescription(1000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
         }
         
         /// <summary>
-        /// Adds the Sprite to the list of things to render
+        /// Called from each render call. Only things in the render queue are rendered
         /// </summary>
-        public void BatchSprite(Sprite sp)
+        public void AddToRenderQueue(DisplayObject displayObject)
         {
-            _draws.Add(sp);
+            _drawQueue.Add(displayObject);
         }
-
-        public void Draw(CommandList cl)
+        
+        /// <summary>
+        /// Called when everything is added to the queue once per frame
+        /// </summary>
+        public void RenderQueue()
         {
-            if (_draws.Count == 0)
-            {
-                return;
-            }
             GraphicsDevice gd = KestrelApp.DefaultGraphicsDevice;
             float width = gd.MainSwapchain.Framebuffer.Width;
             float height = gd.MainSwapchain.Framebuffer.Height;
@@ -36,36 +40,38 @@ namespace Display
                 0,
                 Matrix4x4.CreateOrthographicOffCenter(0, width, 0, height, 0, 1));
 
-            EnsureBufferSize((uint)_draws.Count * DisplayObject.QuadVertex.VertexSize);
+            EnsureBufferSize((uint)_drawQueue.Count * DisplayObject.QuadVertex.VertexSize);
             MappedResourceView<DisplayObject.QuadVertex> writeMap = gd.Map<DisplayObject.QuadVertex>(_vertexBuffer, MapMode.Write);
-            for (int i = 0; i < _draws.Count; i++)
+            for (int i = 0; i < _drawQueue.Count; i++)
             {
-                writeMap[i] = _draws[i].GpuVertex;
+                writeMap[i] = _drawQueue[i].GpuVertex;
             }
             gd.Unmap(_vertexBuffer);
-
+            var cl = KestrelApp.CommandList;
             cl.SetPipeline(KestrelApp.KestrelPipeline.Pipeline);
             cl.SetVertexBuffer(0, _vertexBuffer);
             cl.SetGraphicsResourceSet(0, KestrelApp.KestrelPipeline.OrthoSet);
-
-            for (int i = 0; i < _draws.Count;)
+           
+            for (int i = 0; i < _drawQueue.Count;)
             {
                 uint batchStart = (uint)i;
-                string spriteName = _draws[i].Image;
-                ResourceSet rs = KestrelApp.ImageManager.Load(spriteName);
+                ResourceSet rs = _drawQueue[i].ResSet;
                 cl.SetGraphicsResourceSet(1, rs);
+                // + textField needs here an extra UpdateBuffer call?
+                // cl.UpdateBuffer(_textBuffer, 0, toDraw[0].GpuVertex);
                 uint batchSize = 0;
                 do
                 {
                     i += 1;
                     batchSize += 1;
                 }
-                while (i < _draws.Count && _draws[i].Image == spriteName);
-                cl.Draw(4, batchSize, 0, batchStart);
+                while (i < _drawQueue.Count && _drawQueue[i].ResSet == rs);
+                cl.Draw(4, batchSize, 0, batchStart); // it writes different batches into the same buffer!!
             }
-            _draws.Clear();
+            
+            _drawQueue.Clear();
         }
-
+        
         private void EnsureBufferSize(uint size)
         {
             if (_vertexBuffer.SizeInBytes < size)
@@ -75,5 +81,6 @@ namespace Display
                     new BufferDescription(size, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
             }
         }
+        
     }
 }

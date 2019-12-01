@@ -1,9 +1,10 @@
 using System;
 using System.IO;
+using Engine.Display;
 using Veldrid;
 using Veldrid.SPIRV;
 
-namespace Display
+namespace Engine
 {
     public class KestrelPipeline
     {
