@@ -23,6 +23,7 @@ namespace Snake
             KestrelApp.Start(
                 (int)(Width *_cellSize),
                 (int)(Height * _cellSize), 
+                "Snake Game",
                 OnInit);
         }
 

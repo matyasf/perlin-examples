@@ -1,9 +1,7 @@
 using System;
 using System.Diagnostics;
-using Display;
 using Engine.Display;
 using SixLabors.ImageSharp;
-using Snake;
 using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
@@ -12,35 +10,35 @@ namespace Engine
 {
     public class KestrelApp
     {
-        public static Stage Stage { get; private set; }
-        public static TextRenderer TextRenderer { get; private set; }
-        public static KestrelPipeline KestrelPipeline { get; private set; }
-        internal static BatchRenderer Renderer { get; private set; }
-        public static GraphicsDevice DefaultGraphicsDevice { get; private set; }
-        private static Sdl2Window _window;
-        public static CommandList CommandList { get; private set; }
         public static readonly ImageManager ImageManager = new ImageManager();
-        
-        public static void Start(int width, int height, Action onInit)
+        public static Stage Stage { get; private set; }
+        internal static KestrelPipeline KestrelPipeline { get; private set; }
+        internal static BatchRenderer Renderer { get; private set; }
+        internal static GraphicsDevice DefaultGraphicsDevice { get; private set; }
+        private static Sdl2Window _window;
+        internal static CommandList CommandList { get; private set; }
+
+        public static void Start(int width, int height, string windowTitle, Action onInit)
         {
             Configuration.Default.MemoryAllocator = new SixLabors.Memory.SimpleGcMemoryAllocator();
             GraphicsDeviceOptions options = new GraphicsDeviceOptions();
-            _window = new Sdl2Window("Snake", 50, 50, width, height, SDL_WindowFlags.OpenGL, false);
+            _window = new Sdl2Window(windowTitle, 50, 50, width, height, SDL_WindowFlags.OpenGL, false);
 #if DEBUG
             options.Debug = true;
 #endif
             options.SyncToVerticalBlank = true;
             options.ResourceBindingModel = ResourceBindingModel.Improved;
+            
             DefaultGraphicsDevice = VeldridStartup.CreateGraphicsDevice(_window, options);
             CommandList = DefaultGraphicsDevice.ResourceFactory.CreateCommandList();
             _window.Resized += () => DefaultGraphicsDevice.ResizeMainWindow((uint)_window.Width, (uint)_window.Height);
             KestrelPipeline = new KestrelPipeline(DefaultGraphicsDevice);
-            TextRenderer = new TextRenderer();
             Renderer = new BatchRenderer();
             Stopwatch sw = Stopwatch.StartNew();
             double previousTime = sw.Elapsed.TotalSeconds;
             Stage = new Stage(width, height);
             onInit.Invoke();
+            // The main loop. This gets repeated every frame.
             while (_window.Exists)
             {
                 InputSnapshot snapshot = _window.PumpEvents();
