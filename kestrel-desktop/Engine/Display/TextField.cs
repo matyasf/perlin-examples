@@ -23,6 +23,8 @@ namespace Engine.Display
         private bool _sizeInvalid;
         public Font Font;
         public Rgba32 FontColor = Rgba32.White;
+        public HorizontalAlignment HorizontalAlign = HorizontalAlignment.Left;
+        public VerticalAlignment VerticalAlign = VerticalAlignment.Top;
 
         internal Texture Texture { get; set; }
 
@@ -127,7 +129,7 @@ namespace Engine.Display
         /// <summary>
         /// Called when text changes
         /// </summary>
-        private  static unsafe void DrawText(string text, Image<Rgba32> image, Texture texture, Font font, Rgba32 fontColor)
+        private unsafe void DrawText(string text, Image<Rgba32> image, Texture texture, Font font, Rgba32 fontColor)
         {
             // ImageSharp bug (beta6): if text overflows it'll throw an exception                
             SizeF txtSize = TextMeasurer.Measure(text, new RendererOptions(font));
@@ -149,7 +151,8 @@ namespace Engine.Display
                     {
                         WrapTextWidth = image.Width,
                         Antialias = true,
-                        HorizontalAlignment = HorizontalAlignment.Center
+                        HorizontalAlignment = HorizontalAlign, 
+                        VerticalAlignment = VerticalAlign
                     },
                     text,
                     font,

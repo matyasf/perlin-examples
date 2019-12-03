@@ -1,5 +1,6 @@
 using Engine;
 using Engine.Display;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Display
 {
@@ -11,12 +12,20 @@ namespace Display
             ImagePath = imagePath;
         }
 
+        public Sprite(uint width, uint height, Rgba32 color)
+        {
+            Width = width;
+            Height = height;
+            ResSet = KestrelApp.ImageManager.CreateColoredTexture(width, height, color);
+        }
+
         public string ImagePath
         {
             set
             {
                 ResSet?.Dispose();
-                ResSet = KestrelApp.ImageManager.Load(value);
+                var set = KestrelApp.ImageManager.Load(value);
+                ResSet = set.ret;
                 _imagePath = value;
             }
             get => _imagePath;
@@ -26,7 +35,6 @@ namespace Display
         {
             return "Sprite " + _imagePath;
         }
-
         // note: dispose texture in destructor if its not used by anything else?
     }
 }

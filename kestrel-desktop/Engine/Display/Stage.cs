@@ -26,7 +26,7 @@ namespace Engine.Display
 
         public override void Render(double elapsedTimems)
         {
-            EnterFrameEvent?.Invoke(elapsedTimems);
+            EnterFrameEvent?.Invoke(null, elapsedTimems); // null is not nice here...
             base.Render(elapsedTimems);
         }
     }

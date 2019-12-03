@@ -1,5 +1,4 @@
 using System.Numerics;
-using Display;
 using Veldrid;
 
 namespace Engine.Display
@@ -9,14 +8,36 @@ namespace Engine.Display
     /// </summary>
     public abstract class DisplayObject : UIContainer
     {
-        public delegate void EnterFrame(double elapsed);
+        public delegate void EnterFrame(DisplayObject target, double elapsed);
+        public delegate void UIChange(DisplayObject target);
 
         public event EnterFrame EnterFrameEvent;
+        public event UIChange AddedToStage;
+        public event UIChange RemovedFromStage;
 
+        private bool _isOnStage;
         /// <summary>
         /// Whether this instance is on the Stage. If something is not on the Stage, it will not render.
         /// </summary>
-        public bool IsOnStage { get; internal set; }
+        public bool IsOnStage
+        {
+            get => _isOnStage;
+            internal set
+            {
+                if (value != _isOnStage)
+                {
+                    _isOnStage = value;
+                    if (value)
+                    {
+                        AddedToStage?.Invoke(this);
+                    }
+                    else
+                    {
+                        RemovedFromStage?.Invoke(this);
+                    }
+                }
+            }
+        }
         
         /// <summary>
         /// The GPU resource set for this object. Its the same object for objects with the same image.
@@ -44,7 +65,7 @@ namespace Engine.Display
         {
             if (IsOnStage)
             {
-                EnterFrameEvent?.Invoke(elapsedTimems);
+                EnterFrameEvent?.Invoke(this, elapsedTimems);
             }
             KestrelApp.Renderer.AddToRenderQueue(this);
             base.Render(elapsedTimems);
@@ -89,6 +110,8 @@ namespace Engine.Display
             get => GpuVertex.Tint;
             set => GpuVertex.Tint = value;
         }
+        
+        //  + add touchable, scale
 
         internal struct QuadVertex
         {

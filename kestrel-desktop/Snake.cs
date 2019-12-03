@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using Display;
 using Engine;
+using Engine.Display;
 using Veldrid;
 
 namespace Snake
@@ -80,7 +81,7 @@ namespace Snake
             return MathF.PI;
         }
 
-        public void Update(double deltaSeconds)
+        public void Update(DisplayObject target, double deltaSeconds)
         {
             if (Dead && Input.GetKeyDown(Key.Space))
             {

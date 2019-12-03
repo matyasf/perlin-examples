@@ -54,7 +54,7 @@ namespace Engine
         
         private byte[] LoadShaderBytes(string name)
         {
-            return File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Assets", "Shaders", name));
+            return File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Engine", "Assets", "Shaders", name));
         }
     }
 }

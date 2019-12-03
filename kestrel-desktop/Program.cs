@@ -30,8 +30,8 @@ namespace Snake
         private void OnInit()
         {
             // sample snake game
-            var fc = new FontCollection();
-            var family = fc.Install(Path.Combine(AppContext.BaseDirectory, "Assets", "Fonts", "Sunflower-Medium.ttf"));
+            KestrelApp.ShowStats();
+            var family = KestrelApp.Fonts.Install(Path.Combine(AppContext.BaseDirectory, "Assets", "Fonts", "Sunflower-Medium.ttf"));
             var font = family.CreateFont(28);
             
             var highScore = 0;
