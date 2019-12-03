@@ -33,7 +33,7 @@ namespace Engine.Display
             child.Parent = null;
         }
 
-        public virtual void Render(double elapsedTimems)
+        public virtual void Render(float elapsedTimems)
         {
             foreach (var child in _children)
             {

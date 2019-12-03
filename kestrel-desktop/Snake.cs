@@ -81,7 +81,7 @@ namespace Snake
             return MathF.PI;
         }
 
-        public void Update(DisplayObject target, double deltaSeconds)
+        public void Update(DisplayObject target, float deltaSeconds)
         {
             if (Dead && Input.GetKeyDown(Key.Space))
             {

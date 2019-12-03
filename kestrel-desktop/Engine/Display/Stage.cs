@@ -24,7 +24,7 @@ namespace Engine.Display
             Height = height;
         }
 
-        public override void Render(double elapsedTimems)
+        public override void Render(float elapsedTimems)
         {
             EnterFrameEvent?.Invoke(null, elapsedTimems); // null is not nice here...
             base.Render(elapsedTimems);

@@ -111,7 +111,7 @@ namespace Engine.Display
             _image = new Image<Rgba32>((int)Width, (int)Height);
         }
 
-        public override void Render(double elapsedTimems)
+        public override void Render(float elapsedTimeSecs)
         {
             if (_sizeInvalid)
             {
@@ -123,7 +123,7 @@ namespace Engine.Display
                 DrawText(_text, _image, Texture, Font, FontColor);
                 _textInvalid = false;
             }
-            base.Render(elapsedTimems);
+            base.Render(elapsedTimeSecs);
         }
         
         /// <summary>

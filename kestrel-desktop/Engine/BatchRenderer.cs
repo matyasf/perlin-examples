@@ -12,7 +12,8 @@ namespace Engine
     {
         private DeviceBuffer _vertexBuffer;
         private readonly List<DisplayObject> _drawQueue = new List<DisplayObject>();
-
+        internal uint DrawCount;
+        
         public BatchRenderer()
         {
             _vertexBuffer = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateBuffer(
@@ -51,7 +52,7 @@ namespace Engine
             cl.SetPipeline(KestrelApp.KestrelPipeline.Pipeline);
             cl.SetVertexBuffer(0, _vertexBuffer);
             cl.SetGraphicsResourceSet(0, KestrelApp.KestrelPipeline.OrthoSet);
-           
+            DrawCount = 0;
             for (int i = 0; i < _drawQueue.Count;)
             {
                 uint batchStart = (uint)i;
@@ -66,6 +67,7 @@ namespace Engine
                     batchSize += 1;
                 }
                 while (i < _drawQueue.Count && _drawQueue[i].ResSet == rs);
+                DrawCount++;
                 cl.Draw(4, batchSize, 0, batchStart); // it writes different batches into the same buffer!!
             }
             

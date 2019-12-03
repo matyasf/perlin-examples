@@ -14,22 +14,21 @@ namespace Engine
         private int _frameCount;
         private float _totalTime;
         private const uint _width = 90;
-        private const uint _height = 35;
+        private const uint _height = 48;
         
         public float Fps;
         public float Memory;
         public float GpuMemory;
-        public int DrawCount = 0;
         private int _skipCount;
 
         /// <summary>
         /// Creates a new Statistics Box.
         /// </summary>
-        public StatsDisplay() : base(_width, _height, new Rgba32(0f, 0f, 0f, 0.7f))
+        public StatsDisplay() : base(_width, _height, new Rgba32(0.6f, 0f, 0f, 0.7f))
         {
             const string gpuLabel = "\ngpu memory:";
             const string labels = "frames/sec:\nstd memory:" + gpuLabel + "\ndraw calls:";
-            var font = KestrelApp.FontRobotoMono.CreateFont(14);
+            var font = KestrelApp.FontRobotoMono.CreateFont(9);
 
             var labels1 = new TextField(font)
             {
@@ -65,9 +64,9 @@ namespace Engine
             EnterFrameEvent -= OnEnterFrame;
         }
 
-        private void OnEnterFrame(DisplayObject target, double passedTime)
+        private void OnEnterFrame(DisplayObject target, float elapsedTimeSecs)
         {
-            _totalTime += (float) (passedTime / 1000);
+            _totalTime += elapsedTimeSecs;
             _frameCount++;
             if (_totalTime > UPDATE_INTERVAL)
             {
@@ -91,18 +90,10 @@ namespace Engine
             string fpsText = Fps < 100 ? Fps.ToString("N1") : Fps.ToString("N0");
             string memText = Memory < 100 ? Memory.ToString("N1") : Memory.ToString("N0");
             string gpuMemText = GpuMemory < 100 ? GpuMemory.ToString("N1") : GpuMemory.ToString("N0");
-            string drwText = (_totalTime > 0 ? DrawCount - 2 : DrawCount).ToString(); // ignore self
+            string drwText = (KestrelApp.Renderer.DrawCount - 3).ToString(); // ignore self
 
             _values.Text = fpsText + "\n" + memText + "\n" +
                            (GpuMemory >= 0 ? gpuMemText + "\n" : "") + drwText;
-        }
-
-        /// <summary>
-        /// Call this once in every frame that can skip rendering because nothing changed.
-        /// </summary>
-        public void MarkFrameAsSkipped()
-        {
-            _skipCount += 1;
         }
 
         /// <summary>

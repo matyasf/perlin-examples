@@ -8,7 +8,7 @@ namespace Engine.Display
     /// </summary>
     public abstract class DisplayObject : UIContainer
     {
-        public delegate void EnterFrame(DisplayObject target, double elapsed);
+        public delegate void EnterFrame(DisplayObject target, float elapsedTimeSecs);
         public delegate void UIChange(DisplayObject target);
 
         public event EnterFrame EnterFrameEvent;
@@ -61,14 +61,14 @@ namespace Engine.Display
             }
         }
 
-        public override void Render(double elapsedTimems)
+        public override void Render(float elapsedTimeSecs)
         {
             if (IsOnStage)
             {
-                EnterFrameEvent?.Invoke(this, elapsedTimems);
+                EnterFrameEvent?.Invoke(this, elapsedTimeSecs);
             }
             KestrelApp.Renderer.AddToRenderQueue(this);
-            base.Render(elapsedTimems);
+            base.Render(elapsedTimeSecs);
         }
 
         public UIContainer Parent { get; internal set; }

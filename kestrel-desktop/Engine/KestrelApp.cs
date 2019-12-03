@@ -70,7 +70,7 @@ namespace Engine
                     CommandList.Begin();
                     CommandList.SetFramebuffer(DefaultGraphicsDevice.MainSwapchain.Framebuffer);
                     CommandList.ClearColorTarget(0, Stage.BackgroundColor);
-                    Stage.Render(elapsed);
+                    Stage.Render((float)elapsed);
                     Renderer.RenderQueue();
                     CommandList.End();
                     DefaultGraphicsDevice.SubmitCommands(CommandList);
