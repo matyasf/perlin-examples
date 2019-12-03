@@ -14,6 +14,7 @@ namespace Engine.Display
         public event EnterFrame EnterFrameEvent;
         public event UIChange AddedToStage;
         public event UIChange RemovedFromStage;
+        public bool Visible = true;
 
         private bool _isOnStage;
         /// <summary>
@@ -67,8 +68,15 @@ namespace Engine.Display
             {
                 EnterFrameEvent?.Invoke(this, elapsedTimeSecs);
             }
-            KestrelApp.Renderer.AddToRenderQueue(this);
-            base.Render(elapsedTimeSecs);
+
+            if (Visible)
+            {
+                if (Width > 0 && Height > 0)
+                {
+                    KestrelApp.Renderer.AddToRenderQueue(this);      
+                }
+                base.Render(elapsedTimeSecs);
+            }
         }
 
         public UIContainer Parent { get; internal set; }

@@ -25,7 +25,11 @@ namespace Engine.Display
         public Rgba32 FontColor = Rgba32.White;
         public HorizontalAlignment HorizontalAlign = HorizontalAlignment.Left;
         public VerticalAlignment VerticalAlign = VerticalAlignment.Top;
-
+        /// <summary>
+        /// Gets or sets a value indicating when a text should wrap.
+        /// Default is 0, in this case no automatic wrapping will happen.
+        /// </summary>
+//        public float WrapTextWidth = 0;
         internal Texture Texture { get; set; }
 
         /// <summary>
@@ -88,11 +92,6 @@ namespace Engine.Display
 
         private void RecreateTexture()
         {
-            if (Width <= 0f || Height <= 0f)
-            {
-                Console.WriteLine("Warning: TextField size is 0 or less " + this._text);
-                return;
-            }
             Texture?.Dispose();
             _textureView?.Dispose();
             _image?.Dispose();
@@ -131,7 +130,7 @@ namespace Engine.Display
         /// </summary>
         private unsafe void DrawText(string text, Image<Rgba32> image, Texture texture, Font font, Rgba32 fontColor)
         {
-            // ImageSharp bug (beta6): if text overflows it'll throw an exception                
+            // ImageSharp bug (beta6): if text overflows it'll throw an exception
             SizeF txtSize = TextMeasurer.Measure(text, new RendererOptions(font));
             if (txtSize.Width > image.Width || txtSize.Height > image.Height)
             {
@@ -149,6 +148,7 @@ namespace Engine.Display
                 ctx.DrawText(
                     new TextGraphicsOptions
                     {
+                        //WrapTextWidth = WrapTextWidth, // buggy! was the whole width
                         WrapTextWidth = image.Width,
                         Antialias = true,
                         HorizontalAlignment = HorizontalAlign, 

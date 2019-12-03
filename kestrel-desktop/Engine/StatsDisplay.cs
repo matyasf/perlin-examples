@@ -90,7 +90,7 @@ namespace Engine
             string fpsText = Fps < 100 ? Fps.ToString("N1") : Fps.ToString("N0");
             string memText = Memory < 100 ? Memory.ToString("N1") : Memory.ToString("N0");
             string gpuMemText = GpuMemory < 100 ? GpuMemory.ToString("N1") : GpuMemory.ToString("N0");
-            string drwText = (KestrelApp.Renderer.DrawCount - 3).ToString(); // ignore self
+            string drwText = KestrelApp.Renderer.DrawCount > 2 ? (KestrelApp.Renderer.DrawCount - 3).ToString() : "0"; // ignore self
 
             _values.Text = fpsText + "\n" + memText + "\n" +
                            (GpuMemory >= 0 ? gpuMemText + "\n" : "") + drwText;
