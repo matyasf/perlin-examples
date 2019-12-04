@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Veldrid;
 using Veldrid.ImageSharp;
@@ -20,13 +21,15 @@ namespace Engine
         /// Loads an stores an image from the disk.
         /// </summary>
         /// <param name="imageName">the image filename</param>
-        public (ResourceSet ret, TextureView view) Load(string imageName)
+        public (ResourceSet ret, TextureView view) Load(string imageName, bool mipmap = false)
         {
             if (!_loadedImages.TryGetValue(imageName, out (ResourceSet, TextureView) ret))
             {
                 GraphicsDevice gd = KestrelApp.DefaultGraphicsDevice;
                 var texPath = Path.Combine(AppContext.BaseDirectory, "Assets", imageName);
-                var imTex = new ImageSharpTexture(texPath, false);
+                //var imTex = new ImageSharpTexture(texPath, false); // does not work because we use the latest Imagesharp!
+                Image<Rgba32> im = Image.Load<Rgba32>(texPath);
+                var imTex = new ImageSharpTexture(im, mipmap);
                 var tex = imTex.CreateDeviceTexture(gd, gd.ResourceFactory);
                 var view = gd.ResourceFactory.CreateTextureView(tex);
                 ResourceSet set = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(

@@ -36,15 +36,15 @@ namespace Snake
             
             var highScore = 0;
             var worldSize = new Vector2(Width, Height);
-            var _world = new World(worldSize, _cellSize);
-            var _snake = new Snake(_world);
-            var _scoreTextField = new TextField(font) {Text = "0", Width = 250, Height = 100};
-            _scoreTextField.X = KestrelApp.Stage.Width / 2f - _scoreTextField.Width / 2f;
-            _scoreTextField.Y = KestrelApp.Stage.Height - _scoreTextField.Height - 10f;
+            var world = new World(worldSize, _cellSize);
+            var snake = new Snake(world);
+            var scoreTextField = new TextField(font) {Text = "0", Width = 250, Height = 100};
+            scoreTextField.X = KestrelApp.Stage.Width / 2f - scoreTextField.Width / 2f;
+            scoreTextField.Y = KestrelApp.Stage.Height - scoreTextField.Height - 10f;
             
-            KestrelApp.Stage.AddChild(_scoreTextField);
-            _snake.ScoreChanged += () => _scoreTextField.Text =_snake.Score.ToString();
-            _snake.ScoreChanged += () => highScore = Math.Max(highScore, _snake.Score);
+            KestrelApp.Stage.AddChild(scoreTextField);
+            snake.ScoreChanged += () => scoreTextField.Text =snake.Score.ToString();
+            snake.ScoreChanged += () => highScore = Math.Max(highScore, snake.Score);
             
             /*
             var s1 = new Sprite("snake-3.png") {Width = 32, Height = 32, X = 20, Y = 20};
