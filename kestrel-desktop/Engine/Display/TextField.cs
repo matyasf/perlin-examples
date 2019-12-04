@@ -22,7 +22,7 @@ namespace Engine.Display
         private bool _textInvalid;
         private bool _sizeInvalid;
         public Font Font;
-        public Rgba32 FontColor = Rgba32.White;
+        public Rgba32 FontColor = Rgba32.Black;
         public HorizontalAlignment HorizontalAlign = HorizontalAlignment.Left;
         public VerticalAlignment VerticalAlign = VerticalAlignment.Top;
         /// <summary>

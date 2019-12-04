@@ -1,6 +1,7 @@
 using Engine;
 using Engine.Display;
 using SixLabors.ImageSharp.PixelFormats;
+using Veldrid;
 
 namespace Display
 {

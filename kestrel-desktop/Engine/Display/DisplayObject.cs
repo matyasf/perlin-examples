@@ -16,7 +16,7 @@ namespace Engine.Display
         public event UIChange RemovedFromStage;
         public bool Visible = true;
 
-        private bool _isOnStage;
+        protected bool _isOnStage;
         /// <summary>
         /// Whether this instance is on the Stage. If something is not on the Stage, it will not render.
         /// </summary>
@@ -66,9 +66,8 @@ namespace Engine.Display
         {
             if (IsOnStage)
             {
-                EnterFrameEvent?.Invoke(this, elapsedTimeSecs);
+                InvokeEnterFrameEvent(elapsedTimeSecs);
             }
-
             if (Visible)
             {
                 if (Width > 0 && Height > 0)
@@ -79,14 +78,14 @@ namespace Engine.Display
             }
         }
 
-        public UIContainer Parent { get; internal set; }
-        public float X
+        public virtual UIContainer Parent { get; internal set; }
+        public virtual float X
         {
             get => GpuVertex.Position.X;
             set => GpuVertex.Position.X = value;
         }
 
-        public float Y
+        public virtual float Y
         {
             get => GpuVertex.Position.Y;
             set => GpuVertex.Position.Y = value;
@@ -107,7 +106,7 @@ namespace Engine.Display
         /// <summary>
         /// Rotation in Radians.
         /// </summary>
-        public float Rotation
+        public virtual float Rotation
         {
             get => GpuVertex.Rotation;
             set => GpuVertex.Rotation = value;
@@ -118,8 +117,6 @@ namespace Engine.Display
             get => GpuVertex.Tint;
             set => GpuVertex.Tint = value;
         }
-        
-        //  + add touchable, scale
 
         internal struct QuadVertex
         {
@@ -131,5 +128,34 @@ namespace Engine.Display
             public float Rotation; // in radians
         }
         
+        /// <summary>
+        ///  Returns the object that is found topmost on a point in local coordinates, or null if the test fails.
+        /// </summary>
+        public virtual DisplayObject HitTest(Point p)
+        {
+            for (var i = _children.Count - 1; i >= 0; --i) // front to back!
+            {
+                DisplayObject child = _children[i];
+                if (child.Visible)
+                {
+                    DisplayObject target = child.HitTest(p);
+                    if (target != null)
+                    {
+                        return target;
+                    }
+                }
+            }
+            // just tests the bounding rectangle. TODO Take rotation into account!!
+            if (X > p.X && X + Width < p.X && Y > p.Y && Y < p.Y + Height)
+            {
+                return this;
+            }
+            return null;
+        }
+
+        internal void InvokeEnterFrameEvent(float elapsedTimeSecs)
+        {
+            EnterFrameEvent?.Invoke(this, elapsedTimeSecs);
+        }
     }
 }

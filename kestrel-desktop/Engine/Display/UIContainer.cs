@@ -7,7 +7,7 @@ namespace Engine.Display
     /// </summary>
     public abstract class UIContainer
     {
-        private readonly List<DisplayObject> _children = new List<DisplayObject>();
+        protected readonly List<DisplayObject> _children = new List<DisplayObject>();
         
         public virtual void AddChild(DisplayObject child)
         {
@@ -33,11 +33,11 @@ namespace Engine.Display
             child.Parent = null;
         }
 
-        public virtual void Render(float elapsedTimems)
+        public virtual void Render(float elapsedTimeSecs)
         {
             foreach (var child in _children)
             {
-                child.Render(elapsedTimems);
+                child.Render(elapsedTimeSecs);
             }
         }
     }

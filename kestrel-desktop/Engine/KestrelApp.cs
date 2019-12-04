@@ -69,7 +69,11 @@ namespace Engine
                 {
                     CommandList.Begin();
                     CommandList.SetFramebuffer(DefaultGraphicsDevice.MainSwapchain.Framebuffer);
-                    CommandList.ClearColorTarget(0, Stage.BackgroundColor);
+                    CommandList.ClearColorTarget(0, new RgbaFloat(
+                        Stage.Tint.R/255f,
+                        Stage.Tint.G/255f,
+                        Stage.Tint.B/255f,
+                        Stage.Tint.A/255f));
                     Stage.Render((float)elapsed);
                     Renderer.RenderQueue();
                     CommandList.End();

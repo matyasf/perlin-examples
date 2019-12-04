@@ -1,4 +1,4 @@
-using Display;
+using System;
 using Veldrid;
 
 namespace Engine.Display
@@ -6,28 +6,31 @@ namespace Engine.Display
     /// <summary>
     /// Stage is the root of the display tree; its a singleton.
     /// </summary>
-    public class Stage : UIContainer
+    public class Stage : DisplayObject
     {
-        public int Width { get; }
-        public int Height { get; }
         
-        /// <summary>
-        /// Background color of the app.
-        /// </summary>
-        public readonly RgbaFloat BackgroundColor = new RgbaFloat(0, 0, 0f, 1f);
+        public override float Rotation { set => throw new ArgumentException(); }
 
-        public event DisplayObject.EnterFrame EnterFrameEvent;
+        public override float X { set => throw new ArgumentException(); }
+
+        public override float Y { set => throw new ArgumentException(); }
+
+        public override UIContainer Parent { internal set => throw new ArgumentException(); }
 
         internal Stage(int width, int height)
         {
+            _isOnStage = true;
             Width = width;
             Height = height;
         }
 
-        public override void Render(float elapsedTimems)
+        public override void Render(float elapsedTimeSecs)
         {
-            EnterFrameEvent?.Invoke(null, elapsedTimems); // null is not nice here...
-            base.Render(elapsedTimems);
+            InvokeEnterFrameEvent(elapsedTimeSecs);
+            foreach (var child in _children)
+            {
+                child.Render(elapsedTimeSecs);
+            }
         }
     }
 }

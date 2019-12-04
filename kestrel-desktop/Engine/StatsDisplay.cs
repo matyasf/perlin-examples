@@ -6,6 +6,9 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Engine
 {
+    /// <summary>
+    /// Simple overlay that displays some performance statistics.
+    /// </summary>
     public class StatsDisplay : Sprite
     {
         private static readonly float UPDATE_INTERVAL = 0.5f;

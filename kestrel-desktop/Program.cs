@@ -30,7 +30,6 @@ namespace Snake
         private void OnInit()
         {
             // sample snake game
-            KestrelApp.ShowStats();
             var family = KestrelApp.Fonts.Install(Path.Combine(AppContext.BaseDirectory, "Assets", "Fonts", "Sunflower-Medium.ttf"));
             var font = family.CreateFont(28);
             
@@ -66,6 +65,7 @@ namespace Snake
                 if (a > 99) a = 0;
             };
             */
+            KestrelApp.ShowStats();
         }
     }
 }
