@@ -20,7 +20,7 @@ namespace Engine.Display
             {
                 child.IsOnStage = true;
             }
-            child.Parent = this;
+           // child.Parent = this;
         }
 
         public virtual void RemoveChild(DisplayObject child)

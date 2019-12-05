@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Veldrid;
 
@@ -17,6 +19,13 @@ namespace Engine.Display
         public bool Visible = true;
 
         protected bool _isOnStage;
+        
+        public DisplayObject()
+        {
+            GpuVertex.Tint = RgbaByte.White;
+            _transformationMatrix = Matrix2D.Create();
+        }
+        
         /// <summary>
         /// Whether this instance is on the Stage. If something is not on the Stage, it will not render.
         /// </summary>
@@ -46,12 +55,7 @@ namespace Engine.Display
         internal ResourceSet ResSet;
 
         internal QuadVertex GpuVertex;
-        
-        public DisplayObject()
-        {
-            GpuVertex.Tint = RgbaByte.White;
-        }
-        
+
         public void RemoveFromParent()
         {
             if (Parent != null)
@@ -78,17 +82,17 @@ namespace Engine.Display
             }
         }
 
-        public virtual UIContainer Parent { get; internal set; }
+        public virtual DisplayObject Parent { get; internal set; }
         public virtual float X
         {
             get => GpuVertex.Position.X;
-            set => GpuVertex.Position.X = value;
+            set => GpuVertex.Position.X = value; // not good, needs to be positioned relative to the parent!
         }
 
         public virtual float Y
         {
             get => GpuVertex.Position.Y;
-            set => GpuVertex.Position.Y = value;
+            set => GpuVertex.Position.Y = value; // not good, needs to be positioned relative to the parent!
         }
 
         public virtual float Width
@@ -117,6 +121,9 @@ namespace Engine.Display
             get => GpuVertex.Tint;
             set => GpuVertex.Tint = value;
         }
+        
+        private float _pivotX;
+        private float _pivotY;
 
         internal struct QuadVertex
         {
@@ -156,6 +163,142 @@ namespace Engine.Display
         internal void InvokeEnterFrameEvent(float elapsedTimeSecs)
         {
             EnterFrameEvent?.Invoke(this, elapsedTimeSecs);
+        }
+        
+        private Matrix2D _transformationMatrix;
+        /// <summary>
+        /// The transformation matrix of the object relative to its parent.
+        /// <returns>CAUTION: not a copy, but the actual object!</returns>
+        /// </summary>
+        public Matrix2D TransformationMatrix
+        {
+            get
+            {
+                // Note: cache this!
+                _transformationMatrix.Identity();
+                //_transformationMatrix.Scale(_scaleX, _scaleY);
+                //_transformationMatrix.Skew(_skewX, _skewY);
+                _transformationMatrix.Rotate(Rotation);
+                _transformationMatrix.Translate(X, Y);
+
+                if (_pivotX != 0.0f || _pivotY != 0.0f)
+                {
+                    // prepend pivot transformation
+                    _transformationMatrix.Tx = X - _transformationMatrix.A * _pivotX
+                                                  - _transformationMatrix.C * _pivotY;
+                    _transformationMatrix.Ty = Y - _transformationMatrix.B * _pivotX
+                                                  - _transformationMatrix.D * _pivotY;
+                }
+                return _transformationMatrix;
+            }
+        }
+        
+        /// <summary>
+        /// Creates a matrix that represents the transformation from the local coordinate system to another.
+        /// </summary>
+        public Matrix2D GetTransformationMatrix(DisplayObject targetSpace)
+        {
+            DisplayObject commonParent;
+            DisplayObject currentObject;
+            Matrix2D outMatrix = Matrix2D.Create();
+            outMatrix.Identity();
+            if (targetSpace == this)
+            {
+                return outMatrix;
+            }
+            if (targetSpace == Parent || (targetSpace == null && Parent == null))
+            {
+                outMatrix.CopyFromMatrix(TransformationMatrix);
+                return outMatrix;
+            }
+            if (targetSpace == null || targetSpace == Root)
+            {
+                // if targetSpace 'null', we assume that we need it in the space of the Base object.
+                // -> move up from this to base
+                currentObject = this;
+                while (currentObject != targetSpace)
+                {
+                    outMatrix.AppendMatrix(currentObject.TransformationMatrix);
+                    currentObject = currentObject.Parent;
+                }
+                return outMatrix;
+            }
+            if (targetSpace.Parent == this)
+            {
+                outMatrix = targetSpace.GetTransformationMatrix(this);
+                outMatrix.Invert();
+                return outMatrix;
+            }
+            // targetSpace is not an ancestor
+            // 1.: Find a common parent of this and the target coordinate space.
+            commonParent = FindCommonParent(this, targetSpace);
+
+            // 2.: Move up from this to common parent
+            currentObject = this;
+            while (currentObject != commonParent)
+            {
+                outMatrix.AppendMatrix(currentObject.TransformationMatrix);
+                currentObject = currentObject.Parent;
+            }
+
+            if (commonParent == targetSpace)
+            {
+                return outMatrix;
+            }
+
+            // 3.: Now move up from target until we reach the common parent
+            var sHelperMatrix = Matrix2D.Create();
+            sHelperMatrix.Identity();
+            currentObject = targetSpace;
+            while (currentObject != commonParent)
+            {
+                sHelperMatrix.AppendMatrix(currentObject.TransformationMatrix);
+                currentObject = currentObject.Parent;
+            }
+
+            // 4.: Combine the two matrices
+            sHelperMatrix.Invert();
+            outMatrix.AppendMatrix(sHelperMatrix);
+
+            return outMatrix;
+        }
+        
+        private static readonly List<DisplayObject> _commonParentHelper = new List<DisplayObject>();
+        private static DisplayObject FindCommonParent(DisplayObject object1, DisplayObject object2)
+        {
+            DisplayObject currentObject = object1;
+            while (currentObject != null)
+            {
+                _commonParentHelper.Add(currentObject);
+                currentObject = currentObject.Parent;
+            }
+            currentObject = object2;
+            while (currentObject != null && _commonParentHelper.Contains(currentObject) == false)
+            {
+                currentObject = currentObject.Parent;
+            }
+            _commonParentHelper.Clear();
+            if (currentObject != null)
+            {
+                return currentObject;
+            }
+            throw new ArgumentException("Object not connected to target");
+        }
+        
+        /// <summary>
+        /// The topmost object in the display tree the object is part of.
+        /// </summary>
+        public DisplayObject Root
+        {
+            get
+            {
+                DisplayObject currentObject = this;
+                while (currentObject.Parent != null)
+                {
+                    currentObject = currentObject.Parent;
+                }
+                return currentObject;
+            }
         }
     }
 }

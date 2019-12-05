@@ -15,7 +15,7 @@ namespace Engine.Display
 
         public override float Y { set => throw new ArgumentException(); }
 
-        public override UIContainer Parent { internal set => throw new ArgumentException(); }
+        public override DisplayObject Parent { internal set => throw new ArgumentException(); }
 
         internal Stage(int width, int height)
         {
