@@ -144,26 +144,30 @@ namespace Engine.Display
         }
         
         /// <summary>
-        ///  Returns the object that is found topmost on a point in local coordinates, or null if the test fails.
+        /// Returns the object that is found topmost on a point in local coordinates, or null if the test fails.
         /// </summary>
         public virtual DisplayObject HitTest(Point p)
         {
+            if (!Visible)
+            {
+                return null;
+            }
             for (var i = Children.Count - 1; i >= 0; --i) // front to back!
             {
                 DisplayObject child = Children[i];
                 if (child.Visible)
                 {
-                    DisplayObject target = child.HitTest(p);
+                    Matrix2D transformationMatrix = Matrix2D.Create();
+                    transformationMatrix.CopyFromMatrix(child.TransformationMatrix);
+                    transformationMatrix.Invert();
+
+                    Point transformedPoint = transformationMatrix.TransformPoint(p);
+                    DisplayObject target = child.HitTest(transformedPoint);
                     if (target != null)
                     {
                         return target;
                     }
                 }
-            }
-            // just tests the bounding rectangle. TODO Take rotation into account!!
-            if (X > p.X && X + Width < p.X && Y > p.Y && Y < p.Y + Height)
-            {
-                return this;
             }
             return null;
         }

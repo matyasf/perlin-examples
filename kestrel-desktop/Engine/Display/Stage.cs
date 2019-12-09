@@ -25,6 +25,22 @@ namespace Engine.Display
             Height = height;
         }
 
+        public override DisplayObject HitTest(Point p)
+        {
+            // locations outside of the stage area shouldn't be accepted
+            if (p.X < 0 || p.X > Width || p.Y < 0 || p.Y > Height)
+            {
+                return null;
+            }
+            // if nothing else is hit, the stage returns itself as target
+            DisplayObject target = base.HitTest(p);
+            if (target == null)
+            {
+                target = this;
+            }
+            return target;
+        }
+
         public override void Render(float elapsedTimeSecs)
         {
             InvokeEnterFrameEvent(elapsedTimeSecs);
