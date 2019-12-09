@@ -8,7 +8,7 @@ namespace Engine.Display
     /// <summary>
     /// DisplayObject is the base class for every renderable object.
     /// </summary>
-    public abstract class DisplayObject : UIContainer
+    public abstract class DisplayObject
     {
         public delegate void EnterFrame(DisplayObject target, float elapsedTimeSecs);
         public delegate void UIChange(DisplayObject target);
@@ -19,11 +19,19 @@ namespace Engine.Display
         public bool Visible = true;
 
         protected bool _isOnStage;
-        
+        public float PivotX { get; set; }
+        public float PivotY { get; set; }
+        private float _scaleX = 1.0f;
+        private float _scaleY = 1.0f;
+        private Rectangle _bounds;
+        private float _skewX;
+        private float _skewY;
+
         public DisplayObject()
         {
             GpuVertex.Tint = RgbaByte.White;
             _transformationMatrix = Matrix2D.Create();
+            _bounds = Rectangle.Create(0, 0, Width, Height);
         }
         
         /// <summary>
@@ -66,7 +74,7 @@ namespace Engine.Display
             }
         }
 
-        public override void Render(float elapsedTimeSecs)
+        public virtual void Render(float elapsedTimeSecs)
         {
             if (IsOnStage)
             {
@@ -78,7 +86,10 @@ namespace Engine.Display
                 {
                     KestrelApp.Renderer.AddToRenderQueue(this);      
                 }
-                base.Render(elapsedTimeSecs);
+                foreach (var child in Children)
+                {
+                    child.Render(elapsedTimeSecs);
+                }
             }
         }
 
@@ -121,9 +132,6 @@ namespace Engine.Display
             get => GpuVertex.Tint;
             set => GpuVertex.Tint = value;
         }
-        
-        private float _pivotX;
-        private float _pivotY;
 
         internal struct QuadVertex
         {
@@ -140,9 +148,9 @@ namespace Engine.Display
         /// </summary>
         public virtual DisplayObject HitTest(Point p)
         {
-            for (var i = _children.Count - 1; i >= 0; --i) // front to back!
+            for (var i = Children.Count - 1; i >= 0; --i) // front to back!
             {
-                DisplayObject child = _children[i];
+                DisplayObject child = Children[i];
                 if (child.Visible)
                 {
                     DisplayObject target = child.HitTest(p);
@@ -165,6 +173,42 @@ namespace Engine.Display
             EnterFrameEvent?.Invoke(this, elapsedTimeSecs);
         }
         
+        public virtual Rectangle GetBounds(DisplayObject targetSpace)
+        {
+            Rectangle outRect = Rectangle.Create();
+
+            if (targetSpace == this) // Optimization
+            {
+                outRect.CopyFrom(_bounds);
+            }
+            else if (targetSpace == Parent && !IsRotated) // Optimization
+            {
+                float scaleX = _scaleX;
+                float scaleY = _scaleY;
+
+                outRect = Rectangle.Create(X - PivotX * scaleX,
+                    Y - PivotY * scaleY,
+                    _bounds.Width * _scaleX,
+                    _bounds.Height * _scaleY);
+                if (scaleX < 0.0f)
+                {
+                    outRect.Width *= -1.0f;
+                    outRect.X -= outRect.Width;
+                }
+                if (scaleY < 0.0f)
+                {
+                    outRect.Height *= -1.0f;
+                    outRect.Top -= outRect.Height;
+                }
+            }
+            else
+            {
+                Matrix2D sMatrix = GetTransformationMatrix(targetSpace);
+                outRect = _bounds.GetBounds(sMatrix);
+            }
+            return outRect;
+        }
+        
         private Matrix2D _transformationMatrix;
         /// <summary>
         /// The transformation matrix of the object relative to its parent.
@@ -176,18 +220,18 @@ namespace Engine.Display
             {
                 // Note: cache this!
                 _transformationMatrix.Identity();
-                //_transformationMatrix.Scale(_scaleX, _scaleY);
-                //_transformationMatrix.Skew(_skewX, _skewY);
+                _transformationMatrix.Scale(_scaleX, _scaleY);
+                _transformationMatrix.Skew(_skewX, _skewY);
                 _transformationMatrix.Rotate(Rotation);
                 _transformationMatrix.Translate(X, Y);
 
-                if (_pivotX != 0.0f || _pivotY != 0.0f)
+                if (PivotX != 0.0f || PivotY != 0.0f)
                 {
                     // prepend pivot transformation
-                    _transformationMatrix.Tx = X - _transformationMatrix.A * _pivotX
-                                                  - _transformationMatrix.C * _pivotY;
-                    _transformationMatrix.Ty = Y - _transformationMatrix.B * _pivotX
-                                                  - _transformationMatrix.D * _pivotY;
+                    _transformationMatrix.Tx = X - _transformationMatrix.A * PivotX
+                                                  - _transformationMatrix.C * PivotY;
+                    _transformationMatrix.Ty = Y - _transformationMatrix.B * PivotX
+                                                  - _transformationMatrix.D * PivotY;
                 }
                 return _transformationMatrix;
             }
@@ -263,27 +307,36 @@ namespace Engine.Display
             return outMatrix;
         }
         
-        private static readonly List<DisplayObject> _commonParentHelper = new List<DisplayObject>();
+        private static readonly List<DisplayObject> CommonParentHelper = new List<DisplayObject>();
         private static DisplayObject FindCommonParent(DisplayObject object1, DisplayObject object2)
         {
             DisplayObject currentObject = object1;
             while (currentObject != null)
             {
-                _commonParentHelper.Add(currentObject);
+                CommonParentHelper.Add(currentObject);
                 currentObject = currentObject.Parent;
             }
             currentObject = object2;
-            while (currentObject != null && _commonParentHelper.Contains(currentObject) == false)
+            while (currentObject != null && CommonParentHelper.Contains(currentObject) == false)
             {
                 currentObject = currentObject.Parent;
             }
-            _commonParentHelper.Clear();
+            CommonParentHelper.Clear();
             if (currentObject != null)
             {
                 return currentObject;
             }
             throw new ArgumentException("Object not connected to target");
         }
+        
+        /// <summary>
+        /// Indicates if the object is rotated or skewed in any way.
+        /// </summary>
+        internal bool IsRotated
+        {
+            get { return Rotation != 0.0 || _skewX != 0.0 || _skewY != 0.0; }
+        }
+
         
         /// <summary>
         /// The topmost object in the display tree the object is part of.
@@ -299,6 +352,29 @@ namespace Engine.Display
                 }
                 return currentObject;
             }
+        }
+        
+        protected readonly List<DisplayObject> Children = new List<DisplayObject>();
+        
+        public virtual void AddChild(DisplayObject child)
+        {
+            if (child.Parent != null)
+            {
+                child.RemoveFromParent();
+            }
+            Children.Add(child);
+            if (IsOnStage)
+            {
+                child.IsOnStage = true;
+            }
+            child.Parent = this;
+        }
+
+        public virtual void RemoveChild(DisplayObject child)
+        {
+            Children.Remove(child);
+            child.IsOnStage = false;
+            child.Parent = null;
         }
     }
 }

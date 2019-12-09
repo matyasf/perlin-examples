@@ -219,20 +219,23 @@ namespace Engine
             return false;
         }
         
-        /*
+        
         /// <summary>
         /// Returns a point that is transformed by this matrix
         /// </summary>
         public Point TransformPoint(Point point)
         { 
-            return new Point(A * point.X + C * point.Y + Tx, B * point.X + D * point.Y + Ty);
+            return Point.Create(A * point.X + C * point.Y + Tx, B * point.X + D * point.Y + Ty);
         }
 
+        /// <summary>
+        /// Returns a point that is transformed by this matrix
+        /// </summary>
         public Point TransformPoint(float x, float y)
         {
             return Point.Create(A * x + C * y + Tx, B * x + D * y + Ty);
         }
-        */
+        
         public Matrix2D Invert()
         {
             float det = Determinant;

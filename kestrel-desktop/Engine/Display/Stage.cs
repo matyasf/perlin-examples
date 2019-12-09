@@ -16,7 +16,8 @@ namespace Engine.Display
         public override float Y { set => throw new ArgumentException(); }
 
         public override DisplayObject Parent { internal set => throw new ArgumentException(); }
-
+        
+        
         internal Stage(int width, int height)
         {
             _isOnStage = true;
@@ -27,7 +28,7 @@ namespace Engine.Display
         public override void Render(float elapsedTimeSecs)
         {
             InvokeEnterFrameEvent(elapsedTimeSecs);
-            foreach (var child in _children)
+            foreach (var child in Children)
             {
                 child.Render(elapsedTimeSecs);
             }
