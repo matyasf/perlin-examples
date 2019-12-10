@@ -1,6 +1,6 @@
 using System;
 
-namespace Engine
+namespace Engine.Geom
 {
     /// <summary>
     /// The Point class describes a two dimensional point or vector.

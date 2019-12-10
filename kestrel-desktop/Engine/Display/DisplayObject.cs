@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Engine.Geom;
 using Veldrid;
+using Point = Engine.Geom.Point;
+using Rectangle = Engine.Geom.Rectangle;
 
 namespace Engine.Display
 {
@@ -84,7 +87,9 @@ namespace Engine.Display
             {
                 if (Width > 0 && Height > 0)
                 {
-                    KestrelApp.Renderer.AddToRenderQueue(this);      
+                    // + push transformation matrix, prepend it, add alpha
+                    KestrelApp.Renderer.AddToRenderQueue(this); 
+                    // + pop transformation matrix
                 }
                 foreach (var child in Children)
                 {
@@ -336,12 +341,9 @@ namespace Engine.Display
         /// <summary>
         /// Indicates if the object is rotated or skewed in any way.
         /// </summary>
-        internal bool IsRotated
-        {
-            get { return Rotation != 0.0 || _skewX != 0.0 || _skewY != 0.0; }
-        }
+        internal bool IsRotated => Rotation != 0.0 || _skewX != 0.0 || _skewY != 0.0;
 
-        
+
         /// <summary>
         /// The topmost object in the display tree the object is part of.
         /// </summary>

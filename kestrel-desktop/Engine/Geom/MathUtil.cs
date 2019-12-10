@@ -1,7 +1,4 @@
-using System;
-using Veldrid;
-
-namespace Engine
+namespace Engine.Geom
 {
     public static class MathUtil
     {
@@ -14,16 +11,16 @@ namespace Engine
         /// </summary>
         public static readonly float[] CosLUT = new float[2048];
 
-        public static readonly float PIQUARTER = (float)(Math.PI / 4.0f);
-        public static readonly float PIHALF = (float)(Math.PI / 2.0f);
-        public static readonly float TWOPI = (float)(Math.PI * 2.0f);
+        public static readonly float PIQUARTER = (float)(System.Math.PI / 4.0f);
+        public static readonly float PIHALF = (float)(System.Math.PI / 2.0f);
+        public static readonly float TWOPI = (float)(System.Math.PI * 2.0f);
 
         static MathUtil()
         {
             for (int i = 0; i < 2048; i++)
             {
-                SinLUT[i & 2047] = (float)Math.Sin(i * 0.00306796157577128245943617517898f); //0.003067 = 2PI/2048
-                CosLUT[i & 2047] = (float)Math.Cos(i * 0.00306796157577128245943617517898f);
+                SinLUT[i & 2047] = (float)System.Math.Sin(i * 0.00306796157577128245943617517898f); //0.003067 = 2PI/2048
+                CosLUT[i & 2047] = (float)System.Math.Cos(i * 0.00306796157577128245943617517898f);
             }
         }
 
@@ -48,12 +45,12 @@ namespace Engine
         /// </summary>
         public static bool Equals(float a, float b, float epsilon = 0.000005f)
         {
-            return Math.Abs(a - b) < epsilon;
+            return System.Math.Abs(a - b) < epsilon;
         }
 
         public static float Clamp(float value, float min, float max)
         {
-            return Math.Min(max, Math.Max(value, min));
+            return System.Math.Min(max, System.Math.Max(value, min));
         }
 
         /// <summary>
@@ -123,12 +120,12 @@ namespace Engine
 
         public static float Deg2Rad(float deg)
         {
-            return deg / 180.0f * (float)Math.PI;   
+            return deg / 180.0f * (float)System.Math.PI;   
         }
 
         public static float Rad2Deg(float rad)
         {
-            return rad * 180.0f / (float)Math.PI;
+            return rad * 180.0f / (float)System.Math.PI;
         }
 
         /// <summary>

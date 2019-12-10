@@ -1,6 +1,7 @@
-namespace Engine
+using System;
+
+namespace Engine.Geom
 {
-    using System;
     /// <summary>
     /// The Matrix class describes an affine, 2D transformation Matrix. It provides methods to
     /// manipulate the matrix in convenient ways, and can be used to transform points.
