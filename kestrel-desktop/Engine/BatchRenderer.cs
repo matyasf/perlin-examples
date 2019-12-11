@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Engine.Display;
@@ -43,15 +42,13 @@ namespace Engine
             gd.UpdateBuffer(
                 KestrelApp.KestrelPipeline.OrthoBuffer,
                 0,
-//                Matrix4x4.CreateOrthographicOffCenter(0, width, 0, height, 0, 1));
                 Matrix4x4.CreateOrthographicOffCenter(0, width, height, 0, 0, 1));
 
             EnsureBufferSize((uint)_drawQueue.Count * DisplayObject.QuadVertex.VertexSize);
             MappedResourceView<DisplayObject.QuadVertex> writeMap = gd.Map<DisplayObject.QuadVertex>(_vertexBuffer, MapMode.Write);
             for (int i = 0; i < _drawQueue.Count; i++)
             {
-//                writeMap[i] = _drawQueue[i].GpuVertex;
-                writeMap[i] = _drawQueue[i].AbsoluteVertex;
+                writeMap[i] = _drawQueue[i].GetGpuVertex();
             }
             gd.Unmap(_vertexBuffer);
             var cl = KestrelApp.CommandList;

@@ -32,24 +32,17 @@ namespace Engine.Display
         /// The GPU resource set for this object. Its the same object for objects with the same image.
         /// </summary>
         internal ResourceSet ResSet;
-        internal QuadVertex GpuVertex;
         private RenderState _renderState;
-
-        internal QuadVertex AbsoluteVertex
+        private QuadVertex GpuVertex;
+        
+        internal QuadVertex GetGpuVertex()
         {
-            get
-            {
-                var vert = new QuadVertex();
-                vert.Position.X = _renderState.ModelviewMatrix.Tx;
-                vert.Position.Y = _renderState.ModelviewMatrix.Ty;
-                vert.Rotation = _renderState.ModelviewMatrix.Rotation;
-                vert.Size.X = GpuVertex.Size.X;
-                vert.Size.Y = GpuVertex.Size.Y;
-                vert.Tint = GpuVertex.Tint;
-                // + set alpha, pivot
-                var tm = GetTransformationMatrix(KestrelApp.Stage);
-                return vert;
-            }
+            GpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
+            GpuVertex.Position.Y = _renderState.ModelviewMatrix.Ty;
+            GpuVertex.Rotation = _renderState.ModelviewMatrix.Rotation;
+            //GpuVertex.Tint.A = _renderState.Alpha;
+            // + set  pivot, scale
+            return GpuVertex;
         }
 
         public DisplayObject()
@@ -115,16 +108,19 @@ namespace Engine.Display
         }
 
         public virtual DisplayObject Parent { get; internal set; }
+
+        private float _x;
         public virtual float X
         {
-            get => GpuVertex.Position.X;
-            set => GpuVertex.Position.X = value; // not good, needs to be positioned relative to the parent!
+            get => _x;
+            set => _x = value;
         }
 
+        private float _y;
         public virtual float Y
         {
-            get => GpuVertex.Position.Y;
-            set => GpuVertex.Position.Y = value; // not good, needs to be positioned relative to the parent!
+            get => _y;
+            set => _y = value; 
         }
 
         public virtual float Width
@@ -138,14 +134,15 @@ namespace Engine.Display
             get => GpuVertex.Size.Y;
             set => GpuVertex.Size.Y = value;
         }
-        
+
+        private float _rotation;
         /// <summary>
         /// Rotation in Radians.
         /// </summary>
         public virtual float Rotation
         {
-            get => GpuVertex.Rotation;
-            set => GpuVertex.Rotation = value;
+            get => _rotation;
+            set => _rotation = value;
         }
         
         public RgbaByte Tint

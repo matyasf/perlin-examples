@@ -10,7 +10,7 @@ namespace Display
         private string _imagePath;
         public Sprite(string imagePath)
         {
-            ImagePath = imagePath;
+            ImagePath = imagePath; // todo if null do not render it
         }
 
         public Sprite(uint width, uint height, Rgba32 color)
