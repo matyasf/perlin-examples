@@ -13,40 +13,33 @@ layout(location = 3) in float Rotation;
 layout(location = 0) out vec2 fsin_TexCoords;
 layout(location = 1) out vec4 fsin_Tint;
 
-layout(constant_id = 0) const bool InvertedY = true;
-
 const vec4 Quads[4]= vec4[4](
-    vec4(-.5, .5, 0, 0),
-    vec4(.5, .5, 1, 0),
+    vec4(-.5,  .5, 0, 0),
+    vec4( .5,  .5, 1, 0),
     vec4(-.5, -.5, 0, 1),
-    vec4(.5, -.5, 1, 1)
+    vec4( .5, -.5, 1, 1)
 );
 
-vec2 rotate(vec2 v, float a)
+vec2 rotate(vec2 pos, float rot)
 {
-    float s = sin(a);
-    float c = cos(a);
+    float s = sin(rot);
+    float c = cos(rot);
     mat2 m = mat2(c, -s, s, c);
-    return m * v;
+    return m * pos;
 }
 
 void main()
 {
     vec4 src = Quads[gl_VertexIndex];
-
     vec2 srcPos = src.xy;
-    srcPos = rotate(srcPos, Rotation);
-
+    srcPos = rotate(srcPos, -Rotation);
+    // TODO use Pivot here
     srcPos.x = (srcPos.x * Size.x) + Pos.x + (Size.x / 2);
     srcPos.y = (srcPos.y * Size.y) + Pos.y + (Size.y / 2);
 
     gl_Position = Projection * vec4(srcPos, 0, 1);
 
     fsin_TexCoords = src.zw;
+    fsin_TexCoords.y = -fsin_TexCoords.y;
     fsin_Tint = Tint;
-
-    if (InvertedY)
-    {
-        gl_Position.y *= -1;
-    }
 }

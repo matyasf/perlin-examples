@@ -46,6 +46,7 @@ namespace Engine
 #endif
             options.SyncToVerticalBlank = true;
             options.ResourceBindingModel = ResourceBindingModel.Improved;
+            //options.PreferStandardClipSpaceYDirection = true;
             
             DefaultGraphicsDevice = VeldridStartup.CreateGraphicsDevice(_window, options);
             CommandList = DefaultGraphicsDevice.ResourceFactory.CreateCommandList();

@@ -52,7 +52,7 @@ namespace Engine
                 gd.MainSwapchain.Framebuffer.OutputDescription));
         }
         
-        private byte[] LoadShaderBytes(string name)
+        private static byte[] LoadShaderBytes(string name)
         {
             return File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Engine", "Assets", "Shaders", name));
         }

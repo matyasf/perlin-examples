@@ -30,7 +30,7 @@ namespace Engine.Display
         /// Default is 0, in this case no automatic wrapping will happen.
         /// </summary>
 //        public float WrapTextWidth = 0;
-        internal Texture Texture { get; set; }
+        private Texture Texture { get; set; }
 
         /// <summary>
         /// Creates a new TextField instance. For text to be displayed, its Width, Height, Font and Text properties

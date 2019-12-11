@@ -21,7 +21,6 @@ namespace Engine.Display
         public event UIChange RemovedFromStage;
         public bool Visible = true;
 
-        protected bool _isOnStage;
         public float PivotX { get; set; }
         public float PivotY { get; set; }
         private float _scaleX = 1.0f;
@@ -29,6 +28,29 @@ namespace Engine.Display
         private Rectangle _bounds;
         private float _skewX;
         private float _skewY;
+        /// <summary>
+        /// The GPU resource set for this object. Its the same object for objects with the same image.
+        /// </summary>
+        internal ResourceSet ResSet;
+        internal QuadVertex GpuVertex;
+        private RenderState _renderState;
+
+        internal QuadVertex AbsoluteVertex
+        {
+            get
+            {
+                var vert = new QuadVertex();
+                vert.Position.X = _renderState.ModelviewMatrix.Tx;
+                vert.Position.Y = _renderState.ModelviewMatrix.Ty;
+                vert.Rotation = _renderState.ModelviewMatrix.Rotation;
+                vert.Size.X = GpuVertex.Size.X;
+                vert.Size.Y = GpuVertex.Size.Y;
+                vert.Tint = GpuVertex.Tint;
+                // + set alpha, pivot
+                var tm = GetTransformationMatrix(KestrelApp.Stage);
+                return vert;
+            }
+        }
 
         public DisplayObject()
         {
@@ -36,7 +58,8 @@ namespace Engine.Display
             _transformationMatrix = Matrix2D.Create();
             _bounds = Rectangle.Create(0, 0, Width, Height);
         }
-        
+
+        protected bool _isOnStage;
         /// <summary>
         /// Whether this instance is on the Stage. If something is not on the Stage, it will not render.
         /// </summary>
@@ -60,13 +83,6 @@ namespace Engine.Display
             }
         }
         
-        /// <summary>
-        /// The GPU resource set for this object. Its the same object for objects with the same image.
-        /// </summary>
-        internal ResourceSet ResSet;
-
-        internal QuadVertex GpuVertex;
-
         public void RemoveFromParent()
         {
             if (Parent != null)
@@ -85,16 +101,16 @@ namespace Engine.Display
             }
             if (Visible)
             {
+                _renderState = KestrelApp.Renderer.PushRenderState(1.0f, TransformationMatrix);
                 if (Width > 0 && Height > 0)
                 {
-                    // + push transformation matrix, prepend it, add alpha
-                    KestrelApp.Renderer.AddToRenderQueue(this); 
-                    // + pop transformation matrix
+                    KestrelApp.Renderer.AddToRenderQueue(this);
                 }
                 foreach (var child in Children)
                 {
                     child.Render(elapsedTimeSecs);
                 }
+                KestrelApp.Renderer.PopRenderState();
             }
         }
 
@@ -218,7 +234,7 @@ namespace Engine.Display
             return outRect;
         }
         
-        private Matrix2D _transformationMatrix;
+        private readonly Matrix2D _transformationMatrix;
         /// <summary>
         /// The transformation matrix of the object relative to its parent.
         /// <returns>CAUTION: not a copy, but the actual object!</returns>
@@ -227,7 +243,7 @@ namespace Engine.Display
         {
             get
             {
-                // Note: cache this!
+                // TODO cache this!
                 _transformationMatrix.Identity();
                 _transformationMatrix.Scale(_scaleX, _scaleY);
                 _transformationMatrix.Skew(_skewX, _skewY);
@@ -251,7 +267,6 @@ namespace Engine.Display
         /// </summary>
         public Matrix2D GetTransformationMatrix(DisplayObject targetSpace)
         {
-            DisplayObject commonParent;
             DisplayObject currentObject;
             Matrix2D outMatrix = Matrix2D.Create();
             outMatrix.Identity();
@@ -284,7 +299,7 @@ namespace Engine.Display
             }
             // targetSpace is not an ancestor
             // 1.: Find a common parent of this and the target coordinate space.
-            commonParent = FindCommonParent(this, targetSpace);
+            var commonParent = FindCommonParent(this, targetSpace);
 
             // 2.: Move up from this to common parent
             currentObject = this;

@@ -36,8 +36,7 @@ namespace Engine.Display
             get => _modelviewMatrix;
             set => _modelviewMatrix.CopyFromMatrix(value);
         }
-        
-        
+
         public void CopyFrom(RenderState renderState)
         {
             Alpha = renderState.Alpha;
