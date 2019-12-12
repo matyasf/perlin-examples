@@ -64,13 +64,8 @@ namespace Engine.Display
 
         public override float Width
         {
-            get => base.Width;
             set
             {
-                if (value == base.Width)
-                {
-                    return;
-                }
                 base.Width = value;
                 _sizeInvalid = true;
             }
@@ -78,13 +73,8 @@ namespace Engine.Display
 
         public override float Height
         {
-            get => base.Height;
             set
             {
-                if (value == base.Height)
-                {
-                    return;
-                }
                 base.Height = value;
                 _sizeInvalid = true;
             }

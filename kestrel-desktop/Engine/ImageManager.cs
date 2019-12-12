@@ -14,16 +14,16 @@ namespace Engine
     /// </summary>
     public class ImageManager
     {
-        private readonly Dictionary<string, (ResourceSet, TextureView)> _loadedImages = 
-            new Dictionary<string, (ResourceSet, TextureView)>();
+        private readonly Dictionary<string, (ResourceSet, Texture)> _loadedImages = 
+            new Dictionary<string, (ResourceSet, Texture)>();
 
         /// <summary>
         /// Loads an stores an image from the disk.
         /// </summary>
         /// <param name="imageName">the image filename</param>
-        public (ResourceSet ret, TextureView view) Load(string imageName, bool mipmap = false)
+        public (ResourceSet ret, Texture texture) Load(string imageName, bool mipmap = false)
         {
-            if (!_loadedImages.TryGetValue(imageName, out (ResourceSet, TextureView) ret))
+            if (!_loadedImages.TryGetValue(imageName, out (ResourceSet, Texture) ret))
             {
                 GraphicsDevice gd = KestrelApp.DefaultGraphicsDevice;
                 var texPath = Path.Combine(AppContext.BaseDirectory, "Assets", imageName);
@@ -36,7 +36,7 @@ namespace Engine
                     KestrelApp.KestrelPipeline.TexLayout,
                     view,
                     gd.PointSampler)); 
-                ret = (set, view);
+                ret = (set, tex);
                 _loadedImages.Add(imageName, ret);
             }
             return ret;

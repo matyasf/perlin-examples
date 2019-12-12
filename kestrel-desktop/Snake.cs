@@ -58,13 +58,12 @@ namespace Snake
                 var sp = new Sprite(BodySprite)
                 {
                     X = (3 + i) * _world.CellSize, Y = 3 * _world.CellSize,
-                    Rotation = rotation,
-                    Width = _world.CellSize, Height = _world.CellSize
+                    Rotation = rotation
                 };
                 _positions.Add(sp);
                 KestrelApp.Stage.AddChild(sp);
             }
-            _positions.Last().ImagePath = HeadSprite;
+            _positions.Last().LoadImage(HeadSprite);
         }
 
         private void SetScore(int newScore)
@@ -140,7 +139,7 @@ namespace Snake
             }
 
             _previousDir = _direction;
-            _positions.Last().ImagePath = BodySprite;
+            _positions.Last().LoadImage(BodySprite);
             var sp = new Sprite(HeadSprite)
             {
                 X = newX, Y = newY,

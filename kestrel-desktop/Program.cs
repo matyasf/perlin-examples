@@ -49,11 +49,10 @@ namespace Snake
             snake.ScoreChanged += () => scoreTextField.Text =snake.Score.ToString();
             snake.ScoreChanged += () => highScore = Math.Max(highScore, snake.Score);
             */
-            
 //            var s1 = new Sprite("snake-3.png") {Width = 32, Height = 32, X = 20, Y = 20};
 //            var tf = new TextField(KestrelApp.FontRobotoMono.CreateFont(14)) {Text = "BBA", Width = 62, Height = 32, X = 40, Y = 20};
-            var s2 = new Sprite("snake-3.png") {Width = 32, Height = 32, X = 130, Y = 130};
-            var s3 = new Sprite("snake-head.png") {Width = 32, Height = 32, X = 20, Y = 50};
+            var s2 = new Sprite("snake-3.png") {X = 130, Y = 130};
+            var s3 = new Sprite("snake-head.png") {X = 20, Y = 50};
 //            var tf2 = new TextField(KestrelApp.FontRobotoMono.CreateFont(14)) {Text = "ZZB", Width = 62, Height = 32, X = 90, Y = 20};
             
 //            KestrelApp.Stage.AddChild(s1);
@@ -68,6 +67,7 @@ namespace Snake
                 s2.Rotation += 0.03f;
                 a++;
                 if (a > 99) a = 0;
+                Console.WriteLine(s2.Width + " " + s2.GetBounds().Width + " " + s2.GetBoundsWithChildren().Width);
             };
 
             KestrelApp.ShowStats();

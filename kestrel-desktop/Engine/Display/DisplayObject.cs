@@ -25,7 +25,6 @@ namespace Engine.Display
         public float PivotY { get; set; }
         private float _scaleX = 1.0f;
         private float _scaleY = 1.0f;
-        private Rectangle _bounds;
         private float _skewX;
         private float _skewY;
         /// <summary>
@@ -35,21 +34,22 @@ namespace Engine.Display
         private RenderState _renderState;
         private QuadVertex GpuVertex;
         
+        public DisplayObject()
+        {
+            GpuVertex.Tint = RgbaByte.White;
+            _transformationMatrix = Matrix2D.Create();
+        }
+        
         internal QuadVertex GetGpuVertex()
         {
             GpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
             GpuVertex.Position.Y = _renderState.ModelviewMatrix.Ty;
             GpuVertex.Rotation = _renderState.ModelviewMatrix.Rotation;
+            GpuVertex.Size.X = _originalWidth;
+            GpuVertex.Size.Y = _originalHeight;
             //GpuVertex.Tint.A = _renderState.Alpha;
             // + set  pivot, scale
             return GpuVertex;
-        }
-
-        public DisplayObject()
-        {
-            GpuVertex.Tint = RgbaByte.White;
-            _transformationMatrix = Matrix2D.Create();
-            _bounds = Rectangle.Create(0, 0, Width, Height);
         }
 
         protected bool _isOnStage;
@@ -95,7 +95,8 @@ namespace Engine.Display
             if (Visible)
             {
                 _renderState = KestrelApp.Renderer.PushRenderState(1.0f, TransformationMatrix);
-                if (Width > 0 && Height > 0)
+                var bounds = GetBounds();
+                if (bounds.Width > 0 && bounds.Height > 0)
                 {
                     KestrelApp.Renderer.AddToRenderQueue(this);
                 }
@@ -123,16 +124,21 @@ namespace Engine.Display
             set => _y = value; 
         }
 
+        private float _originalWidth;
+        /// <summary>
+        /// The width of the object without transformations.
+        /// </summary>
         public virtual float Width
         {
-            get => GpuVertex.Size.X;
-            set => GpuVertex.Size.X = value;
+            get => _originalWidth;
+            set => _originalWidth = value;
         }
 
+        private float _originalHeight;
         public virtual float Height
         {
-            get => GpuVertex.Size.Y;
-            set => GpuVertex.Size.Y = value;
+            get => _originalHeight;
+            set => _originalHeight = value;
         }
 
         private float _rotation;
@@ -195,29 +201,34 @@ namespace Engine.Display
             EnterFrameEvent?.Invoke(this, elapsedTimeSecs);
         }
         
+                /// <summary>
+        /// Returns the bounds of this object after transformations
+        /// </summary>
+        public virtual Rectangle GetBounds()
+        {
+            return GetBounds(Parent);
+        }
+        
         public virtual Rectangle GetBounds(DisplayObject targetSpace)
         {
             Rectangle outRect = Rectangle.Create();
-
             if (targetSpace == this) // Optimization
             {
-                outRect.CopyFrom(_bounds);
+                outRect.Width = _originalWidth;
+                outRect.Height = _originalHeight;
             }
             else if (targetSpace == Parent && !IsRotated) // Optimization
             {
-                float scaleX = _scaleX;
-                float scaleY = _scaleY;
-
-                outRect = Rectangle.Create(X - PivotX * scaleX,
-                    Y - PivotY * scaleY,
-                    _bounds.Width * _scaleX,
-                    _bounds.Height * _scaleY);
-                if (scaleX < 0.0f)
+                outRect = Rectangle.Create(X - PivotX * _scaleX,
+                    Y - PivotY * _scaleY,
+                    _originalWidth * _scaleX,
+                    _originalHeight * _scaleY);
+                if (_scaleX < 0.0f)
                 {
                     outRect.Width *= -1.0f;
                     outRect.X -= outRect.Width;
                 }
-                if (scaleY < 0.0f)
+                if (_scaleY < 0.0f)
                 {
                     outRect.Height *= -1.0f;
                     outRect.Top -= outRect.Height;
@@ -225,12 +236,44 @@ namespace Engine.Display
             }
             else
             {
+                outRect.Width = _originalWidth;
+                outRect.Height = _originalHeight;
                 Matrix2D sMatrix = GetTransformationMatrix(targetSpace);
-                outRect = _bounds.GetBounds(sMatrix);
+                outRect = outRect.GetBounds(sMatrix);
             }
             return outRect;
         }
-        
+
+        public virtual Rectangle GetBoundsWithChildren()
+        {
+            return GetBoundsWithChildren(Parent);
+        }
+        public virtual Rectangle GetBoundsWithChildren(DisplayObject targetSpace)
+        {
+            int numChildren = Children.Count;
+            if (numChildren == 0)
+            {
+                // Matrix2D transformationMatrix = GetTransformationMatrix(targetSpace);
+                // Point transformedPoint = transformationMatrix.TransformPoint(X, Y);
+                // return Rectangle.Create(transformedPoint.X, transformedPoint.Y);
+                return GetBounds(targetSpace);
+            }
+            if (numChildren == 1)
+            {
+                return Children[0].GetBoundsWithChildren(targetSpace);
+            }
+            float minX = float.MaxValue, maxX = -float.MaxValue, minY = float.MaxValue, maxY = -float.MaxValue;
+            foreach (DisplayObject child in Children)
+            {
+                Rectangle childBounds = child.GetBoundsWithChildren(targetSpace);
+                minX = Math.Min(minX, childBounds.X);
+                maxX = Math.Max(maxX, childBounds.X + childBounds.Width);
+                minY = Math.Min(minY, childBounds.Top);
+                maxY = Math.Max(maxY, childBounds.Top + childBounds.Height);
+            }
+            return Rectangle.Create(minX, minY, maxX - minX, maxY - minY);
+        }
+
         private readonly Matrix2D _transformationMatrix;
         /// <summary>
         /// The transformation matrix of the object relative to its parent.
