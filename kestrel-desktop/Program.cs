@@ -64,7 +64,7 @@ namespace Snake
             KestrelApp.Stage.EnterFrameEvent += (target, secs) =>
             {
                 //tf2.Text = a.ToString();
-                s2.Rotation += 0.03f;
+                s2.Rotation += 0.01f;
                 a++;
                 if (a > 99) a = 0;
                 Console.WriteLine(s2.Width + " " + s2.GetBounds().Width + " " + s2.GetBoundsWithChildren().Width);

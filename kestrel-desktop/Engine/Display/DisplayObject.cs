@@ -201,7 +201,7 @@ namespace Engine.Display
             EnterFrameEvent?.Invoke(this, elapsedTimeSecs);
         }
         
-                /// <summary>
+        /// <summary>
         /// Returns the bounds of this object after transformations
         /// </summary>
         public virtual Rectangle GetBounds()
@@ -250,19 +250,9 @@ namespace Engine.Display
         }
         public virtual Rectangle GetBoundsWithChildren(DisplayObject targetSpace)
         {
-            int numChildren = Children.Count;
-            if (numChildren == 0)
-            {
-                // Matrix2D transformationMatrix = GetTransformationMatrix(targetSpace);
-                // Point transformedPoint = transformationMatrix.TransformPoint(X, Y);
-                // return Rectangle.Create(transformedPoint.X, transformedPoint.Y);
-                return GetBounds(targetSpace);
-            }
-            if (numChildren == 1)
-            {
-                return Children[0].GetBoundsWithChildren(targetSpace);
-            }
-            float minX = float.MaxValue, maxX = -float.MaxValue, minY = float.MaxValue, maxY = -float.MaxValue;
+            var ownBounds = GetBounds(targetSpace);
+            float minX = ownBounds.X, maxX = ownBounds.Right;
+            float minY = ownBounds.Y, maxY = ownBounds.Bottom;
             foreach (DisplayObject child in Children)
             {
                 Rectangle childBounds = child.GetBoundsWithChildren(targetSpace);

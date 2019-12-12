@@ -140,12 +140,10 @@ namespace Engine.Geom
             {
                 return null;
             }
-
             float left = Math.Max(X, rectangle.X);
             float right = Math.Min(X + Width, rectangle.X + rectangle.Width);
             float top = Math.Max(Y, rectangle.Y);
             float bottom = Math.Min(Y + Height, rectangle.Y + rectangle.Height);
-
             return Create(left, top, right - left, bottom - top);
         }
 
