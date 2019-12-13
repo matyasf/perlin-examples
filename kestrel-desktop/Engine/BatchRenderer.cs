@@ -44,8 +44,8 @@ namespace Engine
                 0,
                 Matrix4x4.CreateOrthographicOffCenter(0, width, height, 0, 0, 1));
 
-            EnsureBufferSize((uint)_drawQueue.Count * DisplayObject.QuadVertex.VertexSize);
-            MappedResourceView<DisplayObject.QuadVertex> writeMap = gd.Map<DisplayObject.QuadVertex>(_vertexBuffer, MapMode.Write);
+            EnsureBufferSize((uint)_drawQueue.Count * QuadVertex.VertexSize);
+            MappedResourceView<QuadVertex> writeMap = gd.Map<QuadVertex>(_vertexBuffer, MapMode.Write);
             for (int i = 0; i < _drawQueue.Count; i++)
             {
                 writeMap[i] = _drawQueue[i].GetGpuVertex();

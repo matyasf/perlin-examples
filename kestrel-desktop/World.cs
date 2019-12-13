@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
-using Display;
 using Engine;
+using Engine.Display;
 
 namespace Snake
 {
@@ -21,9 +21,7 @@ namespace Snake
             FoodSprite = new Sprite("food.png")
             {
                 X = currentFoodLocation.X * CellSize, 
-                Y = currentFoodLocation.Y * CellSize,
-                Width = CellSize,
-                Height = CellSize
+                Y = currentFoodLocation.Y * CellSize
             };
             KestrelApp.Stage.AddChild(FoodSprite);
         }

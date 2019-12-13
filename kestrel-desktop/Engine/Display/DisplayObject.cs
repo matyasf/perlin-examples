@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using Engine.Geom;
 using Veldrid;
 using Point = Engine.Geom.Point;
@@ -45,8 +44,8 @@ namespace Engine.Display
             GpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
             GpuVertex.Position.Y = _renderState.ModelviewMatrix.Ty;
             GpuVertex.Rotation = _renderState.ModelviewMatrix.Rotation;
-            GpuVertex.Size.X = _originalWidth;
-            GpuVertex.Size.Y = _originalHeight;
+            GpuVertex.Size.X = OriginalWidth;
+            GpuVertex.Size.Y = OriginalHeight;
             //GpuVertex.Tint.A = _renderState.Alpha;
             // + set  pivot, scale
             return GpuVertex;
@@ -124,22 +123,17 @@ namespace Engine.Display
             set => _y = value; 
         }
 
-        private float _originalWidth;
+        protected float OriginalWidth;
         /// <summary>
         /// The width of the object without transformations.
         /// </summary>
-        public virtual float Width
-        {
-            get => _originalWidth;
-            set => _originalWidth = value;
-        }
+        public virtual float Width => OriginalWidth;
 
-        private float _originalHeight;
-        public virtual float Height
-        {
-            get => _originalHeight;
-            set => _originalHeight = value;
-        }
+        protected float OriginalHeight;
+        /// <summary>
+        /// The height of the object without transformations.
+        /// </summary>
+        public virtual float Height => OriginalHeight;
 
         private float _rotation;
         /// <summary>
@@ -157,16 +151,6 @@ namespace Engine.Display
             set => GpuVertex.Tint = value;
         }
 
-        internal struct QuadVertex
-        {
-            public const uint VertexSize = 24;
-
-            public Vector2 Position;
-            public Vector2 Size;
-            public RgbaByte Tint;
-            public float Rotation; // in radians
-        }
-        
         /// <summary>
         /// Returns the object that is found topmost on a point in local coordinates, or null if the test fails.
         /// </summary>
@@ -214,15 +198,15 @@ namespace Engine.Display
             Rectangle outRect = Rectangle.Create();
             if (targetSpace == this) // Optimization
             {
-                outRect.Width = _originalWidth;
-                outRect.Height = _originalHeight;
+                outRect.Width = OriginalWidth;
+                outRect.Height = OriginalHeight;
             }
             else if (targetSpace == Parent && !IsRotated) // Optimization
             {
                 outRect = Rectangle.Create(X - PivotX * _scaleX,
                     Y - PivotY * _scaleY,
-                    _originalWidth * _scaleX,
-                    _originalHeight * _scaleY);
+                    OriginalWidth * _scaleX,
+                    OriginalHeight * _scaleY);
                 if (_scaleX < 0.0f)
                 {
                     outRect.Width *= -1.0f;
@@ -236,8 +220,8 @@ namespace Engine.Display
             }
             else
             {
-                outRect.Width = _originalWidth;
-                outRect.Height = _originalHeight;
+                outRect.Width = OriginalWidth;
+                outRect.Height = OriginalHeight;
                 Matrix2D sMatrix = GetTransformationMatrix(targetSpace);
                 outRect = outRect.GetBounds(sMatrix);
             }
@@ -277,7 +261,7 @@ namespace Engine.Display
                 _transformationMatrix.Identity();
                 _transformationMatrix.Scale(_scaleX, _scaleY);
                 _transformationMatrix.Skew(_skewX, _skewY);
-                _transformationMatrix.Rotate(Rotation);
+                _transformationMatrix.Rotate(_rotation);
                 _transformationMatrix.Translate(X, Y);
 
                 if (PivotX != 0.0f || PivotY != 0.0f)
@@ -386,7 +370,7 @@ namespace Engine.Display
         /// <summary>
         /// Indicates if the object is rotated or skewed in any way.
         /// </summary>
-        internal bool IsRotated => Rotation != 0.0 || _skewX != 0.0 || _skewY != 0.0;
+        internal bool IsRotated => _rotation != 0.0 || _skewX != 0.0 || _skewY != 0.0;
 
 
         /// <summary>

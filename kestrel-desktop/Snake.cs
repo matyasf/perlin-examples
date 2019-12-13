@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Display;
 using Engine;
 using Engine.Display;
 using Veldrid;
@@ -143,8 +142,7 @@ namespace Snake
             var sp = new Sprite(HeadSprite)
             {
                 X = newX, Y = newY,
-                Rotation = GetRotation(_direction),
-                Width = _world.CellSize, Height = _world.CellSize
+                Rotation = GetRotation(_direction)
             };
             KestrelApp.Stage.AddChild(sp);
             _positions.Add(sp);

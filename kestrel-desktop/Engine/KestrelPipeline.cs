@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using Engine.Display;
 using Veldrid;
 using Veldrid.SPIRV;
 
@@ -37,7 +36,7 @@ namespace Engine
                     new[]
                     {
                         new VertexLayoutDescription(
-                            DisplayObject.QuadVertex.VertexSize,
+                            QuadVertex.VertexSize,
                             1,
                             new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
                             new VertexElementDescription("Size", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),

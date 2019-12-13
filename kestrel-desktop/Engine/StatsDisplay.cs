@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Display;
 using Engine.Display;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.PixelFormats;

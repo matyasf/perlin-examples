@@ -21,8 +21,8 @@ namespace Engine.Display
         internal Stage(int width, int height)
         {
             _isOnStage = true;
-            Width = width;
-            Height = height;
+            OriginalWidth = width;
+            OriginalHeight = height;
         }
 
         public override DisplayObject HitTest(Point p)

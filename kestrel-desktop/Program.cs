@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Numerics;
-using Display;
 using Engine;
 using Engine.Display;
 using SixLabors.Fonts;

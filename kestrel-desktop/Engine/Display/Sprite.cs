@@ -1,8 +1,6 @@
-using Engine;
-using Engine.Display;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Display
+namespace Engine.Display
 {
     public class Sprite : DisplayObject
     {
@@ -14,8 +12,8 @@ namespace Display
 
         public Sprite(uint width, uint height, Rgba32 color)
         {
-            Width = width;
-            Height = height;
+            OriginalWidth = width;
+            OriginalHeight = height;
             ResSet = KestrelApp.ImageManager.CreateColoredTexture(width, height, color);
         }
 
@@ -27,8 +25,8 @@ namespace Display
             _imagePath = path;
             if (resizeToImage)
             {
-                Width = set.texture.Width;
-                Height = set.texture.Height;
+                OriginalWidth = set.texture.Width;
+                OriginalHeight = set.texture.Height;
             }
         }
         

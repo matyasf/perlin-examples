@@ -62,20 +62,22 @@ namespace Engine.Display
             }
         }
 
-        public override float Width
+        public new float Width
         {
+            get => base.Width;
             set
             {
-                base.Width = value;
+                OriginalWidth = value;
                 _sizeInvalid = true;
             }
         }
 
-        public override float Height
+        public new float Height
         {
+            get => base.Height;
             set
             {
-                base.Height = value;
+                OriginalHeight = value;
                 _sizeInvalid = true;
             }
         }
