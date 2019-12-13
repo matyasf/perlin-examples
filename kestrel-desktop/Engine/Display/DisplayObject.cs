@@ -45,8 +45,8 @@ namespace Engine.Display
             _gpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
             _gpuVertex.Position.Y = _renderState.ModelviewMatrix.Ty;
             _gpuVertex.Rotation = _renderState.ModelviewMatrix.Rotation;
-            _gpuVertex.Size.X = OriginalWidth;
-            _gpuVertex.Size.Y = OriginalHeight;
+            _gpuVertex.Size.X = OriginalWidth * _renderState.ModelviewMatrix.ScaleX;
+            _gpuVertex.Size.Y = OriginalHeight * _renderState.ModelviewMatrix.ScaleY;
             //GpuVertex.Tint.A = _renderState.Alpha;
             // + set  pivot, scale
             return _gpuVertex;
@@ -274,9 +274,8 @@ namespace Engine.Display
         /// </summary>
         public Matrix2D TransformationMatrix
         {
-            get
+            get // TODO cache this!
             {
-                // TODO cache this!
                 _transformationMatrix.Identity();
                 _transformationMatrix.Scale(ScaleX, ScaleY);
                 _transformationMatrix.Skew(_skewX, _skewY);
@@ -291,6 +290,7 @@ namespace Engine.Display
                     _transformationMatrix.Ty = Y - _transformationMatrix.B * PivotX
                                                   - _transformationMatrix.D * PivotY;
                 }
+                Console.WriteLine(this + " " + _transformationMatrix.ScaleX + " " + ScaleX + " " + _rotation);
                 return _transformationMatrix;
             }
         }
@@ -390,8 +390,7 @@ namespace Engine.Display
         /// Indicates if the object is rotated or skewed in any way.
         /// </summary>
         internal bool IsRotated => _rotation != 0.0 || _skewX != 0.0 || _skewY != 0.0;
-
-
+        
         /// <summary>
         /// The topmost object in the display tree the object is part of.
         /// </summary>
