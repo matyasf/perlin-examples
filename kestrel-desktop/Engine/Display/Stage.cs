@@ -20,7 +20,7 @@ namespace Engine.Display
         
         internal Stage(int width, int height)
         {
-            _isOnStage = true;
+            IsOnStageProperty = true;
             OriginalWidth = width;
             OriginalHeight = height;
         }

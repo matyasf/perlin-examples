@@ -20,10 +20,11 @@ namespace Engine.Display
         public event UIChange RemovedFromStage;
         public bool Visible = true;
 
-        public float PivotX { get; set; }
-        public float PivotY { get; set; }
-        private float _scaleX = 1.0f;
-        private float _scaleY = 1.0f;
+        public float PivotX;
+        public float PivotY;
+        public float ScaleX = 1.0f;
+        public float ScaleY = 1.0f;
+        
         private float _skewX;
         private float _skewY;
         /// <summary>
@@ -31,38 +32,38 @@ namespace Engine.Display
         /// </summary>
         internal ResourceSet ResSet;
         private RenderState _renderState;
-        private QuadVertex GpuVertex;
+        private QuadVertex _gpuVertex;
         
         public DisplayObject()
         {
-            GpuVertex.Tint = RgbaByte.White;
+            _gpuVertex.Tint = RgbaByte.White;
             _transformationMatrix = Matrix2D.Create();
         }
         
         internal QuadVertex GetGpuVertex()
         {
-            GpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
-            GpuVertex.Position.Y = _renderState.ModelviewMatrix.Ty;
-            GpuVertex.Rotation = _renderState.ModelviewMatrix.Rotation;
-            GpuVertex.Size.X = OriginalWidth;
-            GpuVertex.Size.Y = OriginalHeight;
+            _gpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
+            _gpuVertex.Position.Y = _renderState.ModelviewMatrix.Ty;
+            _gpuVertex.Rotation = _renderState.ModelviewMatrix.Rotation;
+            _gpuVertex.Size.X = OriginalWidth;
+            _gpuVertex.Size.Y = OriginalHeight;
             //GpuVertex.Tint.A = _renderState.Alpha;
             // + set  pivot, scale
-            return GpuVertex;
+            return _gpuVertex;
         }
 
-        protected bool _isOnStage;
+        protected bool IsOnStageProperty;
         /// <summary>
         /// Whether this instance is on the Stage. If something is not on the Stage, it will not render.
         /// </summary>
         public bool IsOnStage
         {
-            get => _isOnStage;
+            get => IsOnStageProperty;
             internal set
             {
-                if (value != _isOnStage)
+                if (value != IsOnStageProperty)
                 {
-                    _isOnStage = value;
+                    IsOnStageProperty = value;
                     if (value)
                     {
                         AddedToStage?.Invoke(this);
@@ -135,6 +136,24 @@ namespace Engine.Display
         /// </summary>
         public virtual float Height => OriginalHeight;
 
+        /// <summary>
+        /// The width of the object after scaling
+        /// </summary>
+        public virtual float WidthScaled
+        {
+            get => OriginalWidth * ScaleX;
+            set => ScaleX = value / OriginalWidth;
+        }
+
+        /// <summary>
+        /// The height of the object after scaling
+        /// </summary>
+        public virtual float HeightScaled
+        {
+            get => OriginalHeight * ScaleY;
+            set => ScaleY = value / OriginalHeight;
+        }
+        
         private float _rotation;
         /// <summary>
         /// Rotation in Radians.
@@ -147,8 +166,8 @@ namespace Engine.Display
         
         public RgbaByte Tint
         {
-            get => GpuVertex.Tint;
-            set => GpuVertex.Tint = value;
+            get => _gpuVertex.Tint;
+            set => _gpuVertex.Tint = value;
         }
 
         /// <summary>
@@ -203,16 +222,16 @@ namespace Engine.Display
             }
             else if (targetSpace == Parent && !IsRotated) // Optimization
             {
-                outRect = Rectangle.Create(X - PivotX * _scaleX,
-                    Y - PivotY * _scaleY,
-                    OriginalWidth * _scaleX,
-                    OriginalHeight * _scaleY);
-                if (_scaleX < 0.0f)
+                outRect = Rectangle.Create(X - PivotX * ScaleX,
+                    Y - PivotY * ScaleY,
+                    OriginalWidth * ScaleX,
+                    OriginalHeight * ScaleY);
+                if (ScaleX < 0.0f)
                 {
                     outRect.Width *= -1.0f;
                     outRect.X -= outRect.Width;
                 }
-                if (_scaleY < 0.0f)
+                if (ScaleY < 0.0f)
                 {
                     outRect.Height *= -1.0f;
                     outRect.Top -= outRect.Height;
@@ -259,7 +278,7 @@ namespace Engine.Display
             {
                 // TODO cache this!
                 _transformationMatrix.Identity();
-                _transformationMatrix.Scale(_scaleX, _scaleY);
+                _transformationMatrix.Scale(ScaleX, ScaleY);
                 _transformationMatrix.Skew(_skewX, _skewY);
                 _transformationMatrix.Rotate(_rotation);
                 _transformationMatrix.Translate(X, Y);

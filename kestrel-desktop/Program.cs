@@ -52,6 +52,9 @@ namespace Snake
 //            var tf = new TextField(KestrelApp.FontRobotoMono.CreateFont(14)) {Text = "BBA", Width = 62, Height = 32, X = 40, Y = 20};
             var s2 = new Sprite("snake-3.png") {X = 130, Y = 130};
             var s3 = new Sprite("snake-head.png") {X = 20, Y = 50};
+            s2.WidthScaled = 32;
+            s2.HeightScaled = 32;
+            
 //            var tf2 = new TextField(KestrelApp.FontRobotoMono.CreateFont(14)) {Text = "ZZB", Width = 62, Height = 32, X = 90, Y = 20};
             
 //            KestrelApp.Stage.AddChild(s1);
