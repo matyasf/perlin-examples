@@ -42,13 +42,28 @@ namespace Engine.Display
         
         internal QuadVertex GetGpuVertex()
         {
+            /*
+            float x = target._vertices[i].Position.X; from sparrow
+            float y = target._vertices[i].Position.Y;
+            target._vertices[i].Position.X = matrix.A * x + matrix.C * y + matrix.Tx;
+            target._vertices[i].Position.Y = matrix.D * y + matrix.B * x + matrix.Ty;
+            */
+            _gpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
+            _gpuVertex.Position.Y = _renderState.ModelviewMatrix.Ty;
+            _gpuVertex.Size.X = OriginalWidth * _renderState.ScaleX;
+            _gpuVertex.Size.Y = OriginalHeight * _renderState.ScaleY;
+            _gpuVertex.Rotation = _renderState.ModelviewMatrix.Rotation;
+            //_gpuVertex.Pivot.X = PivotX;
+            //_gpuVertex.Pivot.Y = PivotY;
+            /*
             _gpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
             _gpuVertex.Position.Y = _renderState.ModelviewMatrix.Ty;
             _gpuVertex.Rotation = _renderState.ModelviewMatrix.Rotation;
-            _gpuVertex.Size.X = OriginalWidth * _renderState.ModelviewMatrix.ScaleX;
+            _gpuVertex.Size.X = OriginalWidth * _renderState.ModelviewMatrix.ScaleX; // TODO!!!
             _gpuVertex.Size.Y = OriginalHeight * _renderState.ModelviewMatrix.ScaleY;
             //GpuVertex.Tint.A = _renderState.Alpha;
             // + set  pivot, scale
+            */
             return _gpuVertex;
         }
 
@@ -94,7 +109,7 @@ namespace Engine.Display
             }
             if (Visible)
             {
-                _renderState = KestrelApp.Renderer.PushRenderState(1.0f, TransformationMatrix);
+                _renderState = KestrelApp.Renderer.PushRenderState(1.0f, TransformationMatrix, ScaleX, ScaleY);
                 var bounds = GetBounds();
                 if (bounds.Width > 0 && bounds.Height > 0)
                 {
@@ -161,9 +176,23 @@ namespace Engine.Display
         public virtual float Rotation
         {
             get => _rotation;
-            set => _rotation = value;
+            set
+            {
+                // move to equivalent value in range [0 deg, 360 deg]
+                value = value % (float)(2.0f * Math.PI);
+                // move to [-180 deg, +180 deg]
+                if (value < -Math.PI)
+                {
+                    value += 2.0f * (float)Math.PI;
+                }
+                else if (value > Math.PI)
+                {
+                    value -= 2.0f * (float)Math.PI;
+                }
+                _rotation = value;
+            }
         }
-        
+
         public RgbaByte Tint
         {
             get => _gpuVertex.Tint;
@@ -290,7 +319,7 @@ namespace Engine.Display
                     _transformationMatrix.Ty = Y - _transformationMatrix.B * PivotX
                                                   - _transformationMatrix.D * PivotY;
                 }
-                Console.WriteLine(this + " " + _transformationMatrix.ScaleX + " " + ScaleX + " " + _rotation);
+                //Console.WriteLine(_rotation + " " + _transformationMatrix.Determinant);
                 return _transformationMatrix;
             }
         }

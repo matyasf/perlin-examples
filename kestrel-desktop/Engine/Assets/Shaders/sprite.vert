@@ -9,35 +9,41 @@ layout(location = 0) in vec2 Pos;
 layout(location = 1) in vec2 Size;
 layout(location = 2) in vec4 Tint;
 layout(location = 3) in float Rotation;
+//layout(location = 4) in vec2 Pivot;
 
 layout(location = 0) out vec2 fsin_TexCoords;
 layout(location = 1) out vec4 fsin_Tint;
-
+/*
 const vec4 Quads[4]= vec4[4](
     vec4(-.5,  .5, 0, 0),
     vec4( .5,  .5, 1, 0),
     vec4(-.5, -.5, 0, 1),
     vec4( .5, -.5, 1, 1)
 );
-
-vec2 rotate(vec2 pos, float rot)
-{
+*/
+const vec4 Quads[4]= vec4[4]( // pivot is top left by default
+    vec4(0, 1, 0, 0), // x, y, textureX, textureY
+    vec4(1, 1, 1, 0),
+    vec4(0, 0, 0, 1),
+    vec4(1, 0, 1, 1)
+);
+vec2 rotate(vec2 pos, float rot) {
     float s = sin(rot);
     float c = cos(rot);
-    mat2 m = mat2(c, -s, s, c);
+    mat2 m = mat2(c, -s, s, c); // 2x2 floating point matrix
     return m * pos;
 }
 
-void main()
-{
+void main() {
     vec4 src = Quads[gl_VertexIndex];
-    vec2 srcPos = src.xy;
-    srcPos = rotate(srcPos, -Rotation);
-    // TODO use Pivot here
-    srcPos.x = (srcPos.x * Size.x) + Pos.x + (Size.x / 2);
-    srcPos.y = (srcPos.y * Size.y) + Pos.y + (Size.y / 2);
-
-    gl_Position = Projection * vec4(srcPos, 0, 1);
+    vec2 quadPos = src.xy; // add skew
+    quadPos.x = (quadPos.x * Size.x);
+    quadPos.y = (quadPos.y * Size.y);
+    quadPos = rotate(quadPos, -Rotation);
+    quadPos.x = quadPos.x + Pos.x;
+    quadPos.y = quadPos.y + Pos.y;
+    
+    gl_Position = Projection * vec4(quadPos, 0, 1);
 
     fsin_TexCoords = src.zw;
     fsin_TexCoords.y = -fsin_TexCoords.y;

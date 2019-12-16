@@ -86,11 +86,14 @@ namespace Engine
             }
         }
 
-        public RenderState PushRenderState(float alpha, Matrix2D matrix2D)
+        // Only the translation values are read from the matrix, others are calculated manually
+        public RenderState PushRenderState(float alpha, Matrix2D matrix2D, float scaleX, float scaleY)
         {
             var rs = new RenderState();
             rs.CopyFrom(_renderStates.Peek());
             rs.Alpha *= alpha;
+            rs.ScaleX *= scaleX;
+            rs.ScaleY *= scaleY;
             rs.TransformModelviewMatrix(matrix2D);
             _renderStates.Push(rs);
             return rs;

@@ -7,9 +7,10 @@ namespace Engine
     {
         public const uint VertexSize = 24;
 
-        public Vector2 Position;
+        public Vector2 Position; // 8 byte
         public Vector2 Size;
-        public RgbaByte Tint;
+        public RgbaByte Tint; // 4 byte
         public float Rotation; // in radians
+        //public Vector2 Pivot;
     }
 }

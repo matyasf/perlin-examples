@@ -132,7 +132,6 @@ namespace Engine.Geom
                 C *= sx;
                 Tx *= sx;
             }
-
             if (sy != 1.0f)
             {
                 B *= sy;

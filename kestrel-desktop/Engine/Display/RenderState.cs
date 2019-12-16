@@ -5,6 +5,8 @@ namespace Engine.Display
     public class RenderState
     {
         public float Alpha;
+        public float ScaleX;
+        public float ScaleY;
         private Matrix2D _modelviewMatrix;
         
         public RenderState()
@@ -18,6 +20,7 @@ namespace Engine.Display
         /// </summary>
         public void Reset()
         {
+            ScaleX = ScaleY = 1.0f;
             Alpha = 1.0f;
             if (_modelviewMatrix != null) _modelviewMatrix.Identity();
             else _modelviewMatrix = Matrix2D.Create();
@@ -40,6 +43,8 @@ namespace Engine.Display
         public void CopyFrom(RenderState renderState)
         {
             Alpha = renderState.Alpha;
+            ScaleX = renderState.ScaleX;
+            ScaleY = renderState.ScaleY;
             _modelviewMatrix.CopyFromMatrix(renderState._modelviewMatrix);
         }
     }

@@ -10,8 +10,8 @@ namespace Snake
 {
     class Program
     {
-        private const int Width = 32;
-        private const int Height = 20;
+        private const int Width = 20;
+        private const int Height = 10;
         private float _cellSize = 32;
 
         public static void Main()
@@ -48,19 +48,19 @@ namespace Snake
             snake.ScoreChanged += () => scoreTextField.Text =snake.Score.ToString();
             snake.ScoreChanged += () => highScore = Math.Max(highScore, snake.Score);
             */
-//            var s1 = new Sprite("snake-3.png") {Width = 32, Height = 32, X = 20, Y = 20};
 //            var tf = new TextField(KestrelApp.FontRobotoMono.CreateFont(14)) {Text = "BBA", Width = 62, Height = 32, X = 40, Y = 20};
-            var s2 = new Sprite("snake-3.png") {X = 130, Y = 130};
+            var s2 = new Sprite("snake-head.png") {X = 150, Y = 150};
             var s3 = new Sprite("snake-head.png") {X = 20, Y = 50};
-            s2.WidthScaled = 32;
-            s2.HeightScaled = 32;
+            var s4 = new Sprite("snake-3.png") {X = 30, Y = 30};
+            s2.ScaleX = s2.ScaleY = 2;
+            //s3.ScaleX = 2;
             
 //            var tf2 = new TextField(KestrelApp.FontRobotoMono.CreateFont(14)) {Text = "ZZB", Width = 62, Height = 32, X = 90, Y = 20};
-            
-//            KestrelApp.Stage.AddChild(s1);
+
 //            KestrelApp.Stage.AddChild(tf);
             KestrelApp.Stage.AddChild(s2);
             s2.AddChild(s3);
+            s3.AddChild(s4);
 //            KestrelApp.Stage.AddChild(tf2);
             int a = 1;
             KestrelApp.Stage.EnterFrameEvent += (target, secs) =>
@@ -69,10 +69,9 @@ namespace Snake
                 s2.Rotation += 0.01f;
                 a++;
                 if (a > 99) a = 0;
-                Console.WriteLine(s2.Width + " " + s2.GetBounds().Width + " " + s2.GetBoundsWithChildren().Width);
+                //Console.WriteLine(s2.Rotation + " " + s2.GetBoundsWithChildren().Width);
             };
-
-            KestrelApp.ShowStats();
+            //KestrelApp.ShowStats();
         }
     }
 }
