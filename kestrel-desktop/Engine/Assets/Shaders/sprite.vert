@@ -9,18 +9,10 @@ layout(location = 0) in vec2 Pos;
 layout(location = 1) in vec2 Size;
 layout(location = 2) in vec4 Tint;
 layout(location = 3) in float Rotation;
-//layout(location = 4) in vec2 Pivot;
 
 layout(location = 0) out vec2 fsin_TexCoords;
 layout(location = 1) out vec4 fsin_Tint;
-/*
-const vec4 Quads[4]= vec4[4](
-    vec4(-.5,  .5, 0, 0),
-    vec4( .5,  .5, 1, 0),
-    vec4(-.5, -.5, 0, 1),
-    vec4( .5, -.5, 1, 1)
-);
-*/
+
 const vec4 Quads[4]= vec4[4]( // pivot is top left by default
     vec4(0, 1, 0, 0), // x, y, textureX, textureY
     vec4(1, 1, 1, 0),
@@ -36,7 +28,7 @@ vec2 rotate(vec2 pos, float rot) {
 
 void main() {
     vec4 src = Quads[gl_VertexIndex];
-    vec2 quadPos = src.xy; // add skew
+    vec2 quadPos = src.xy; 
     quadPos.x = (quadPos.x * Size.x);
     quadPos.y = (quadPos.y * Size.y);
     quadPos = rotate(quadPos, -Rotation);

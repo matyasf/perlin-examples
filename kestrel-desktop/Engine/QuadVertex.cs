@@ -11,6 +11,5 @@ namespace Engine
         public Vector2 Size;
         public RgbaByte Tint; // 4 byte
         public float Rotation; // in radians
-        //public Vector2 Pivot;
     }
 }

@@ -25,8 +25,6 @@ namespace Engine.Display
         public float ScaleX = 1.0f;
         public float ScaleY = 1.0f;
         
-        private float _skewX;
-        private float _skewY;
         /// <summary>
         /// The GPU resource set for this object. Its the same object for objects with the same image.
         /// </summary>
@@ -42,28 +40,11 @@ namespace Engine.Display
         
         internal QuadVertex GetGpuVertex()
         {
-            /*
-            float x = target._vertices[i].Position.X; from sparrow
-            float y = target._vertices[i].Position.Y;
-            target._vertices[i].Position.X = matrix.A * x + matrix.C * y + matrix.Tx;
-            target._vertices[i].Position.Y = matrix.D * y + matrix.B * x + matrix.Ty;
-            */
             _gpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
             _gpuVertex.Position.Y = _renderState.ModelviewMatrix.Ty;
             _gpuVertex.Size.X = OriginalWidth * _renderState.ScaleX;
             _gpuVertex.Size.Y = OriginalHeight * _renderState.ScaleY;
             _gpuVertex.Rotation = _renderState.ModelviewMatrix.Rotation;
-            //_gpuVertex.Pivot.X = PivotX;
-            //_gpuVertex.Pivot.Y = PivotY;
-            /*
-            _gpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
-            _gpuVertex.Position.Y = _renderState.ModelviewMatrix.Ty;
-            _gpuVertex.Rotation = _renderState.ModelviewMatrix.Rotation;
-            _gpuVertex.Size.X = OriginalWidth * _renderState.ModelviewMatrix.ScaleX; // TODO!!!
-            _gpuVertex.Size.Y = OriginalHeight * _renderState.ModelviewMatrix.ScaleY;
-            //GpuVertex.Tint.A = _renderState.Alpha;
-            // + set  pivot, scale
-            */
             return _gpuVertex;
         }
 
@@ -307,7 +288,6 @@ namespace Engine.Display
             {
                 _transformationMatrix.Identity();
                 _transformationMatrix.Scale(ScaleX, ScaleY);
-                _transformationMatrix.Skew(_skewX, _skewY);
                 _transformationMatrix.Rotate(_rotation);
                 _transformationMatrix.Translate(X, Y);
 
@@ -418,7 +398,7 @@ namespace Engine.Display
         /// <summary>
         /// Indicates if the object is rotated or skewed in any way.
         /// </summary>
-        internal bool IsRotated => _rotation != 0.0 || _skewX != 0.0 || _skewY != 0.0;
+        internal bool IsRotated => _rotation != 0.0;
         
         /// <summary>
         /// The topmost object in the display tree the object is part of.

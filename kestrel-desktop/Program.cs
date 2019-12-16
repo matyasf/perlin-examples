@@ -50,13 +50,15 @@ namespace Snake
             */
 //            var tf = new TextField(KestrelApp.FontRobotoMono.CreateFont(14)) {Text = "BBA", Width = 62, Height = 32, X = 40, Y = 20};
             var s2 = new Sprite("snake-head.png") {X = 150, Y = 150};
-            var s3 = new Sprite("snake-head.png") {X = 20, Y = 50};
-            var s4 = new Sprite("snake-3.png") {X = 30, Y = 30};
-            s2.ScaleX = s2.ScaleY = 2;
-            //s3.ScaleX = 2;
+            var s3 = new Sprite("snake-head.png") {X = 0, Y = 50};
+            var s4 = new Sprite("snake-3.png") {X = 0, Y = 30};
+            s2.ScaleX = 2;
+            s2.PivotX = 8;
+            s2.PivotY = 8;
+            s3.Rotation = 0.6f;
             
+            //s3.ScaleX = 2;
 //            var tf2 = new TextField(KestrelApp.FontRobotoMono.CreateFont(14)) {Text = "ZZB", Width = 62, Height = 32, X = 90, Y = 20};
-
 //            KestrelApp.Stage.AddChild(tf);
             KestrelApp.Stage.AddChild(s2);
             s2.AddChild(s3);
