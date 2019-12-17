@@ -20,10 +20,10 @@ namespace Engine.Display
         public event UIChange RemovedFromStage;
         public bool Visible = true;
 
-        public float PivotX;
-        public float PivotY;
-        public float ScaleX = 1.0f;
-        public float ScaleY = 1.0f;
+        private float _pivotX;
+        private float _pivotY;
+        private float _scaleX = 1.0f;
+        private float _scaleY = 1.0f;
         
         /// <summary>
         /// The GPU resource set for this object. Its the same object for objects with the same image.
@@ -31,6 +31,8 @@ namespace Engine.Display
         internal ResourceSet ResSet;
         private RenderState _renderState;
         private QuadVertex _gpuVertex;
+        private readonly Matrix2D _transformationMatrix;
+        private bool _transformationMatrixChanged = true;
         
         public DisplayObject()
         {
@@ -38,14 +40,14 @@ namespace Engine.Display
             _transformationMatrix = Matrix2D.Create();
         }
         
-        internal QuadVertex GetGpuVertex()
+        internal ref QuadVertex GetGpuVertex()
         {
             _gpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
             _gpuVertex.Position.Y = _renderState.ModelviewMatrix.Ty;
             _gpuVertex.Size.X = OriginalWidth * _renderState.ScaleX;
             _gpuVertex.Size.Y = OriginalHeight * _renderState.ScaleY;
             _gpuVertex.Rotation = _renderState.ModelviewMatrix.Rotation;
-            return _gpuVertex;
+            return ref _gpuVertex;
         }
 
         protected bool IsOnStageProperty;
@@ -84,13 +86,13 @@ namespace Engine.Display
 
         public virtual void Render(float elapsedTimeSecs)
         {
-            if (IsOnStage)
+            if (IsOnStageProperty)
             {
                 InvokeEnterFrameEvent(elapsedTimeSecs);
             }
             if (Visible)
             {
-                _renderState = KestrelApp.Renderer.PushRenderState(1.0f, TransformationMatrix, ScaleX, ScaleY);
+                _renderState = KestrelApp.Renderer.PushRenderState(1.0f, TransformationMatrix, _scaleX, _scaleY);
                 var bounds = GetBounds();
                 if (bounds.Width > 0 && bounds.Height > 0)
                 {
@@ -110,14 +112,30 @@ namespace Engine.Display
         public virtual float X
         {
             get => _x;
-            set => _x = value;
+            set
+            {
+                if (value == _x)
+                {
+                    return;
+                }
+                _transformationMatrixChanged = true;
+                _x = value;
+            }
         }
 
         private float _y;
         public virtual float Y
         {
             get => _y;
-            set => _y = value; 
+            set
+            {
+                if (value == _y)
+                {
+                    return;
+                }
+                _transformationMatrixChanged = true;
+                _y = value;
+            }
         }
 
         protected float OriginalWidth;
@@ -137,7 +155,7 @@ namespace Engine.Display
         /// </summary>
         public virtual float WidthScaled
         {
-            get => OriginalWidth * ScaleX;
+            get => OriginalWidth * _scaleX;
             set => ScaleX = value / OriginalWidth;
         }
 
@@ -146,7 +164,7 @@ namespace Engine.Display
         /// </summary>
         public virtual float HeightScaled
         {
-            get => OriginalHeight * ScaleY;
+            get => OriginalHeight * _scaleY;
             set => ScaleY = value / OriginalHeight;
         }
         
@@ -159,6 +177,10 @@ namespace Engine.Display
             get => _rotation;
             set
             {
+                if (value == _rotation)
+                {
+                    return;
+                }
                 // move to equivalent value in range [0 deg, 360 deg]
                 value = value % (float)(2.0f * Math.PI);
                 // move to [-180 deg, +180 deg]
@@ -170,6 +192,7 @@ namespace Engine.Display
                 {
                     value -= 2.0f * (float)Math.PI;
                 }
+                _transformationMatrixChanged = true;
                 _rotation = value;
             }
         }
@@ -232,16 +255,16 @@ namespace Engine.Display
             }
             else if (targetSpace == Parent && !IsRotated) // Optimization
             {
-                outRect = Rectangle.Create(X - PivotX * ScaleX,
-                    Y - PivotY * ScaleY,
-                    OriginalWidth * ScaleX,
-                    OriginalHeight * ScaleY);
-                if (ScaleX < 0.0f)
+                outRect = Rectangle.Create(_x - _pivotX * _scaleX,
+                    _y - _pivotY * _scaleY,
+                    OriginalWidth * _scaleX,
+                    OriginalHeight * _scaleY);
+                if (_scaleX < 0.0f)
                 {
                     outRect.Width *= -1.0f;
                     outRect.X -= outRect.Width;
                 }
-                if (ScaleY < 0.0f)
+                if (_scaleY < 0.0f)
                 {
                     outRect.Height *= -1.0f;
                     outRect.Top -= outRect.Height;
@@ -276,30 +299,33 @@ namespace Engine.Display
             }
             return Rectangle.Create(minX, minY, maxX - minX, maxY - minY);
         }
-
-        private readonly Matrix2D _transformationMatrix;
+        
         /// <summary>
         /// The transformation matrix of the object relative to its parent.
         /// <returns>CAUTION: not a copy, but the actual object!</returns>
         /// </summary>
         public Matrix2D TransformationMatrix
         {
-            get // TODO cache this!
+            get
             {
+                if (!_transformationMatrixChanged)
+                {
+                    return _transformationMatrix;
+                }
                 _transformationMatrix.Identity();
-                _transformationMatrix.Scale(ScaleX, ScaleY);
+                _transformationMatrix.Scale(_scaleX, _scaleY);
                 _transformationMatrix.Rotate(_rotation);
-                _transformationMatrix.Translate(X, Y);
+                _transformationMatrix.Translate(_x, _y);
 
-                if (PivotX != 0.0f || PivotY != 0.0f)
+                if (_pivotX != 0.0f || _pivotY != 0.0f)
                 {
                     // prepend pivot transformation
-                    _transformationMatrix.Tx = X - _transformationMatrix.A * PivotX
-                                                  - _transformationMatrix.C * PivotY;
-                    _transformationMatrix.Ty = Y - _transformationMatrix.B * PivotX
-                                                  - _transformationMatrix.D * PivotY;
+                    _transformationMatrix.Tx = _x - _transformationMatrix.A * _pivotX
+                                                  - _transformationMatrix.C * _pivotY;
+                    _transformationMatrix.Ty = _y - _transformationMatrix.B * _pivotX
+                                                  - _transformationMatrix.D * _pivotY;
                 }
-                //Console.WriteLine(_rotation + " " + _transformationMatrix.Determinant);
+                _transformationMatrixChanged = false;
                 return _transformationMatrix;
             }
         }
@@ -415,7 +441,63 @@ namespace Engine.Display
                 return currentObject;
             }
         }
-        
+
+        public float ScaleX
+        {
+            get => _scaleX;
+            set
+            {
+                if (value == _scaleX)
+                {
+                    return;
+                }
+                _transformationMatrixChanged = true;
+                _scaleX = value;
+            }
+        }
+
+        public float ScaleY
+        {
+            get => _scaleY;
+            set
+            {
+                if (value == _scaleY)
+                {
+                    return;
+                }
+                _transformationMatrixChanged = true;
+                _scaleY = value;
+            }
+        }
+
+        public float PivotX
+        {
+            get => _pivotX;
+            set
+            {
+                if (value == _pivotX)
+                {
+                    return;
+                }
+                _transformationMatrixChanged = true;
+                _pivotX = value;
+            }
+        }
+
+        public float PivotY
+        {
+            get => _pivotY;
+            set
+            {
+                if (value == _pivotY)
+                {
+                    return;
+                }
+                _transformationMatrixChanged = true;
+                _pivotY = value;
+            }
+        }
+
         protected readonly List<DisplayObject> Children = new List<DisplayObject>();
         
         public virtual void AddChild(DisplayObject child)
@@ -425,7 +507,7 @@ namespace Engine.Display
                 child.RemoveFromParent();
             }
             Children.Add(child);
-            if (IsOnStage)
+            if (IsOnStageProperty)
             {
                 child.IsOnStage = true;
             }
