@@ -6,7 +6,7 @@ using Engine;
 using Engine.Display;
 using Veldrid;
 
-namespace Snake
+namespace Snake_Game
 {
     public class Snake
     {

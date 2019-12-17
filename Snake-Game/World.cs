@@ -3,7 +3,7 @@ using System.Numerics;
 using Engine;
 using Engine.Display;
 
-namespace Snake
+namespace Snake_Game
 {
     public class World
     {
