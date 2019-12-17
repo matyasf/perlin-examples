@@ -4,6 +4,7 @@ using System.Numerics;
 using Engine;
 using Engine.Display;
 using SixLabors.Fonts;
+using SixLabors.ImageSharp.PixelFormats;
 using Veldrid;
 
 namespace Snake_Game
@@ -32,7 +33,6 @@ namespace Snake_Game
         {
             KestrelApp.Stage.Tint = RgbaByte.Grey;
             // sample snake game
-            
             var family = KestrelApp.Fonts.Install(Path.Combine(AppContext.BaseDirectory, "Assets", "Fonts", "Sunflower-Medium.ttf"));
             var font = family.CreateFont(28);
             
@@ -58,16 +58,22 @@ namespace Snake_Game
             s3.Rotation = 0.6f;
             
             //s3.ScaleX = 2;
-//            var tf2 = new TextField(KestrelApp.FontRobotoMono.CreateFont(14)) {Text = "ZZB", Width = 62, Height = 32, X = 90, Y = 20};
-//            KestrelApp.Stage.AddChild(tf);
+            var tf2 = new TextField(KestrelApp.FontRobotoMono.CreateFont(14))
+            {
+                Text = "ZZBféáŰ", 
+                Width = 62, Height = 32,
+                X = 90, Y = 20,
+                AutoSize = true,
+                BackgroundColor = new Rgba32(255, 0, 0, 200)
+            };
+            KestrelApp.Stage.AddChild(tf2);
             KestrelApp.Stage.AddChild(s2);
             s2.AddChild(s3);
             s3.AddChild(s4);
-//            KestrelApp.Stage.AddChild(tf2);
             int a = 1;
             KestrelApp.Stage.EnterFrameEvent += (target, secs) =>
             {
-                //tf2.Text = a.ToString();
+               // tf2.Width++;
                 s2.Rotation += 0.01f;
                 a++;
                 if (a > 99) a = 0;
