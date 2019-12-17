@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Numerics;
 using Engine;
@@ -6,7 +6,7 @@ using Engine.Display;
 using SixLabors.Fonts;
 using Veldrid;
 
-namespace Snake
+namespace Snake_Game
 {
     class Program
     {
