@@ -57,7 +57,9 @@ namespace Snake_Game
                 var sp = new Sprite(BodySprite)
                 {
                     X = (3 + i) * _world.CellSize, Y = 3 * _world.CellSize,
-                    Rotation = rotation
+                    Rotation = rotation,
+                    ScaleX = 2, ScaleY = 2,
+                    PivotX = 8, PivotY = 8
                 };
                 _positions.Add(sp);
                 KestrelApp.Stage.AddChild(sp);
@@ -73,10 +75,10 @@ namespace Snake_Game
 
         private float GetRotation(Vector2 direction)
         {
-            if (direction == Vector2.UnitY) { return 0; }
+            if (direction == Vector2.UnitY) { return MathF.PI; }
             if (direction == Vector2.UnitX) { return MathF.PI / 2; }
             if (direction == -Vector2.UnitX) { return -MathF.PI / 2; }
-            return MathF.PI;
+            return 0;
         }
 
         public void Update(DisplayObject target, float deltaSeconds)
@@ -101,11 +103,11 @@ namespace Snake_Game
             }
             else if (Input.GetKeyDown(Key.Up))
             {
-                TryChangeDirection(new Vector2(0, 1));
+                TryChangeDirection(new Vector2(0, -1));
             }
             else if (Input.GetKeyDown(Key.Down))
             {
-                TryChangeDirection(new Vector2(0, -1));
+                TryChangeDirection(new Vector2(0, 1));
             }
 
             _updateTimer -= deltaSeconds;
@@ -142,7 +144,9 @@ namespace Snake_Game
             var sp = new Sprite(HeadSprite)
             {
                 X = newX, Y = newY,
-                Rotation = GetRotation(_direction)
+                ScaleX = 2, ScaleY = 2,
+                Rotation = GetRotation(_direction),
+                PivotX = 8, PivotY = 8
             };
             KestrelApp.Stage.AddChild(sp);
             _positions.Add(sp);

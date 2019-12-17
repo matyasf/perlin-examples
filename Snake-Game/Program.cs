@@ -32,7 +32,7 @@ namespace Snake_Game
         {
             KestrelApp.Stage.Tint = RgbaByte.Grey;
             // sample snake game
-            /*
+            
             var family = KestrelApp.Fonts.Install(Path.Combine(AppContext.BaseDirectory, "Assets", "Fonts", "Sunflower-Medium.ttf"));
             var font = family.CreateFont(28);
             
@@ -47,7 +47,7 @@ namespace Snake_Game
             KestrelApp.Stage.AddChild(scoreTextField);
             snake.ScoreChanged += () => scoreTextField.Text =snake.Score.ToString();
             snake.ScoreChanged += () => highScore = Math.Max(highScore, snake.Score);
-            */
+            
 //            var tf = new TextField(KestrelApp.FontRobotoMono.CreateFont(14)) {Text = "BBA", Width = 62, Height = 32, X = 40, Y = 20};
             var s2 = new Sprite("snake-head.png") {X = 150, Y = 150};
             var s3 = new Sprite("snake-head.png") {X = 0, Y = 50};
@@ -73,7 +73,7 @@ namespace Snake_Game
                 if (a > 99) a = 0;
                 //Console.WriteLine(s2.Rotation + " " + s2.GetBoundsWithChildren().Width);
             };
-            //KestrelApp.ShowStats();
+            KestrelApp.ShowStats();
         }
     }
 }

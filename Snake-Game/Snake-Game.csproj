@@ -10,4 +10,19 @@
       <ProjectReference Include="..\kestrel-desktop\kestrel-desktop.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Assets\food.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\snake-3.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\snake-head.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\Fonts\Sunflower-Medium.ttf">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

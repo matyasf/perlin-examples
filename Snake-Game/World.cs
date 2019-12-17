@@ -21,7 +21,9 @@ namespace Snake_Game
             FoodSprite = new Sprite("food.png")
             {
                 X = currentFoodLocation.X * CellSize, 
-                Y = currentFoodLocation.Y * CellSize
+                Y = currentFoodLocation.Y * CellSize,
+                WidthScaled = 32, HeightScaled = 32,
+                PivotX = 32, PivotY = 32
             };
             KestrelApp.Stage.AddChild(FoodSprite);
         }
