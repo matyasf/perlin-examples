@@ -17,41 +17,49 @@ namespace Engine.Display
     /// </summary>
     public class TextField : DisplayObject
     {
+        private Font _font;
         private Image<Rgba32> _image;
         private TextureView _textureView;
         private string _text;
-        private bool _textInvalid;
-        private bool _sizeInvalid;
-        public Font Font;
-        public Rgba32 FontColor = Rgba32.Black;
-        public Rgba32 BackgroundColor = new Rgba32(255, 255, 255, 0);
-        public HorizontalAlignment HorizontalAlign = HorizontalAlignment.Left;
-        public VerticalAlignment VerticalAlign = VerticalAlignment.Top;
+        private bool _needsTextureRedraw;
+        private bool _needsTextureRecreate;
+        private bool _autoSize;
+        private Rgba32 _fontColor = Rgba32.Black;
+        private Rgba32 _backgroundColor = new Rgba32(255, 255, 255, 0);
+        private HorizontalAlignment _horizontalAlign = HorizontalAlignment.Left;
+        private VerticalAlignment _verticalAlign = VerticalAlignment.Top;
 
         /// <summary>
         /// Gets or sets a value indicating when a text should wrap.
         /// Default is 0, in this case no automatic wrapping will happen.
         /// </summary>
 //        public float WrapTextWidth = 0;
+        
         private Texture Texture { get; set; }
 
         /// <summary>
-        /// Creates a new TextField instance. For text to be displayed, its Width, Height, Font and Text properties
-        /// must be set.
+        /// Creates a new TextField instance.
         /// </summary>
         /// <param name="font">The font to use. An example to load one:
         /// <code>
-        /// var fc = new FontCollection();
-        /// var family = fc.Install(Path.Combine(AppContext.BaseDirectory, "Assets", "Fonts", "Sunflower-Medium.ttf"));
+        /// var family = KestrelApp.Fonts.Install(Path.Combine("Assets", "Fonts", "Arial.ttf"));
         /// var font = family.CreateFont(28);
         /// </code>
         /// </param>
-        public TextField(Font font)
+        /// <param name="text">The text to display.</param>
+        /// <param name="autoSize">Whether to automatically set the width and height of this object to fit the text.
+        /// If its set to false you need to define its Width and Height otherwise nothing will be displayed since
+        /// the default Width and Height are 0.</param>
+        public TextField(Font font, string text = null, bool autoSize = true)
         {
-            Font = font;
+            _text = text;
+            _font = font;
+            AutoSize = autoSize;
         }
         
-        private bool _autoSize = false;
+        /// <summary>
+        /// The text displayed in this TextField.
+        /// </summary>
         public string Text
         {
             get => _text;
@@ -62,7 +70,7 @@ namespace Engine.Display
                     return;
                 }
                 _text = value;
-                _textInvalid = true;
+                _needsTextureRedraw = true;
                 if (_autoSize)
                 {
                     PerformAutoSize();
@@ -76,7 +84,7 @@ namespace Engine.Display
             set
             {
                 OriginalWidth = value;
-                _sizeInvalid = true;
+                _needsTextureRecreate = true;
             }
         }
 
@@ -86,12 +94,12 @@ namespace Engine.Display
             set
             {
                 OriginalHeight = value;
-                _sizeInvalid = true;
+                _needsTextureRecreate = true;
             }
         }
 
         /// <summary>
-        /// If true after setting text the textfield is resized automatically to the text size.
+        /// The textfield is resized automatically to fit the the text size if set to <code>true</code>.
         /// </summary>
         public bool AutoSize
         {
@@ -107,7 +115,73 @@ namespace Engine.Display
             }
         }
 
-        private void PerformAutoSize()
+        public Font Font
+        {
+            get => _font;
+            set
+            {
+                _needsTextureRedraw = true;
+                _font = value;
+            }
+        }
+
+        /// <summary>
+        /// The color of the displayed font, default is <code>Rgba32.Black</code>
+        /// </summary>
+        public Rgba32 FontColor
+        {
+            get => _fontColor;
+            set
+            {
+                _needsTextureRedraw = true;
+                _fontColor = value;
+            }
+        }
+
+        /// <summary>
+        /// The vertical alignment of the text inside this TextField. Default is VerticalAlignment.Top
+        /// </summary>
+        public VerticalAlignment VerticalAlign
+        {
+            get => _verticalAlign;
+            set
+            {
+                _needsTextureRedraw = true;
+                _verticalAlign = value;
+            }
+        }
+
+        /// <summary>
+        /// The horizontal alignment of the text inside of this TextField. Default is HorizontalAlignment.Left
+        /// </summary>
+        public HorizontalAlignment HorizontalAlign
+        {
+            get => _horizontalAlign;
+            set
+            {
+                _needsTextureRedraw = true;
+                _horizontalAlign = value;
+            }
+        }
+
+        /// <summary>
+        /// The background color for this TextField. Default is Rgba32(255, 255, 255, 0);
+        /// </summary>
+        public Rgba32 BackgroundColor
+        {
+            get => _backgroundColor;
+            set
+            {
+                _needsTextureRedraw = true;
+                _backgroundColor = value;
+            }
+        }
+        
+        /// <summary>
+        /// Sets the size of this TextField to the size of its text. This is called automatically at the latest
+        /// before rendering, you usually do not need to call it.
+        /// </summary>
+        public void PerformAutoSize()
         {
             var size = MeasureText();
             Width = size.X;
@@ -116,7 +190,7 @@ namespace Engine.Display
 
         private void RecreateTexture()
         {
-            _sizeInvalid = false;
+            _needsTextureRecreate = false;
             Texture?.Dispose();
             _textureView?.Dispose();
             _image?.Dispose();
@@ -137,12 +211,12 @@ namespace Engine.Display
 
         public override void Render(float elapsedTimeSecs)
         {
-            if (_sizeInvalid)
+            if (_needsTextureRecreate)
             {
                 RecreateTexture();
                 DrawText();
             }
-            if (_textInvalid)
+            if (_needsTextureRedraw)
             {
                 DrawText();
             }
@@ -154,30 +228,29 @@ namespace Engine.Display
         /// </summary>
         private unsafe void DrawText()
         {
-            _textInvalid = false;
+            _needsTextureRedraw = false;
             fixed (void* data = &MemoryMarshal.GetReference(_image.GetPixelSpan()))
             {
                 Unsafe.InitBlock(data, 0, (uint)(_image.Width * _image.Height * 4));
             }
             _image.Mutate(ctx =>
             {
-                if (BackgroundColor.A != 0)
+                if (_backgroundColor.A != 0)
                 {
-                    ctx.BackgroundColor(Color.FromRgba(BackgroundColor.R, BackgroundColor.G, BackgroundColor.B, BackgroundColor.A));   
+                    ctx.BackgroundColor(Color.FromRgba(_backgroundColor.R,
+                                                       _backgroundColor.G, 
+                                                       _backgroundColor.B,
+                                                       _backgroundColor.A));   
                 }
                 ctx.DrawText(
                     new TextGraphicsOptions
                     {
-                        //WrapTextWidth = WrapTextWidth, // buggy! was the whole width
-                        WrapTextWidth = _image.Width,
+                        WrapTextWidth = _image.Width, // TODO buggy! conflicts with alignment
                         Antialias = true,
                         HorizontalAlignment = HorizontalAlign, 
-                        VerticalAlignment = VerticalAlign
+                        VerticalAlignment = _verticalAlign
                     },
-                    _text,
-                    Font,
-                    FontColor,
-                    new PointF());
+                    _text, _font, FontColor, new PointF());
             });
             fixed (void* data = &MemoryMarshal.GetReference(_image.GetPixelSpan()))
             {
@@ -188,9 +261,16 @@ namespace Engine.Display
             }
         }
 
+        /// <summary>
+        /// Returns the dimensions of purely the text.
+        /// </summary>
         public Point MeasureText()
         {
-            var size =  TextMeasurer.Measure(_text, new RendererOptions(Font));
+            if (_text == null)
+            {
+                return Point.Create();
+            }
+            var size =  TextMeasurer.Measure(_text, new RendererOptions(_font));
             size.Width = (float)Math.Ceiling(size.Width);
             size.Height = (float)Math.Ceiling(size.Height);
             return Point.Create(size.Width, size.Height);

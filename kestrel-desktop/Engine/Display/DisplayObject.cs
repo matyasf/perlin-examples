@@ -39,18 +39,23 @@ namespace Engine.Display
         private float _scaleY = 1.0f;
         
         /// <summary>
-        /// The GPU resource set for this object. Its the same object for objects with the same image.
+        /// The GPU resource set for this object.
         /// </summary>
         internal ResourceSet ResSet;
         private RenderState _renderState;
         private QuadVertex _gpuVertex;
         private readonly Matrix2D _transformationMatrix;
         private bool _transformationMatrixChanged = true;
-        
-        public DisplayObject()
+
+        protected DisplayObject()
         {
             _gpuVertex.Tint = RgbaByte.White;
             _transformationMatrix = Matrix2D.Create();
+        }
+        
+        ~DisplayObject()
+        {
+            ResSet?.Dispose();
         }
         
         internal ref QuadVertex GetGpuVertex()
@@ -276,6 +281,9 @@ namespace Engine.Display
             return GetBounds(Parent);
         }
         
+        /// <summary>
+        /// Returns the bounding box rectangle relative to the given DisplayObject
+        /// </summary>
         public virtual Rectangle GetBounds(DisplayObject targetSpace)
         {
             Rectangle outRect = Rectangle.Create();
@@ -311,6 +319,10 @@ namespace Engine.Display
             return outRect;
         }
 
+        /// <summary>
+        /// Returns the bounding box of this object in with its own and transformation and its children
+        /// bounds included.
+        /// </summary>
         public virtual Rectangle GetBoundsWithChildren()
         {
             return GetBoundsWithChildren(Parent);

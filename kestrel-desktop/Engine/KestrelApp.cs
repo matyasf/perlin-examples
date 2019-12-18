@@ -11,6 +11,9 @@ using Veldrid.StartupUtilities;
 
 namespace Engine
 {
+    /// <summary>
+    /// A static singleton class to access global properties of the app.
+    /// </summary>
     public static class KestrelApp
     {
         // bug ImageSharp beta7: if text overflows it'll throw an exception, see
