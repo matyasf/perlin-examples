@@ -4,7 +4,7 @@ using Engine.Display;
 using Engine.Geom;
 using Veldrid;
 
-namespace Engine
+namespace Engine.Rendering
 {
     /// <summary>
     /// Internal class used in rendering.
@@ -14,7 +14,7 @@ namespace Engine
         private DeviceBuffer _vertexBuffer;
         private readonly List<DisplayObject> _drawQueue = new List<DisplayObject>();
         internal uint DrawCount;
-        private Stack<RenderState> _renderStates = new Stack<RenderState>();
+        private readonly Stack<RenderState> _renderStates = new Stack<RenderState>();
         
         public BatchRenderer()
         {

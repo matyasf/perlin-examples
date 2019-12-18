@@ -24,31 +24,31 @@ namespace Engine.Geom
 
         public float Top
         {
-            get { return Y; }
-            set { Y = value; }
+            get => Y;
+            set => Y = value;
         }
 
         public float Bottom
         {
-            get { return Y + Height; }
-            set { Height = value - Y; }
+            get => Y + Height;
+            set => Height = value - Y;
         }
 
         public float Left
         {
-            get { return X; }
-            set { X = value; }
+            get => X;
+            set => X = value;
         }
 
         public float Right
         {
-            get { return X + Width; }
-            set { Width = value - X; }
+            get => X + Width;
+            set => Width = value - X;
         }
 
         public Point TopLeft
         {
-            get { return Point.Create(X, Y); }
+            get => Point.Create(X, Y);
             set
             { 
                 X = value.X;
@@ -58,7 +58,7 @@ namespace Engine.Geom
 
         public Point BottomRight
         {
-            get { return Point.Create(X + Width, Y + Height); }
+            get => Point.Create(X + Width, Y + Height);
             set
             { 
                 Right = value.X;
@@ -68,7 +68,7 @@ namespace Engine.Geom
 
         public Point Size
         {
-            get { return Point.Create(Width, Height); }
+            get => Point.Create(Width, Height);
             set
             {
                 Width = value.X;
@@ -118,12 +118,10 @@ namespace Engine.Geom
             {
                 return null;
             }
-
             float left = Math.Max(X, rectangle.X);
             float right = Math.Min(X + Width, rectangle.X + rectangle.Width);
             float top = Math.Max(Y, rectangle.Y);
             float bottom = Math.Min(Y + Height, rectangle.Y + rectangle.Height);
-
             if (left > right || top > bottom)
             {
                 return Create();
@@ -178,7 +176,6 @@ namespace Engine.Geom
                 Width = -Width;
                 X -= Width;
             }
-
             if (Height < 0.0f)
             {
                 Height = -Height;
@@ -204,11 +201,10 @@ namespace Engine.Geom
             {
                 return false;
             }
-
-            return MathUtil.Equals(X, other.X) &&
-            MathUtil.Equals(Y, other.Y) &&
-            MathUtil.Equals(Width, other.Width) &&
-            MathUtil.Equals(Height, other.Height);
+            return MathUtil.IsAlmostEqual(X, other.X) &&
+                   MathUtil.IsAlmostEqual(Y, other.Y) &&
+                   MathUtil.IsAlmostEqual(Width, other.Width) &&
+                   MathUtil.IsAlmostEqual(Height, other.Height);
         }
 
         /// <summary>

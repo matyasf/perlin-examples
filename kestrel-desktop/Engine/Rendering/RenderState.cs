@@ -1,6 +1,6 @@
 using Engine.Geom;
 
-namespace Engine.Display
+namespace Engine.Rendering
 {
     public class RenderState
     {

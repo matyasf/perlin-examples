@@ -3,8 +3,11 @@ using System.IO;
 using Veldrid;
 using Veldrid.SPIRV;
 
-namespace Engine
+namespace Engine.Rendering
 {
+    /// <summary>
+    /// The GPU pipeline used for rendering.
+    /// </summary>
     public class KestrelPipeline
     {
         public Pipeline Pipeline { get; private set; }

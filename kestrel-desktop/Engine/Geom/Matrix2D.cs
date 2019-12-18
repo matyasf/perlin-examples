@@ -277,12 +277,12 @@ namespace Engine.Geom
             }
             else
             {
-                return MathUtil.Equals(A, other.A) &&
-                MathUtil.Equals(B, other.B) &&
-                MathUtil.Equals(C, other.C) &&
-                MathUtil.Equals(D, other.D) &&
-                MathUtil.Equals(Tx, other.Tx) &&
-                MathUtil.Equals(Ty, other.Ty);
+                return MathUtil.IsAlmostEqual(A, other.A) &&
+                MathUtil.IsAlmostEqual(B, other.B) &&
+                MathUtil.IsAlmostEqual(C, other.C) &&
+                MathUtil.IsAlmostEqual(D, other.D) &&
+                MathUtil.IsAlmostEqual(Tx, other.Tx) &&
+                MathUtil.IsAlmostEqual(Ty, other.Ty);
             }
         }
 

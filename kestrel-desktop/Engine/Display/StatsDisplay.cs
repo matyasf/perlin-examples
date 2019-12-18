@@ -1,22 +1,21 @@
 using System.Diagnostics;
-using Engine.Display;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Engine
+namespace Engine.Display
 {
     /// <summary>
-    /// Simple overlay that displays some performance statistics.
+    /// Simple overlay that displays some performance statistics. It is used internally by the engine.
     /// </summary>
-    public class StatsDisplay : Sprite
+    internal sealed class StatsDisplay : Sprite
     {
         private static readonly float UPDATE_INTERVAL = 0.5f;
         private static readonly float B_TO_MB = 1.0f / (1024f * 1024f); // convert from bytes to MB
         private readonly TextField _values;
         private int _frameCount;
         private float _totalTime;
-        private const uint _width = 90;
-        private const uint _height = 48;
+        private const uint ComponentWidth = 90;
+        private const uint ComponentHeight = 48;
         
         public float Fps;
         public float Memory;
@@ -26,7 +25,7 @@ namespace Engine
         /// <summary>
         /// Creates a new Statistics Box.
         /// </summary>
-        public StatsDisplay() : base(_width, _height, new Rgba32(0.6f, 0f, 0f, 0.7f))
+        public StatsDisplay() : base(ComponentWidth, ComponentHeight, new Rgba32(0.6f, 0f, 0f, 0.7f))
         {
             const string gpuLabel = "\ngpu memory:";
             const string labels = "frames/sec:\nstd memory:" + gpuLabel + "\ndraw calls:";
@@ -34,8 +33,8 @@ namespace Engine
 
             var labels1 = new TextField(font)
             {
-                Width = _width - 2,
-                Height = _height,
+                Width = ComponentWidth - 2,
+                Height = ComponentHeight,
                 Text = labels,
                 HorizontalAlign = HorizontalAlignment.Left,
                 X = 2
@@ -43,8 +42,8 @@ namespace Engine
 
             _values = new TextField(font)
             {
-                Width = _width - 1,
-                Height = _height,
+                Width = ComponentWidth - 1,
+                Height = ComponentHeight,
                 HorizontalAlign = HorizontalAlignment.Right
             };
             AddChild(labels1);
@@ -83,7 +82,7 @@ namespace Engine
         /// </summary>
         public void Update()
         {
-            //todo _background.Tint = _skipCount > (_frameCount / 2) ? (uint)0x003F00 : 0x0;
+            // _background.Tint = _skipCount > (_frameCount / 2) ? (uint)0x003F00 : 0x0;
             Fps = _totalTime > 0 ? _frameCount / _totalTime : 0;
             Process currentProc = Process.GetCurrentProcess();
             Memory = currentProc.PrivateMemorySize64 * B_TO_MB;
@@ -103,7 +102,7 @@ namespace Engine
         /// </summary>
         private int GetGPUMemory()
         {
-            /*
+            /* needs to figure out how to do this in Veldrid
             if (GLExtensions.DeviceSupportsOpenGLExtension("GL_NVX_gpu_memory_info"))
             {
                 // this returns in Kb, Nvidia only extension

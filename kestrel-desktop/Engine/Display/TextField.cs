@@ -8,6 +8,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
 using Veldrid;
+using Point = Engine.Geom.Point;
 
 namespace Engine.Display
 {
@@ -109,8 +110,8 @@ namespace Engine.Display
         private void PerformAutoSize()
         {
             var size = MeasureText();
-            Width = size.Width;
-            Height = size.Height;
+            Width = size.X;
+            Height = size.Y;
         }
 
         private void RecreateTexture()
@@ -154,15 +155,6 @@ namespace Engine.Display
         private unsafe void DrawText()
         {
             _textInvalid = false;
-            SizeF txtSize = MeasureText();
-            if (txtSize.Width > _image.Width || txtSize.Height > _image.Height)
-            {
-                // ImageSharp bug (beta6): if text overflows it'll throw an exception
-                Console.WriteLine("Cannot render text '" + _text + "', it would take up " +
-                                  txtSize + " and the textField is smaller. (" + _image.Width + 
-                                  "x" + _image.Height + ")");
-                return;
-            }
             fixed (void* data = &MemoryMarshal.GetReference(_image.GetPixelSpan()))
             {
                 Unsafe.InitBlock(data, 0, (uint)(_image.Width * _image.Height * 4));
@@ -196,12 +188,12 @@ namespace Engine.Display
             }
         }
 
-        public SizeF MeasureText()
+        public Point MeasureText()
         {
             var size =  TextMeasurer.Measure(_text, new RendererOptions(Font));
             size.Width = (float)Math.Ceiling(size.Width);
             size.Height = (float)Math.Ceiling(size.Height);
-            return size;
+            return Point.Create(size.Width, size.Height);
         }
     }
 }

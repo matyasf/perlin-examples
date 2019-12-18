@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kestrel-desktop", "kestrel-desktop.csproj", "{4AAEBC86-5A38-4905-A821-D3CD985F5CB2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kestrel-desktop", "kestrel-desktop\kestrel-desktop.csproj", "{4AAEBC86-5A38-4905-A821-D3CD985F5CB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake-Game", "..\Snake-Game\Snake-Game.csproj", "{D4FF8E5A-E50C-4BB6-B60A-6A9531E38B5D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake-Game", "Snake-Game\Snake-Game.csproj", "{D4FF8E5A-E50C-4BB6-B60A-6A9531E38B5D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

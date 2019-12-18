@@ -1,5 +1,8 @@
 namespace Engine.Geom
 {
+    /// <summary>
+    /// Static utility class for mathematical functions.
+    /// </summary>
     public static class MathUtil
     {
         /// <summary>
@@ -40,22 +43,14 @@ namespace Engine.Geom
             return outP;
         }*/
 
-        /// <summary>
-        /// checks if two numbers are equal with a small margin of error
-        /// </summary>
-        public static bool Equals(float a, float b, float epsilon = 0.000005f)
-        {
-            return System.Math.Abs(a - b) < epsilon;
-        }
-
         public static float Clamp(float value, float min, float max)
         {
             return System.Math.Min(max, System.Math.Max(value, min));
         }
 
         /// <summary>
-        /// Fast sinus calculation with a look up table.
-        /// Note that it is less accurate than Math.Sin; the largest error is around 0.3 degrees
+        /// Fast sine calculation with a look up table.
+        /// It is less accurate than Math.Sin; the largest error is around 0.3 degrees
         /// </summary>
         public static float FastSin(float angle)
         {
@@ -63,8 +58,8 @@ namespace Engine.Geom
         }
 
         /// <summary>
-        /// Fast cosinus calculation with a look up table.
-        /// Note that it is less accurate than Math.Cos; the largest error is around 0.3 degrees;
+        /// Fast cosine calculation with a look up table.
+        /// It is less accurate than Math.Cos; the largest error is around 0.3 degrees;
         /// </summary>
         public static float FastCos(float angle)
         {
@@ -129,26 +124,11 @@ namespace Engine.Geom
         }
 
         /// <summary>
-        /// Divides the value of the x, y, and z properties of the current Vector3D object 
-        /// by the value of its w property.
-        ///
-        /// If the current Vector3D object is the result of multiplying a Vector3D object 
-        /// by a projection Matrix3D object, the w property can hold the transform value.
-        /// The ProjectVector3D() method then can complete the projection by dividing the
-        /// elements by the w property.
+        /// checks if two numbers are equal with a small margin of error
         /// </summary>
-        public static float[] ProjectVector3D(ref float[] vector)
+        public static bool IsAlmostEqual(float a, float b, float epsilon = 0.000005f)
         {
-            vector[0] = vector[0] / vector[3];
-            vector[1] = vector[1] / vector[3];
-            vector[2] = vector[2] / vector[3];
-            return vector;
-        }
-
-        /** Indicates if two float values are equal, give or take <code>epsilon</code>. */
-        public static bool IsEquivalent(float a, float b, float epsilon = 0.0001f)
-        {
-            return (a - epsilon < b) && (a + epsilon > b);
+            return System.Math.Abs(a - b) < epsilon;
         }
 
     }

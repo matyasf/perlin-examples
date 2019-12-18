@@ -36,21 +36,9 @@ namespace Engine.Geom
             }
         }
 
-        public float Angle
-        {
-            get
-            {
-                return (float)Math.Atan2(Y, X);
-            }
-        }
+        public float Angle => (float)Math.Atan2(Y, X);
 
-        public bool IsOrigin
-        {
-            get
-            {
-                return X == 0.0f && Y == 0.0f;
-            }
-        }
+        public bool IsOrigin => X == 0.0f && Y == 0.0f;
 
         public void Invert()
         {
@@ -125,7 +113,7 @@ namespace Engine.Geom
                 return false;
             }
 
-            return MathUtil.Equals(X, other.X) && MathUtil.Equals(Y, other.Y);
+            return MathUtil.IsAlmostEqual(X, other.X) && MathUtil.IsAlmostEqual(Y, other.Y);
         }
 
         public float Distance(Point p2)

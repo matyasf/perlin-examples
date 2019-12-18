@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Engine.Geom;
+using Engine.Rendering;
 using Veldrid;
 using Point = Engine.Geom.Point;
 using Rectangle = Engine.Geom.Rectangle;
@@ -15,9 +16,21 @@ namespace Engine.Display
         public delegate void EnterFrame(DisplayObject target, float elapsedTimeSecs);
         public delegate void UIChange(DisplayObject target);
 
+        /// <summary>
+        /// This event will get called on every frame while this object is on the Stage.
+        /// </summary>
         public event EnterFrame EnterFrameEvent;
+        /// <summary>
+        /// Called when an object is added to the Stage.
+        /// </summary>
         public event UIChange AddedToStage;
+        /// <summary>
+        /// Called when an object is removed from the Stage.
+        /// </summary>
         public event UIChange RemovedFromStage;
+        /// <summary>
+        /// Sets the visibility of an object.
+        /// </summary>
         public bool Visible = true;
 
         private float _pivotX;
@@ -52,7 +65,8 @@ namespace Engine.Display
 
         protected bool IsOnStageProperty;
         /// <summary>
-        /// Whether this instance is on the Stage. If something is not on the Stage, it will not render.
+        /// Whether this instance is connected to the Stage (= itself or one its parent/grandparent/.. is on the Stage).
+        /// If something is not on the Stage, it will not render.
         /// </summary>
         public bool IsOnStage
         {
@@ -74,6 +88,9 @@ namespace Engine.Display
             }
         }
         
+        /// <summary>
+        /// Removed this object from its Parent. Does nothing if it has no Parent.
+        /// </summary>
         public void RemoveFromParent()
         {
             if (Parent != null)
@@ -84,28 +101,38 @@ namespace Engine.Display
             }
         }
 
+        /// <summary>
+        /// Renders the object. You do not need to call this, the engine calls it on every frame while
+        /// this is on the Stage
+        /// </summary>
+        /// <param name="elapsedTimeSecs">The elapsed time in seconds since the last render call</param>
         public virtual void Render(float elapsedTimeSecs)
         {
             if (IsOnStageProperty)
             {
                 InvokeEnterFrameEvent(elapsedTimeSecs);
             }
-            if (Visible)
+            if (!Visible)
             {
-                _renderState = KestrelApp.Renderer.PushRenderState(1.0f, TransformationMatrix, _scaleX, _scaleY);
-                var bounds = GetBounds();
-                if (bounds.Width > 0 && bounds.Height > 0)
-                {
-                    KestrelApp.Renderer.AddToRenderQueue(this);
-                }
-                foreach (var child in Children)
-                {
-                    child.Render(elapsedTimeSecs);
-                }
-                KestrelApp.Renderer.PopRenderState();
+                return;
             }
+            _renderState = KestrelApp.Renderer.PushRenderState(1.0f, TransformationMatrix, _scaleX, _scaleY);
+            var bounds = GetBounds();
+            if (bounds.Width > 0 && bounds.Height > 0)
+            {
+                KestrelApp.Renderer.AddToRenderQueue(this);
+            }
+            foreach (var child in Children)
+            {
+                child.Render(elapsedTimeSecs);
+            }
+            KestrelApp.Renderer.PopRenderState();
         }
 
+        /// <summary>
+        /// The parent of this object. You cannot set this manually, call <code>AddChild</code> on the object you want to add
+        /// this to.
+        /// </summary>
         public virtual DisplayObject Parent { get; internal set; }
 
         private float _x;
@@ -196,7 +223,11 @@ namespace Engine.Display
                 _rotation = value;
             }
         }
-
+        
+        /// <summary>
+        /// The color modifier of this object. If its set to <code>RgbaByte.White</code> (the default) it will
+        /// apply no modification. 
+        /// </summary>
         public RgbaByte Tint
         {
             get => _gpuVertex.Tint;
@@ -253,7 +284,7 @@ namespace Engine.Display
                 outRect.Width = OriginalWidth;
                 outRect.Height = OriginalHeight;
             }
-            else if (targetSpace == Parent && !IsRotated) // Optimization
+            else if (targetSpace == Parent && _rotation == 0.0) // Optimization
             {
                 outRect = Rectangle.Create(_x - _pivotX * _scaleX,
                     _y - _pivotY * _scaleY,
@@ -301,7 +332,8 @@ namespace Engine.Display
         }
         
         /// <summary>
-        /// The transformation matrix of the object relative to its parent.
+        /// The transformation matrix of the object relative to its parent. This is used internally, you likely
+        /// do not need it.
         /// <returns>CAUTION: not a copy, but the actual object!</returns>
         /// </summary>
         public Matrix2D TransformationMatrix
@@ -420,12 +452,7 @@ namespace Engine.Display
             }
             throw new ArgumentException("Object not connected to target");
         }
-        
-        /// <summary>
-        /// Indicates if the object is rotated or skewed in any way.
-        /// </summary>
-        internal bool IsRotated => _rotation != 0.0;
-        
+
         /// <summary>
         /// The topmost object in the display tree the object is part of.
         /// </summary>
@@ -442,6 +469,10 @@ namespace Engine.Display
             }
         }
 
+        /// <summary>
+        /// The horizontal scale of the object. 1 (the default) represents no scaling, 2 is scaled to 2x,
+        /// negative values mirror the object (currently buggy!)
+        /// </summary>
         public float ScaleX
         {
             get => _scaleX;
@@ -456,6 +487,10 @@ namespace Engine.Display
             }
         }
 
+        /// <summary>
+        /// The vertical scale of the object. 1 (the default) represents no scaling, 2 is scaled to 2x,
+        /// negative values mirror the object.
+        /// </summary>
         public float ScaleY
         {
             get => _scaleY;
@@ -469,7 +504,10 @@ namespace Engine.Display
                 _scaleY = value;
             }
         }
-
+        
+        /// <summary>
+        /// The pivot point of an object is the center of its rotation. By default its the top left corner. 
+        /// </summary>
         public float PivotX
         {
             get => _pivotX;
@@ -484,6 +522,9 @@ namespace Engine.Display
             }
         }
 
+        /// <summary>
+        /// The pivot point of an object is the center of its rotation. By default its the top left corner. 
+        /// </summary>
         public float PivotY
         {
             get => _pivotY;
@@ -500,13 +541,41 @@ namespace Engine.Display
 
         protected readonly List<DisplayObject> Children = new List<DisplayObject>();
         
+        /// <summary>
+        /// <para>
+        /// Adds a child to this instance. The child is added to the front (top) of all other children in
+        /// this instance. (To add a child to a specific index position, use the <code>AddChildAt()</code> method.)
+        /// </para>
+        /// <para>
+        /// If you add a child object that already has a different display object container as a parent, the object
+        /// is removed from the child list of the other display object container.
+        /// </para>
+        /// </summary>
+        /// <param name="child">The child to add</param>
         public virtual void AddChild(DisplayObject child)
+        {
+            AddChildAt(child, NumChildren);
+        }
+
+        /// <summary>
+        /// <para>
+        /// Adds a child to this instance. The child is added to the specified index, 0 represents the back (bottom)
+        /// of this DisplayObject.
+        /// </para>
+        /// <para>
+        /// If you add a child object that already has a different display object container as a parent, the object
+        /// is removed from the child list of the other display object container.
+        /// </para>
+        /// </summary>
+        /// <param name="child">The child to add</param>
+        /// <param name="index">Index to add to.</param>
+        public virtual void AddChildAt(DisplayObject child, int index)
         {
             if (child.Parent != null)
             {
                 child.RemoveFromParent();
             }
-            Children.Add(child);
+            Children.Insert(index, child);
             if (IsOnStageProperty)
             {
                 child.IsOnStage = true;
@@ -514,11 +583,53 @@ namespace Engine.Display
             child.Parent = this;
         }
 
+        /// <summary>
+        /// Removes a child from this object's list of children.
+        /// </summary>
+        /// <param name="child">The child to remove</param>
         public virtual void RemoveChild(DisplayObject child)
         {
             Children.Remove(child);
             child.IsOnStage = false;
             child.Parent = null;
         }
+        
+        /// <summary>
+        /// Removes a child at the specified index.
+        /// </summary>
+        /// <param name="index"></param>
+        public virtual void RemoveChildAt(int index)
+        {
+            RemoveChild(Children[index]);
+        }
+        
+        /// <summary>
+        /// Removes every child from this instance.
+        /// </summary>
+        public virtual void RemoveAllChildren()
+        {
+            while (NumChildren > 0)
+            {
+                RemoveChildAt(0);
+            }
+        }
+        
+        /// <summary>
+        /// Swaps the rendering order of the 2 specified children.
+        /// </summary>
+        /// <param name="child1"></param>
+        /// <param name="child2"></param>
+        public virtual void SwapChildren(DisplayObject child1, DisplayObject child2)
+        {
+            var firstIndex = Children.FindIndex(o => o == child1);
+            var secondIndex = Children.FindIndex(o => o == child2);
+            DisplayObject tmp = Children[firstIndex];
+            Children[firstIndex] = Children[secondIndex];
+            Children[secondIndex] = tmp;
+        }
+        /// <summary>
+        /// The number of children.
+        /// </summary>
+        public virtual int NumChildren => Children.Count;
     }
 }
