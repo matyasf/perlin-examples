@@ -29,7 +29,7 @@ namespace Engine.Display
         /// </summary>
         public event UiEvent RemovedFromStage;
         /// <summary>
-        /// Called when this object is clicked with the mouse.
+        /// TODO not working yet Called when this object is clicked with the mouse.
         /// </summary>
         public event UiEvent MouseClick;
         /// <summary>

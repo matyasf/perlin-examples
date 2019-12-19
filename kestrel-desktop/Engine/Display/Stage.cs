@@ -65,6 +65,7 @@ namespace Engine.Display
         internal void OnMouseMove(int x, int y)
         {
             var res = HitTest(Point.Create(x, y));
+            // TODO somehow determine who we entered and left to calculate MOUSE_ENTER and MOUSE_OUT events
             Console.WriteLine("move x:" + x + " y:" + y + " " + res);
         }
 

@@ -25,16 +25,6 @@ namespace Engine
             return _newKeysThisFrame.Contains(key);
         }
 
-        public static bool GetMouseButton(MouseButton button)
-        {
-            return _currentlyPressedMouseButtons.Contains(button);
-        }
-
-        public static bool GetMouseButtonDown(MouseButton button)
-        {
-            return _newMouseButtonsThisFrame.Contains(button);
-        }
-
         public static void UpdateFrameInput(InputSnapshot snapshot)
         {
             FrameSnapshot = snapshot;
@@ -59,26 +49,16 @@ namespace Engine
                 MouseEvent me = snapshot.MouseEvents[i];
                 if (me.Down)
                 {
-                    MouseDown(me.MouseButton);
+                    if (_currentlyPressedMouseButtons.Add(me.MouseButton))
+                    {
+                        _newMouseButtonsThisFrame.Add(me.MouseButton);
+                    }
                 }
                 else
                 {
-                    MouseUp(me.MouseButton);
+                    _currentlyPressedMouseButtons.Remove(me.MouseButton);
+                    _newMouseButtonsThisFrame.Remove(me.MouseButton);
                 }
-            }
-        }
-
-        private static void MouseUp(MouseButton mouseButton)
-        {
-            _currentlyPressedMouseButtons.Remove(mouseButton);
-            _newMouseButtonsThisFrame.Remove(mouseButton);
-        }
-
-        private static void MouseDown(MouseButton mouseButton)
-        {
-            if (_currentlyPressedMouseButtons.Add(mouseButton))
-            {
-                _newMouseButtonsThisFrame.Add(mouseButton);
             }
         }
 
