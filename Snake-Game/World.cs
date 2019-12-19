@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Numerics;
 using Engine;
 using Engine.Display;
@@ -18,7 +19,7 @@ namespace Snake_Game
             Size = size;
             CellSize = cellSize;
             var currentFoodLocation = GetRandomFoodLocation();
-            FoodSprite = new Sprite("food.png")
+            FoodSprite = new Sprite(Path.Combine(AppContext.BaseDirectory, "Assets", "food.png"))
             {
                 X = currentFoodLocation.X * CellSize, 
                 Y = currentFoodLocation.Y * CellSize,

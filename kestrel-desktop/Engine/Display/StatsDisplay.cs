@@ -31,22 +31,21 @@ namespace Engine.Display
             const string labels = "frames/sec:\nstd memory:" + gpuLabel + "\ndraw calls:";
             var font = KestrelApp.FontRobotoMono.CreateFont(9);
 
-            var labels1 = new TextField(font)
+            var leftText = new TextField(font, labels, false)
             {
                 Width = ComponentWidth - 2,
                 Height = ComponentHeight,
-                Text = labels,
                 HorizontalAlign = HorizontalAlignment.Left,
                 X = 2
             };
 
-            _values = new TextField(font)
+            _values = new TextField(font, null, false)
             {
                 Width = ComponentWidth - 1,
                 Height = ComponentHeight,
                 HorizontalAlign = HorizontalAlignment.Right
             };
-            AddChild(labels1);
+            AddChild(leftText);
             AddChild(_values);
 
             AddedToStage += OnAddedToStage;

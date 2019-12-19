@@ -20,15 +20,14 @@ namespace Engine
         /// <summary>
         /// Loads an stores an image from the disk.
         /// </summary>
-        /// <param name="imageName">the image filename</param>
-        public (ResourceSet ret, Texture texture) Load(string imageName, bool mipmap = false)
+        /// <param name="imagePath">the path to the image</param>
+        public (ResourceSet ret, Texture texture) Load(string imagePath, bool mipmap = false)
         {
-            if (!_loadedImages.TryGetValue(imageName, out (ResourceSet, Texture) ret))
+            if (!_loadedImages.TryGetValue(imagePath, out (ResourceSet, Texture) ret))
             {
                 GraphicsDevice gd = KestrelApp.DefaultGraphicsDevice;
-                var texPath = Path.Combine(AppContext.BaseDirectory, "Assets", imageName);
-                //var imTex = new ImageSharpTexture(texPath, false); // does not work because we use the latest Imagesharp!
-                Image<Rgba32> im = Image.Load<Rgba32>(texPath);
+                //var imTex = new ImageSharpTexture(imagePath, false); // does not work because we use the latest Imagesharp!
+                Image<Rgba32> im = Image.Load<Rgba32>(imagePath);
                 var imTex = new ImageSharpTexture(im, mipmap);
                 var tex = imTex.CreateDeviceTexture(gd, gd.ResourceFactory);
                 var view = gd.ResourceFactory.CreateTextureView(tex);
@@ -37,7 +36,7 @@ namespace Engine
                     view,
                     gd.PointSampler)); 
                 ret = (set, tex);
-                _loadedImages.Add(imageName, ret);
+                _loadedImages.Add(imagePath, ret);
             }
             return ret;
         }

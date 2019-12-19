@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using Engine;
@@ -54,7 +55,7 @@ namespace Snake_Game
             for (int i = 0; i < InitialSize; i++)
             {
                 float rotation = GetRotation(_direction);
-                var sp = new Sprite(BodySprite)
+                var sp = new Sprite(Path.Combine(AppContext.BaseDirectory, "Assets", BodySprite))
                 {
                     X = (3 + i) * _world.CellSize, Y = 3 * _world.CellSize,
                     Rotation = rotation,
@@ -64,7 +65,8 @@ namespace Snake_Game
                 _positions.Add(sp);
                 KestrelApp.Stage.AddChild(sp);
             }
-            _positions.Last().LoadImage(HeadSprite);
+            var headPath = Path.Combine(AppContext.BaseDirectory, "Assets", HeadSprite);
+            _positions.Last().LoadImage(headPath);
         }
 
         private void SetScore(int newScore)
@@ -140,8 +142,8 @@ namespace Snake_Game
             }
 
             _previousDir = _direction;
-            _positions.Last().LoadImage(BodySprite);
-            var sp = new Sprite(HeadSprite)
+            _positions.Last().LoadImage(Path.Combine(AppContext.BaseDirectory, "Assets", BodySprite));
+            var sp = new Sprite(Path.Combine(AppContext.BaseDirectory, "Assets", HeadSprite))
             {
                 X = newX, Y = newY,
                 ScaleX = 2, ScaleY = 2,

@@ -40,30 +40,33 @@ namespace Snake_Game
             var worldSize = new Vector2(Width, Height);
             var world = new World(worldSize, _cellSize);
             var snake = new Snake(world);
-            var scoreTextField = new TextField(font) {Text = "0", Width = 250, Height = 100};
+            var scoreTextField = new TextField(font, "0", false) {Width = 250, Height = 100};
             scoreTextField.X = KestrelApp.Stage.Width / 2f - scoreTextField.Width / 2f;
-            scoreTextField.Y = KestrelApp.Stage.Height - scoreTextField.Height - 10f;
+            scoreTextField.Y = 0;
+            scoreTextField.FontColor = Rgba32.White;
+            scoreTextField.HorizontalAlign = HorizontalAlignment.Center;
             
             KestrelApp.Stage.AddChild(scoreTextField);
             snake.ScoreChanged += () => scoreTextField.Text =snake.Score.ToString();
             snake.ScoreChanged += () => highScore = Math.Max(highScore, snake.Score);
-            
+            var headPath = Path.Combine(AppContext.BaseDirectory, "Assets", "snake-head.png");
+            var bodyPath = Path.Combine(AppContext.BaseDirectory, "Assets", "snake-3.png");
 //            var tf = new TextField(KestrelApp.FontRobotoMono.CreateFont(14)) {Text = "BBA", Width = 62, Height = 32, X = 40, Y = 20};
-            var s2 = new Sprite("snake-head.png") {X = 150, Y = 150};
-            var s3 = new Sprite("snake-head.png") {X = 0, Y = 50};
-            var s4 = new Sprite("snake-3.png") {X = 0, Y = 30};
+            var s2 = new Sprite(headPath) {X = 150, Y = 150};
+            var s3 = new Sprite(headPath) {X = 0, Y = 50};
+            var s4 = new Sprite(bodyPath) {X = 0, Y = 30};
             s2.ScaleX = 2;
             s2.PivotX = 8;
             s2.PivotY = 8;
             s3.Rotation = 0.6f;
             
             //s3.ScaleX = 2;
-            var tf2 = new TextField(KestrelApp.FontRobotoMono.CreateFont(14))
+            var tf2 = new TextField(KestrelApp.FontRobotoMono.CreateFont(13))
             {
-                Text = "ZZBféáŰ", 
-                Width = 62, Height = 32,
-                X = 90, Y = 20,
-                AutoSize = true,
+                Text = "ZddedZBféáŰ", 
+                Width = 62, Height = 56,
+                X = 190, Y = 20,
+              //  AutoSize = true,
                 BackgroundColor = new Rgba32(255, 0, 0, 200)
             };
             KestrelApp.Stage.AddChild(tf2);

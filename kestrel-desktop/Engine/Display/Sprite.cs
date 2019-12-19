@@ -15,7 +15,7 @@ namespace Engine.Display
         /// Note that it uses the <code>ImageManager</code> class to load the image, the image will stay there
         /// even if this Sprite is removed from the Stage.
         /// </summary>
-        /// <param name="imagePath">the relative path to the image from the executable.</param>
+        /// <param name="imagePath">the path to the image.</param>
         public Sprite(string imagePath)
         {
             LoadImage(imagePath);
@@ -37,7 +37,7 @@ namespace Engine.Display
         /// <summary>
         /// Loads the given image to the Sprite.
         /// </summary>
-        /// <param name="path">The relative path to the image</param>
+        /// <param name="path">The path to the image</param>
         /// <param name="resizeToImage">Whether to resize this Sprite to the given image's dimensions.</param>
         public void LoadImage(string path, bool resizeToImage = true)
         {
