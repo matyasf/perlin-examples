@@ -40,7 +40,8 @@ namespace Snake_Game
             var worldSize = new Vector2(Width, Height);
             var world = new World(worldSize, _cellSize);
             var snake = new Snake(world);
-            var scoreTextField = new TextField(font, "0", false) {Width = 250, Height = 100};
+            var scoreTextField = new TextField(font, "0", false) {Width = 50, Height = 25,
+                                                BackgroundColor = Rgba32.Coral};
             scoreTextField.X = KestrelApp.Stage.Width / 2f - scoreTextField.Width / 2f;
             scoreTextField.Y = 0;
             scoreTextField.FontColor = Rgba32.White;
@@ -83,6 +84,13 @@ namespace Snake_Game
                 //Console.WriteLine(s2.Rotation + " " + s2.GetBoundsWithChildren().Width);
             };
             KestrelApp.ShowStats(HorizontalAlignment.Right, VerticalAlignment.Bottom, 2);
+            
+            /*
+            Button bb = new Button("Cancel");
+            bb.Y = 70;
+            bb.X = 5;
+            KestrelApp.Stage.AddChild(bb);
+            */
         }
     }
 }

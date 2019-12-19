@@ -27,11 +27,11 @@ namespace Engine.Display
         /// <param name="width">Width of the Sprite</param>
         /// <param name="height">Height of the Sprite</param>
         /// <param name="color">the color + transparency (alpha) of the image</param>
-        public Sprite(uint width, uint height, Rgba32 color)
+        public Sprite(float width, float height, Rgba32 color)
         {
             OriginalWidth = width;
             OriginalHeight = height;
-            ResSet = KestrelApp.ImageManager.CreateColoredTexture(width, height, color);
+            ResSet = KestrelApp.ImageManager.CreateColoredTexture((uint)width, (uint)height, color);
         }
         
         /// <summary>

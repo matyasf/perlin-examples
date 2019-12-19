@@ -14,8 +14,8 @@ namespace Engine.Display
     public abstract class DisplayObject
     {
         public delegate void EnterFrame(DisplayObject target, float elapsedTimeSecs);
-        public delegate void UIChange(DisplayObject target);
-
+        public delegate void UiEvent(DisplayObject target);
+        
         /// <summary>
         /// This event will get called on every frame while this object is on the Stage.
         /// </summary>
@@ -23,11 +23,15 @@ namespace Engine.Display
         /// <summary>
         /// Called when an object is added to the Stage.
         /// </summary>
-        public event UIChange AddedToStage;
+        public event UiEvent AddedToStage;
         /// <summary>
         /// Called when an object is removed from the Stage.
         /// </summary>
-        public event UIChange RemovedFromStage;
+        public event UiEvent RemovedFromStage;
+        /// <summary>
+        /// Called when this object is clicked with the mouse.
+        /// </summary>
+        public event UiEvent MouseClick;
         /// <summary>
         /// Sets the visibility of an object.
         /// </summary>
@@ -39,9 +43,9 @@ namespace Engine.Display
         private float _scaleY = 1.0f;
         
         /// <summary>
-        /// The GPU resource set for this object.
+        /// The GPU resource set for this object. This is used for rendering, if its null, the object cannot be rendered.
         /// </summary>
-        internal ResourceSet ResSet;
+        public ResourceSet ResSet;
         private RenderState _renderState;
         private QuadVertex _gpuVertex;
         private readonly Matrix2D _transformationMatrix;
@@ -125,7 +129,7 @@ namespace Engine.Display
             var bounds = GetBounds();
             if (bounds.Width > 0 && bounds.Height > 0)
             {
-                KestrelApp.Renderer.AddToRenderQueue(this);
+                KestrelApp.Renderer.AddToRenderQueue(this); // TODO only add if it has a resource set?
             }
             foreach (var child in Children)
             {
@@ -238,6 +242,11 @@ namespace Engine.Display
             get => _gpuVertex.Tint;
             set => _gpuVertex.Tint = value;
         }
+        
+        internal void InvokeEnterFrameEvent(float elapsedTimeSecs)
+        {
+            EnterFrameEvent?.Invoke(this, elapsedTimeSecs);
+        }
 
         /// <summary>
         /// Returns the object that is found topmost on a point in local coordinates, or null if the test fails.
@@ -248,6 +257,7 @@ namespace Engine.Display
             {
                 return null;
             }
+            // check every child recursively
             for (var i = Children.Count - 1; i >= 0; --i) // front to back!
             {
                 DisplayObject child = Children[i];
@@ -265,14 +275,10 @@ namespace Engine.Display
                     }
                 }
             }
-            return null;
+            // check self
+            return GetBounds().Contains(p) ? this : null;
         }
 
-        internal void InvokeEnterFrameEvent(float elapsedTimeSecs)
-        {
-            EnterFrameEvent?.Invoke(this, elapsedTimeSecs);
-        }
-        
         /// <summary>
         /// Returns the bounds of this object after transformations
         /// </summary>
@@ -282,7 +288,8 @@ namespace Engine.Display
         }
         
         /// <summary>
-        /// Returns the bounding box rectangle relative to the given DisplayObject
+        /// Returns the bounding box rectangle relative to the given DisplayObject.
+        /// It will take transformations into account, but the returned rectangle is not rotated.
         /// </summary>
         public virtual Rectangle GetBounds(DisplayObject targetSpace)
         {
@@ -295,9 +302,9 @@ namespace Engine.Display
             else if (targetSpace == Parent && _rotation == 0.0) // Optimization
             {
                 outRect = Rectangle.Create(_x - _pivotX * _scaleX,
-                    _y - _pivotY * _scaleY,
-                    OriginalWidth * _scaleX,
-                    OriginalHeight * _scaleY);
+                                           _y - _pivotY * _scaleY,
+                                        OriginalWidth * _scaleX,
+                                       OriginalHeight * _scaleY);
                 if (_scaleX < 0.0f)
                 {
                     outRect.Width *= -1.0f;
@@ -346,8 +353,8 @@ namespace Engine.Display
         /// <summary>
         /// The transformation matrix of the object relative to its parent. This is used internally, you likely
         /// do not need it.
-        /// <returns>CAUTION: not a copy, but the actual object!</returns>
         /// </summary>
+        /// <returns>Not a copy, but the actual object!</returns>
         public Matrix2D TransformationMatrix
         {
             get

@@ -88,6 +88,7 @@ namespace Engine
             double previousTime = sw.Elapsed.TotalSeconds;
             Stage = new Stage(width, height);
             onInit.Invoke();
+            Window.MouseMove += mouseEvent => { Stage.OnMouseMove(mouseEvent.State.X, mouseEvent.State.Y); };
             // The main loop. This gets repeated every frame.
             while (Window.Exists)
             {

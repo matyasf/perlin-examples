@@ -62,6 +62,12 @@ namespace Engine.Display
             return target;
         }
 
+        internal void OnMouseMove(int x, int y)
+        {
+            var res = HitTest(Point.Create(x, y));
+            Console.WriteLine("move x:" + x + " y:" + y + " " + res);
+        }
+
         public override void Render(float elapsedTimeSecs)
         {
             InvokeEnterFrameEvent(elapsedTimeSecs);

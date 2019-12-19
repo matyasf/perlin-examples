@@ -275,5 +275,10 @@ namespace Engine.Display
             size.Height = (float)Math.Ceiling(size.Height);
             return Point.Create(size.Width, size.Height);
         }
+
+        public override string ToString()
+        {
+            return "[TextField text:" + _text + "]";
+        }
     }
 }
