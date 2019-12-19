@@ -76,5 +76,10 @@ namespace Engine.Display
                 child.Render(elapsedTimeSecs);
             }
         }
+
+        public override string ToString()
+        {
+            return "Stage";
+        }
     }
 }

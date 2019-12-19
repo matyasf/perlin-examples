@@ -276,7 +276,7 @@ namespace Engine.Display
                 }
             }
             // check self
-            return GetBounds().Contains(p) ? this : null;
+            return GetBounds(this).Contains(p) ? this : null;
         }
 
         /// <summary>
