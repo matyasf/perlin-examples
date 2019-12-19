@@ -82,7 +82,7 @@ namespace Snake_Game
                 if (a > 99) a = 0;
                 //Console.WriteLine(s2.Rotation + " " + s2.GetBoundsWithChildren().Width);
             };
-            KestrelApp.ShowStats();
+            KestrelApp.ShowStats(HorizontalAlignment.Right, VerticalAlignment.Bottom, 2);
         }
     }
 }

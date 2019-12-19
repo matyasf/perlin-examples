@@ -21,6 +21,8 @@ namespace Engine
         /// Loads an stores an image from the disk.
         /// </summary>
         /// <param name="imagePath">the path to the image</param>
+        /// <param name="mipmap">Whether to create mipmaps for the image. Images with MipMaps look better when scaled
+        /// or skewed, but take up more GPU memory.</param>
         public (ResourceSet ret, Texture texture) Load(string imagePath, bool mipmap = false)
         {
             if (!_loadedImages.TryGetValue(imagePath, out (ResourceSet, Texture) ret))
@@ -40,12 +42,15 @@ namespace Engine
             }
             return ret;
         }
-        
+
         /// <summary>
         /// Creates a texture with the given color.
         /// This is not optimal, because it will not be batchable with anything, you should
         /// rather create textures from parts of texture atlases.
         /// </summary>
+        /// <param name="width">The width of the texture in pixels</param>
+        /// <param name="height">The height of the texture in pixels</param>
+        /// <param name="color">The color + transparency (alpha) of the texture</param>
         public unsafe ResourceSet CreateColoredTexture(uint width, uint height, Rgba32 color)
         {
             GraphicsDevice gd = KestrelApp.DefaultGraphicsDevice;

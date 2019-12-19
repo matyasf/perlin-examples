@@ -121,7 +121,7 @@ namespace Engine
         /// Shows a small debug statistic overlay on one of the corners.
         /// </summary>
         public static void ShowStats(HorizontalAlignment horizontalAlign = HorizontalAlignment.Left, 
-                                     VerticalAlignment verticalAlign = VerticalAlignment.Top/*, float scale = 1f*/)
+                                     VerticalAlignment verticalAlign = VerticalAlignment.Top, float scale = 1f)
         {
             float stageWidth  = Stage.Width;
             float stageHeight = Stage.Height;
@@ -133,15 +133,15 @@ namespace Engine
             }
 
             Stage.AddChild(_statsDisplay);
-            //_statsDisplay.ScaleX = _statsDisplay.ScaleY = scale;
+            _statsDisplay.ScaleX = _statsDisplay.ScaleY = scale;
 
             if (horizontalAlign == HorizontalAlignment.Left) _statsDisplay.X = 0f;
-            else if (horizontalAlign == HorizontalAlignment.Right) _statsDisplay.X = stageWidth - _statsDisplay.Width;
-            else if (horizontalAlign == HorizontalAlignment.Center) _statsDisplay.X = (stageWidth - _statsDisplay.Width) / 2;
+            else if (horizontalAlign == HorizontalAlignment.Right) _statsDisplay.X = stageWidth - _statsDisplay.WidthScaled;
+            else if (horizontalAlign == HorizontalAlignment.Center) _statsDisplay.X = (stageWidth - _statsDisplay.WidthScaled) / 2;
 
             if (verticalAlign == VerticalAlignment.Top) _statsDisplay.Y = 0f;
-            else if (verticalAlign == VerticalAlignment.Bottom) _statsDisplay.Y = stageHeight - _statsDisplay.Height;
-            else if (verticalAlign == VerticalAlignment.Center) _statsDisplay.Y = (stageHeight - _statsDisplay.Height) / 2;
+            else if (verticalAlign == VerticalAlignment.Bottom) _statsDisplay.Y = stageHeight - _statsDisplay.HeightScaled;
+            else if (verticalAlign == VerticalAlignment.Center) _statsDisplay.Y = (stageHeight - _statsDisplay.HeightScaled) / 2;
         }
 
     }

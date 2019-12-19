@@ -20,7 +20,7 @@ namespace Engine.Display
         public float Fps;
         public float Memory;
         public float GpuMemory;
-        private int _skipCount;
+        //private int _skipCount;
 
         /// <summary>
         /// Creates a new Statistics Box.
@@ -55,7 +55,8 @@ namespace Engine.Display
         private void OnAddedToStage(DisplayObject target)
         {
             EnterFrameEvent += OnEnterFrame;
-            _totalTime = _frameCount = _skipCount = 0;
+            _totalTime = _frameCount = 0;
+            //_skipCount = 0;
             Update();
         }
 
@@ -71,7 +72,8 @@ namespace Engine.Display
             if (_totalTime > UPDATE_INTERVAL)
             {
                 Update();
-                _frameCount = _skipCount = 0;
+                _frameCount = 0;
+                //_skipCount = 0;
                 _totalTime = 0;
             }
         }
