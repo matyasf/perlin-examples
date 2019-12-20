@@ -37,7 +37,11 @@ namespace Engine.Display
         /// Called when a pressed mouse button released in this object
         /// </summary>
         public event MouseEvent MouseUp;
-
+        /// <summary>
+        /// Called when this pbject is clicked
+        /// </summary>
+        public event MouseEvent MouseClick;
+        
         internal void DispatchMouseDown(MouseButton button, Point mousePosition)
         {
             MouseDown?.Invoke(this, mousePosition, button);
@@ -46,6 +50,11 @@ namespace Engine.Display
         internal void DispatchMouseUp(MouseButton button, Point mousePosition)
         {
             MouseUp?.Invoke(this, mousePosition, button);
+        }
+        
+        internal void DispatchMouseClick(Point mousePosition)
+        {
+            MouseClick?.Invoke(this, mousePosition, MouseButton.Left);
         }
         /// <summary>
         /// Sets the visibility of an object.

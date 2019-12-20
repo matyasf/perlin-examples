@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using Engine.Display;
 using Veldrid;
+using Point = Engine.Geom.Point;
 
 namespace Engine
 {
@@ -23,6 +26,7 @@ namespace Engine
             return _newKeysThisFrame.Contains(key);
         }
 
+        private static DisplayObject lastMouseDownObject;
         public static void UpdateFrameInput(InputSnapshot snapshot, double elapsedTimeSinceStart)
         {
             _newKeysThisFrame.Clear();
@@ -48,7 +52,7 @@ namespace Engine
                     if (_currentlyPressedMouseButtons.Add(me.MouseButton))
                     {
                         _newMouseButtonsThisFrame.Add(me.MouseButton);
-                        KestrelApp.Stage.DispatchMouseDownInternal(me.MouseButton, mousePosition);
+                        lastMouseDownObject = KestrelApp.Stage.DispatchMouseDownInternal(me.MouseButton, mousePosition);
                         if (me.MouseButton == MouseButton.Left)
                         {
                             _mouseDownData = (elapsedTimeSinceStart, mousePosition);   
@@ -59,13 +63,15 @@ namespace Engine
                 {
                     _currentlyPressedMouseButtons.Remove(me.MouseButton);
                     _newMouseButtonsThisFrame.Remove(me.MouseButton);
-                    KestrelApp.Stage.DispatchMouseUpInternal(me.MouseButton, mousePosition);
+                    var lastMouseUpObject = KestrelApp.Stage.DispatchMouseUpInternal(me.MouseButton, mousePosition);
                     if (me.MouseButton == MouseButton.Left && 
                         elapsedTimeSinceStart -_mouseDownData.timeSinceStart < 0.3 &&
-                        Vector2.Distance(mousePosition, _mouseDownData.mouseCoords) < 100) // TODO make this DPI dependent
+                        lastMouseDownObject == lastMouseUpObject)
                     {
-//                        KestrelApp.Stage.DispatchMouseClick(me.MouseButton, mousePosition);
+                        //Console.WriteLine("CLICK " + mousePosition + " " + lastMouseUpObject);
+                        lastMouseUpObject.DispatchMouseClick(Point.Create(mousePosition.X, mousePosition.Y));
                     }
+                    lastMouseDownObject = null;
                 }
             }
             // TODO handle mouse move and dispatch its event.

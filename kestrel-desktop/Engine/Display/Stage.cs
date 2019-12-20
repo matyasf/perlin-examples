@@ -64,27 +64,29 @@ namespace Engine.Display
             return target;
         }
 
-        internal void OnMouseMove(int x, int y)
+        internal void OnMouseMoveInternal(int x, int y)
         {
             var res = HitTest(Point.Create(x, y));
             // TODO somehow determine who we entered and left to calculate MOUSE_ENTER and MOUSE_OUT events
             //Console.WriteLine("move x:" + x + " y:" + y + " " + res);
         }
         
-        internal void DispatchMouseDownInternal(MouseButton button, Vector2 mousePosition)
+        internal DisplayObject DispatchMouseDownInternal(MouseButton button, Vector2 mousePosition)
         {
             var p = Point.Create(mousePosition.X, mousePosition.Y);
             var target = HitTest(p);
             target.DispatchMouseDown(button, p);
-            //Console.WriteLine("DOWN" + p + " " + target);
+            //Console.WriteLine("DOWN " + p + " " + target);
+            return target;
         }
         
-        internal void DispatchMouseUpInternal(MouseButton button, Vector2 mousePosition)
+        internal DisplayObject DispatchMouseUpInternal(MouseButton button, Vector2 mousePosition)
         {
             var p = Point.Create(mousePosition.X, mousePosition.Y);
             var target = HitTest(p);
             target.DispatchMouseUp(button, p);
-            //Console.WriteLine("UP" + p + " " + target);
+            //Console.WriteLine("UP " + p + " " + target);
+            return target;
         }
 
         public override void Render(float elapsedTimeSecs)
