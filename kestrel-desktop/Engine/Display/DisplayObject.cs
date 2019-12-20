@@ -291,6 +291,7 @@ namespace Engine.Display
         /// Returns the bounding box rectangle relative to the given DisplayObject.
         /// It will take transformations into account, but the returned rectangle is not rotated.
         /// </summary>
+        /// <param name="targetSpace">The bounding box relative to this DisplayObject</param>
         public virtual Rectangle GetBounds(DisplayObject targetSpace)
         {
             Rectangle outRect = Rectangle.Create();
