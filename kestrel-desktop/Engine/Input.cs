@@ -74,6 +74,7 @@ namespace Engine
                     lastMouseDownObject = null;
                 }
             }
+            KestrelApp.Stage.OnMouseMoveInternal(mousePosition.X, mousePosition.Y);
             // TODO handle mouse move and dispatch its event.
         }
 

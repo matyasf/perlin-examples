@@ -50,11 +50,6 @@ namespace Engine.Display
 
         public override DisplayObject HitTest(Point p)
         {
-            // locations outside of the stage area shouldn't be accepted
-            if (p.X < 0 || p.X > Width || p.Y < 0 || p.Y > Height)
-            {
-                return null;
-            }
             // if nothing else is hit, the stage returns itself as target
             DisplayObject target = base.HitTest(p);
             if (target == null)
@@ -64,29 +59,39 @@ namespace Engine.Display
             return target;
         }
 
-        internal void OnMouseMoveInternal(int x, int y)
+        internal void OnMouseMoveInternal(float x, float y)
         {
-            var res = HitTest(Point.Create(x, y));
+            var p = Point.Create(x, y);
             // TODO somehow determine who we entered and left to calculate MOUSE_ENTER and MOUSE_OUT events
             //Console.WriteLine("move x:" + x + " y:" + y + " " + res);
+            var hit = HitTest(p);
+            //hit.DispatchMouseMoved(x, y); // + send local coordinates too
+            var current = hit;
+            do
+            {
+                current = current.Parent;
+               // current.DispatchMouseMovedInChild(x, y);
+            } while (current != null);
         }
         
         internal DisplayObject DispatchMouseDownInternal(MouseButton button, Vector2 mousePosition)
         {
             var p = Point.Create(mousePosition.X, mousePosition.Y);
             var target = HitTest(p);
-            target.DispatchMouseDown(button, p);
+            target.DispatchMouseDown(button, p); // + send local coordinates too
             //Console.WriteLine("DOWN " + p + " " + target);
             return target;
+            // + DispatchMouseDownInChild(x, y);
         }
         
         internal DisplayObject DispatchMouseUpInternal(MouseButton button, Vector2 mousePosition)
         {
             var p = Point.Create(mousePosition.X, mousePosition.Y);
             var target = HitTest(p);
-            target.DispatchMouseUp(button, p);
+            target.DispatchMouseUp(button, p); // + send local coordinates too
             //Console.WriteLine("UP " + p + " " + target);
             return target;
+            // + DispatchMouseUPInChild
         }
 
         public override void Render(float elapsedTimeSecs)

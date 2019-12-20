@@ -38,7 +38,7 @@ namespace Engine.Display
         /// </summary>
         public event MouseEvent MouseUp;
         /// <summary>
-        /// Called when this pbject is clicked
+        /// Called when this object is clicked
         /// </summary>
         public event MouseEvent MouseClick;
         
