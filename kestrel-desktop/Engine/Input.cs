@@ -48,7 +48,7 @@ namespace Engine
                     if (_currentlyPressedMouseButtons.Add(me.MouseButton))
                     {
                         _newMouseButtonsThisFrame.Add(me.MouseButton);
-//                        KestrelApp.Stage.DispatchMouseDown(me.MouseButton, mousePosition);
+                        KestrelApp.Stage.DispatchMouseDownInternal(me.MouseButton, mousePosition);
                         if (me.MouseButton == MouseButton.Left)
                         {
                             _mouseDownData = (elapsedTimeSinceStart, mousePosition);   
@@ -59,7 +59,7 @@ namespace Engine
                 {
                     _currentlyPressedMouseButtons.Remove(me.MouseButton);
                     _newMouseButtonsThisFrame.Remove(me.MouseButton);
-//                    KestrelApp.Stage.DispatchMouseUp(me.MouseButton, mousePosition);
+                    KestrelApp.Stage.DispatchMouseUpInternal(me.MouseButton, mousePosition);
                     if (me.MouseButton == MouseButton.Left && 
                         elapsedTimeSinceStart -_mouseDownData.timeSinceStart < 0.3 &&
                         Vector2.Distance(mousePosition, _mouseDownData.mouseCoords) < 100) // TODO make this DPI dependent

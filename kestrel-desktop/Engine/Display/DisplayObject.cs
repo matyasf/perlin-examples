@@ -15,6 +15,7 @@ namespace Engine.Display
     {
         public delegate void EnterFrame(DisplayObject target, float elapsedTimeSecs);
         public delegate void UiEvent(DisplayObject target);
+        public delegate void MouseEvent(DisplayObject target, Point coords, MouseButton button);
         
         /// <summary>
         /// This event will get called on every frame while this object is on the Stage.
@@ -29,9 +30,23 @@ namespace Engine.Display
         /// </summary>
         public event UiEvent RemovedFromStage;
         /// <summary>
-        /// TODO not working yet Called when this object is clicked with the mouse.
+        /// Called when a mouse button is pressed in this object
         /// </summary>
-        public event UiEvent MouseClick;
+        public event MouseEvent MouseDown;
+        /// <summary>
+        /// Called when a pressed mouse button released in this object
+        /// </summary>
+        public event MouseEvent MouseUp;
+
+        internal void DispatchMouseDown(MouseButton button, Point mousePosition)
+        {
+            MouseDown?.Invoke(this, mousePosition, button);
+        }
+        
+        internal void DispatchMouseUp(MouseButton button, Point mousePosition)
+        {
+            MouseUp?.Invoke(this, mousePosition, button);
+        }
         /// <summary>
         /// Sets the visibility of an object.
         /// </summary>

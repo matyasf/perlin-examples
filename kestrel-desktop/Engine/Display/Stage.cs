@@ -1,5 +1,7 @@
 using System;
-using Engine.Geom;
+using System.Numerics;
+using Veldrid;
+using Point = Engine.Geom.Point;
 
 namespace Engine.Display
 {
@@ -66,7 +68,23 @@ namespace Engine.Display
         {
             var res = HitTest(Point.Create(x, y));
             // TODO somehow determine who we entered and left to calculate MOUSE_ENTER and MOUSE_OUT events
-            Console.WriteLine("move x:" + x + " y:" + y + " " + res);
+            //Console.WriteLine("move x:" + x + " y:" + y + " " + res);
+        }
+        
+        internal void DispatchMouseDownInternal(MouseButton button, Vector2 mousePosition)
+        {
+            var p = Point.Create(mousePosition.X, mousePosition.Y);
+            var target = HitTest(p);
+            target.DispatchMouseDown(button, p);
+            //Console.WriteLine("DOWN" + p + " " + target);
+        }
+        
+        internal void DispatchMouseUpInternal(MouseButton button, Vector2 mousePosition)
+        {
+            var p = Point.Create(mousePosition.X, mousePosition.Y);
+            var target = HitTest(p);
+            target.DispatchMouseUp(button, p);
+            //Console.WriteLine("UP" + p + " " + target);
         }
 
         public override void Render(float elapsedTimeSecs)
