@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Veldrid;
 
@@ -11,10 +12,7 @@ namespace Engine
 
         private static HashSet<MouseButton> _currentlyPressedMouseButtons = new HashSet<MouseButton>();
         private static HashSet<MouseButton> _newMouseButtonsThisFrame = new HashSet<MouseButton>();
-
-        public static Vector2 MousePosition;
-        public static InputSnapshot FrameSnapshot { get; private set; }
-
+        private static (double timeSinceStart, Vector2 mouseCoords) _mouseDownData;
         public static bool GetKey(Key key)
         {
             return _currentlyPressedKeys.Contains(key);
@@ -25,13 +23,10 @@ namespace Engine
             return _newKeysThisFrame.Contains(key);
         }
 
-        public static void UpdateFrameInput(InputSnapshot snapshot)
+        public static void UpdateFrameInput(InputSnapshot snapshot, double elapsedTimeSinceStart)
         {
-            FrameSnapshot = snapshot;
             _newKeysThisFrame.Clear();
             _newMouseButtonsThisFrame.Clear();
-
-            MousePosition = snapshot.MousePosition;
             for (int i = 0; i < snapshot.KeyEvents.Count; i++)
             {
                 KeyEvent ke = snapshot.KeyEvents[i];
@@ -44,6 +39,7 @@ namespace Engine
                     KeyUp(ke.Key);
                 }
             }
+            var mousePosition = snapshot.MousePosition;
             for (int i = 0; i < snapshot.MouseEvents.Count; i++)
             {
                 MouseEvent me = snapshot.MouseEvents[i];
@@ -52,14 +48,27 @@ namespace Engine
                     if (_currentlyPressedMouseButtons.Add(me.MouseButton))
                     {
                         _newMouseButtonsThisFrame.Add(me.MouseButton);
+//                        KestrelApp.Stage.DispatchMouseDown(me.MouseButton, mousePosition);
+                        if (me.MouseButton == MouseButton.Left)
+                        {
+                            _mouseDownData = (elapsedTimeSinceStart, mousePosition);   
+                        }
                     }
                 }
                 else
                 {
                     _currentlyPressedMouseButtons.Remove(me.MouseButton);
                     _newMouseButtonsThisFrame.Remove(me.MouseButton);
+//                    KestrelApp.Stage.DispatchMouseUp(me.MouseButton, mousePosition);
+                    if (me.MouseButton == MouseButton.Left && 
+                        elapsedTimeSinceStart -_mouseDownData.timeSinceStart < 0.3 &&
+                        Vector2.Distance(mousePosition, _mouseDownData.mouseCoords) < 100) // TODO make this DPI dependent
+                    {
+//                        KestrelApp.Stage.DispatchMouseClick(me.MouseButton, mousePosition);
+                    }
                 }
             }
+            // TODO handle mouse move and dispatch its event.
         }
 
         private static void KeyUp(Key key)

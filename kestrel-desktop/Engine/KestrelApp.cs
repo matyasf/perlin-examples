@@ -88,16 +88,15 @@ namespace Engine
             double previousTime = sw.Elapsed.TotalSeconds;
             Stage = new Stage(width, height);
             onInit.Invoke();
-            Window.MouseMove += mouseEvent => { Stage.OnMouseMove(mouseEvent.State.X, mouseEvent.State.Y); };
+            Window.MouseMove += mouseEvent => { Stage.OnMouseMove(mouseEvent.State.X, mouseEvent.State.Y); }; // this should go to Input.cs
             // The main loop. This gets repeated every frame.
             while (Window.Exists)
             {
                 InputSnapshot snapshot = Window.PumpEvents();
-                Input.UpdateFrameInput(snapshot);
-
                 double newTime = sw.Elapsed.TotalSeconds;
                 double elapsed = newTime - previousTime;
                 previousTime = newTime;
+                Input.UpdateFrameInput(snapshot, newTime);
                 if (Window.Exists)
                 {
                     CommandList.Begin();
