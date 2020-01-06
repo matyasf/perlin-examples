@@ -16,6 +16,7 @@ namespace Engine.Display
         public delegate void EnterFrame(DisplayObject target, float elapsedTimeSecs);
         public delegate void UiEvent(DisplayObject target);
         public delegate void MouseEvent(DisplayObject target, Point coords, MouseButton button);
+        public delegate void MouseMoveEvent(DisplayObject target, Point coords);
         
         /// <summary>
         /// This event will get called on every frame while this object is on the Stage.
@@ -38,6 +39,10 @@ namespace Engine.Display
         /// </summary>
         public event MouseEvent MouseUp;
         /// <summary>
+        /// Called when a pressed mouse button released in this object
+        /// </summary>
+        public event MouseMoveEvent MouseMoved;
+        /// <summary>
         /// Called when this object is clicked
         /// </summary>
         public event MouseEvent MouseClick;
@@ -50,6 +55,11 @@ namespace Engine.Display
         internal void DispatchMouseUp(MouseButton button, Point mousePosition)
         {
             MouseUp?.Invoke(this, mousePosition, button);
+        }
+        
+        internal void DispatchMouseMoved(Point mousePosition)
+        {
+            MouseMoved?.Invoke(this, mousePosition);
         }
         
         internal void DispatchMouseClick(Point mousePosition)

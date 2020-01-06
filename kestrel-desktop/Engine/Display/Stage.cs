@@ -59,28 +59,35 @@ namespace Engine.Display
             return target;
         }
 
+        private DisplayObject _mouseDownTarget;
+
         internal void OnMouseMoveInternal(float x, float y)
         {
+            // in sparrow: DOWN creates target, this dispatches the event unless its
+            // removed from Stage, then the new top one is assigned.
+            // + it has a HOVER event, this hittests every frame.
             var p = Point.Create(x, y);
             // TODO somehow determine who we entered and left to calculate MOUSE_ENTER and MOUSE_OUT events
-            //Console.WriteLine("move x:" + x + " y:" + y + " " + res);
-            var hit = HitTest(p);
-            //hit.DispatchMouseMoved(x, y); // + send local coordinates too
-            var current = hit;
-            do
+            DisplayObject target;
+            if (_mouseDownTarget != null)
             {
-                current = current.Parent;
-               // current.DispatchMouseMovedInChild(x, y);
-            } while (current != null);
+                target = _mouseDownTarget;
+            }
+            else
+            {
+                target = HitTest(p);
+            }
+            //Console.WriteLine("move x:" + x + " y:" + y + " " + target);
+            target.DispatchMouseMoved(p); // + send local coordinates too, but calculate on-demand
         }
         
         internal DisplayObject DispatchMouseDownInternal(MouseButton button, Vector2 mousePosition)
         {
             var p = Point.Create(mousePosition.X, mousePosition.Y);
-            var target = HitTest(p);
-            target.DispatchMouseDown(button, p); // + send local coordinates too
+            _mouseDownTarget = HitTest(p);
+            _mouseDownTarget.DispatchMouseDown(button, p); // + send local coordinates too
             //Console.WriteLine("DOWN " + p + " " + target);
-            return target;
+            return _mouseDownTarget;
             // + DispatchMouseDownInChild(x, y);
         }
         
@@ -90,8 +97,9 @@ namespace Engine.Display
             var target = HitTest(p);
             target.DispatchMouseUp(button, p); // + send local coordinates too
             //Console.WriteLine("UP " + p + " " + target);
+            _mouseDownTarget = null;
             return target;
-            // + DispatchMouseUPInChild
+            // + DispatchMouseUpInChild
         }
 
         public override void Render(float elapsedTimeSecs)

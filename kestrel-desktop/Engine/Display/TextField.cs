@@ -278,7 +278,7 @@ namespace Engine.Display
 
         public override string ToString()
         {
-            return "[TextField text:" + _text + "]";
+            return "[TextField text:" + _text.Substring(0, 10) + "]";
         }
     }
 }
