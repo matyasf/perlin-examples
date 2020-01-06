@@ -85,12 +85,11 @@ namespace Snake_Game
             };
             KestrelApp.ShowStats(HorizontalAlignment.Right, VerticalAlignment.Bottom, 2);
             
-            /*
+            
             Button bb = new Button("Cancel");
             bb.Y = 70;
             bb.X = 5;
             KestrelApp.Stage.AddChild(bb);
-            */
         }
     }
 }

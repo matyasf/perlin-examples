@@ -22,7 +22,7 @@ namespace Engine
         /// </summary>
         /// <param name="imagePath">the path to the image</param>
         /// <param name="mipmap">Whether to create mipmaps for the image. Images with MipMaps look better when scaled
-        /// or skewed, but take up more GPU memory (around 1.5 times more).</param>
+        /// or skewed, but take up more GPU memory (around 1.5x more).</param>
         public (ResourceSet ret, Texture texture) Load(string imagePath, bool mipmap = false)
         {
             if (!_loadedImages.TryGetValue(imagePath, out (ResourceSet, Texture) ret))

@@ -19,6 +19,7 @@ namespace Engine.Display
         public Sprite(string imagePath)
         {
             LoadImage(imagePath);
+            Name = "Sprite";
         }
 
         /// <summary>
@@ -32,6 +33,7 @@ namespace Engine.Display
             OriginalWidth = width;
             OriginalHeight = height;
             ResSet = KestrelApp.ImageManager.CreateColoredTexture((uint)width, (uint)height, color);
+            Name = "Sprite";
         }
         
         /// <summary>

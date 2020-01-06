@@ -11,7 +11,11 @@ namespace Engine.Display
     /// </summary>
     public class Stage : DisplayObject
     {
-        
+
+        public Stage()
+        {
+            Name = "Stage";
+        }
         /// <summary>
         /// Stage cannot be rotated, this will throw an exception
         /// </summary>
@@ -58,27 +62,33 @@ namespace Engine.Display
             }
             return target;
         }
-
+        
         private DisplayObject _mouseDownTarget;
+        private DisplayObject _mouseHoverTarget;
 
         internal void OnMouseMoveInternal(float x, float y)
         {
-            // in sparrow: DOWN creates target, this dispatches the event unless its
-            // removed from Stage, then the new top one is assigned.
-            // + it has a HOVER event, this hittests every frame.
             var p = Point.Create(x, y);
-            // TODO somehow determine who we entered and left to calculate MOUSE_ENTER and MOUSE_OUT events
-            DisplayObject target;
+            DisplayObject mouseDownTarget;
+            DisplayObject currentObjectUnderMouse = HitTest(p);
+            if (_mouseHoverTarget != currentObjectUnderMouse) // mouse hovered over a new object
+            {
+                _mouseHoverTarget?.DispatchMouseExit(p);
+                currentObjectUnderMouse.DispatchMouseEnter(p);
+                Console.WriteLine("enter: " + currentObjectUnderMouse.Name + " exit: " + _mouseHoverTarget?.Name);
+                _mouseHoverTarget = currentObjectUnderMouse;
+            }
+            currentObjectUnderMouse.DispatchMouseHover(p);
             if (_mouseDownTarget != null)
             {
-                target = _mouseDownTarget;
+                mouseDownTarget = _mouseDownTarget;
             }
             else
             {
-                target = HitTest(p);
+                mouseDownTarget = currentObjectUnderMouse;
             }
-            //Console.WriteLine("move x:" + x + " y:" + y + " " + target);
-            target.DispatchMouseMoved(p); // + send local coordinates too, but calculate on-demand
+        //    Console.WriteLine("move x:" + x + " y:" + y + " " + currentObjectUnderMouse);
+            mouseDownTarget.DispatchMouseMoved(p); // + send local coordinates too, but calculate on-demand
         }
         
         internal DisplayObject DispatchMouseDownInternal(MouseButton button, Vector2 mousePosition)
@@ -88,7 +98,6 @@ namespace Engine.Display
             _mouseDownTarget.DispatchMouseDown(button, p); // + send local coordinates too
             //Console.WriteLine("DOWN " + p + " " + target);
             return _mouseDownTarget;
-            // + DispatchMouseDownInChild(x, y);
         }
         
         internal DisplayObject DispatchMouseUpInternal(MouseButton button, Vector2 mousePosition)
@@ -99,7 +108,6 @@ namespace Engine.Display
             //Console.WriteLine("UP " + p + " " + target);
             _mouseDownTarget = null;
             return target;
-            // + DispatchMouseUpInChild
         }
 
         public override void Render(float elapsedTimeSecs)

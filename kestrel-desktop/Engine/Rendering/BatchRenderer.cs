@@ -24,11 +24,14 @@ namespace Engine.Rendering
         }
         
         /// <summary>
-        /// Called from each render call. Only things in the render queue are rendered
+        /// Called from each render call. Only things in the render queue are rendered. 
         /// </summary>
         public void AddToRenderQueue(DisplayObject displayObject)
         {
-            _drawQueue.Add(displayObject);
+            if (displayObject.ResSet != null)
+            {
+                _drawQueue.Add(displayObject);   
+            }
         }
         
         /// <summary>

@@ -55,6 +55,7 @@ namespace Engine.Display
             _text = text;
             _font = font;
             AutoSize = autoSize;
+            Name = "textField";
         }
         
         /// <summary>
@@ -278,7 +279,11 @@ namespace Engine.Display
 
         public override string ToString()
         {
-            return "[TextField text:" + _text.Substring(0, 10) + "]";
+            if (_text.Length > 10)
+            {
+                return "[TextField text:" + _text.Substring(0, 10) + "]";   
+            }
+            return "[TextField text:" + _text + "]";
         }
     }
 }

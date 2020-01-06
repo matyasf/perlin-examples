@@ -19,6 +19,10 @@ namespace Engine.Display
         public delegate void MouseMoveEvent(DisplayObject target, Point coords);
         
         /// <summary>
+        /// If false this object or its children cannot receive touch/click/move events.
+        /// </summary>
+        public bool MouseOrTouchEnabled = true;
+        /// <summary>
         /// This event will get called on every frame while this object is on the Stage.
         /// </summary>
         public event EnterFrame EnterFrameEvent;
@@ -39,13 +43,31 @@ namespace Engine.Display
         /// </summary>
         public event MouseEvent MouseUp;
         /// <summary>
-        /// Called when a pressed mouse button released in this object
+        /// Called when the mouse moves after you press down a mouse on this object and it moves OR
+        /// if the mouse moves over this object and mouse coordinates change.
         /// </summary>
         public event MouseMoveEvent MouseMoved;
+        /// <summary>
+        /// Called when the mouse moves over this object and mouse coordinates change.
+        /// </summary>
+        public event MouseMoveEvent MouseHover;
+        /// <summary>
+        /// Called once when the mouse enters this object's bounding box.
+        /// </summary>
+        public event MouseMoveEvent MouseEnter;
+        /// <summary>
+        /// Called once when the mouse leaves this object's bounding box.
+        /// </summary>
+        public event MouseMoveEvent MouseExit;
         /// <summary>
         /// Called when this object is clicked
         /// </summary>
         public event MouseEvent MouseClick;
+
+        /// <summary>
+        /// You can use this property to give an identifier to this object for debugging.
+        /// </summary>
+        public string Name = "DisplayObject";
         
         internal void DispatchMouseDown(MouseButton button, Point mousePosition)
         {
@@ -60,6 +82,21 @@ namespace Engine.Display
         internal void DispatchMouseMoved(Point mousePosition)
         {
             MouseMoved?.Invoke(this, mousePosition);
+        }
+        
+        internal void DispatchMouseHover(Point mousePosition)
+        {
+            MouseHover?.Invoke(this, mousePosition);
+        }
+        
+        internal void DispatchMouseEnter(Point mousePosition)
+        {
+            MouseEnter?.Invoke(this, mousePosition);
+        }
+        
+        internal void DispatchMouseExit(Point mousePosition)
+        {
+            MouseExit?.Invoke(this, mousePosition);
         }
         
         internal void DispatchMouseClick(Point mousePosition)
@@ -163,7 +200,7 @@ namespace Engine.Display
             var bounds = GetBounds();
             if (bounds.Width > 0 && bounds.Height > 0)
             {
-                KestrelApp.Renderer.AddToRenderQueue(this); // TODO only add if it has a resource set?
+                KestrelApp.Renderer.AddToRenderQueue(this);
             }
             foreach (var child in Children)
             {
@@ -287,7 +324,7 @@ namespace Engine.Display
         /// </summary>
         public virtual DisplayObject HitTest(Point p)
         {
-            if (!Visible)
+            if (!Visible || !MouseOrTouchEnabled)
             {
                 return null;
             }
