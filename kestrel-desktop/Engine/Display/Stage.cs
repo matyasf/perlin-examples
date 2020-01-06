@@ -75,7 +75,7 @@ namespace Engine.Display
             {
                 _mouseHoverTarget?.DispatchMouseExit(p);
                 currentObjectUnderMouse.DispatchMouseEnter(p);
-                Console.WriteLine("enter: " + currentObjectUnderMouse.Name + " exit: " + _mouseHoverTarget?.Name);
+                // Console.WriteLine("enter: " + currentObjectUnderMouse.Name + " exit: " + _mouseHoverTarget?.Name);
                 _mouseHoverTarget = currentObjectUnderMouse;
             }
             currentObjectUnderMouse.DispatchMouseHover(p);
