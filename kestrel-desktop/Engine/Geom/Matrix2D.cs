@@ -141,14 +141,15 @@ namespace Engine.Geom
         }
 
         /// <summary>
-        /// Applies a rotation on the matrix (angle in radians).
+        /// Applies a rotation on the matrix (angle in degrees).
         /// </summary>
-        public void Rotate(float angleInRadians)
+        public void Rotate(float angleInDegrees)
         {
-            if (angleInRadians == 0.0f)
+            if (angleInDegrees == 0.0f)
             {
                 return;
             }
+            var angleInRadians = angleInDegrees * (float) Math.PI / 180f;
             float sin = MathUtil.FastSin(angleInRadians);
             float cos = MathUtil.FastCos(angleInRadians);
 

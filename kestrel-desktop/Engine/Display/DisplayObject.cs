@@ -133,12 +133,7 @@ namespace Engine.Display
             _gpuVertex.Tint = RgbaByte.White;
             _transformationMatrix = Matrix2D.Create();
         }
-        
-        ~DisplayObject()
-        {
-            ResSet?.Dispose();
-        }
-        
+
         internal ref QuadVertex GetGpuVertex()
         {
             _gpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
@@ -283,7 +278,7 @@ namespace Engine.Display
         
         private float _rotation;
         /// <summary>
-        /// Rotation in Radians.
+        /// Rotation in Degrees.
         /// </summary>
         public virtual float Rotation
         {
@@ -295,15 +290,15 @@ namespace Engine.Display
                     return;
                 }
                 // move to equivalent value in range [0 deg, 360 deg]
-                value = value % (float)(2.0f * Math.PI);
+                value = value % 360;
                 // move to [-180 deg, +180 deg]
-                if (value < -Math.PI)
+                if (value < -180)
                 {
-                    value += 2.0f * (float)Math.PI;
+                    value += 360;
                 }
-                else if (value > Math.PI)
+                else if (value > 180)
                 {
-                    value -= 2.0f * (float)Math.PI;
+                    value -= 360;
                 }
                 _transformationMatrixChanged = true;
                 _rotation = value;

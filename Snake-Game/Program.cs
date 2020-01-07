@@ -60,7 +60,7 @@ namespace Snake_Game
             s2.ScaleX = 2;
             s2.PivotX = 8;
             s2.PivotY = 8;
-            s3.Rotation = 0.6f;
+            s3.Rotation = 6f;
             
             //s3.ScaleX = 2;
             var tf2 = new TextField(KestrelApp.FontRobotoMono.CreateFont(13))
@@ -79,7 +79,7 @@ namespace Snake_Game
             KestrelApp.Stage.EnterFrameEvent += (target, secs) =>
             {
                // tf2.Width++;
-                s2.Rotation += 0.01f;
+                s2.Rotation += 1f;
                 a++;
                 if (a > 99) a = 0;
                 //Console.WriteLine(s2.Rotation + " " + s2.GetBoundsWithChildren().Width);

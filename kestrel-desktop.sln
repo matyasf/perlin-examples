@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kestrel-desktop", "kestrel-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake-Game", "Snake-Game\Snake-Game.csproj", "{D4FF8E5A-E50C-4BB6-B60A-6A9531E38B5D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake-Game-V2", "Snake-Game-V2\Snake-Game-V2.csproj", "{9BE87329-9B90-44EB-AE76-6CD2EC468AD0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{D4FF8E5A-E50C-4BB6-B60A-6A9531E38B5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4FF8E5A-E50C-4BB6-B60A-6A9531E38B5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4FF8E5A-E50C-4BB6-B60A-6A9531E38B5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BE87329-9B90-44EB-AE76-6CD2EC468AD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BE87329-9B90-44EB-AE76-6CD2EC468AD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BE87329-9B90-44EB-AE76-6CD2EC468AD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BE87329-9B90-44EB-AE76-6CD2EC468AD0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

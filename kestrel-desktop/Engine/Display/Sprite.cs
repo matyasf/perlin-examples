@@ -16,9 +16,11 @@ namespace Engine.Display
         /// even if this Sprite is removed from the Stage.
         /// </summary>
         /// <param name="imagePath">the path to the image.</param>
-        public Sprite(string imagePath)
+        /// <param name="mipmap">Whether to create mipmaps for the image. Images with mipmaps look better when
+        /// scaled, but take up ~1.5x more GPU memory.</param>
+        public Sprite(string imagePath, bool mipmap = false)
         {
-            LoadImage(imagePath);
+            LoadImage(imagePath, true, mipmap);
             Name = "Sprite";
         }
 
@@ -41,10 +43,11 @@ namespace Engine.Display
         /// </summary>
         /// <param name="path">The path to the image</param>
         /// <param name="resizeToImage">Whether to resize this Sprite to the given image's dimensions.</param>
-        public void LoadImage(string path, bool resizeToImage = true)
+        /// <param name="mipmap">Whether to create mipmaps for the image. Images with mipmaps look better when
+        /// scaled, but take up ~1.5x more GPU memory.</param>
+        public void LoadImage(string path, bool resizeToImage = true, bool mipmap = false)
         {
-            ResSet?.Dispose();
-            var set = KestrelApp.ImageManager.Load(path);
+            var set = KestrelApp.ImageManager.Load(path, mipmap);
             ResSet = set.ret;
             _imagePath = path;
             if (resizeToImage)

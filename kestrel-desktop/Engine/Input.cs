@@ -14,12 +14,19 @@ namespace Engine
         private static readonly HashSet<MouseButton> _currentlyPressedMouseButtons = new HashSet<MouseButton>();
         private static readonly HashSet<MouseButton> _newMouseButtonsThisFrame = new HashSet<MouseButton>();
         private static (double timeSinceStart, Vector2 mouseCoords) _mouseDownData;
-        public static bool GetKey(Key key)
+
+        /// <summary>
+        /// Returns if the given key is pressed down currently.
+        /// </summary>
+        public static bool IsKeyDown(Key key)
         {
             return _currentlyPressedKeys.Contains(key);
         }
 
-        public static bool GetKeyDown(Key key)
+        /// <summary>
+        /// Returns if the given keyboard key was pressed this frame.
+        /// </summary>
+        public static bool IsKeyPressedThisFrame(Key key)
         {
             return _newKeysThisFrame.Contains(key);
         }

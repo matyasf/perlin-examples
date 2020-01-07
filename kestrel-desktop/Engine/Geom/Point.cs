@@ -18,18 +18,18 @@ namespace Engine.Geom
         }
         public float Length
         {
-            get
-            {
-                return (float)Math.Sqrt(X * X + Y * Y);
-            }
+            get => (float)Math.Sqrt(X * X + Y * Y);
             set
             {
                 X = X * value;
                 Y = Y * value;
             }
         }
-
-        public float Angle => (float)Math.Atan2(Y, X);
+        
+        /// <summary>
+        /// Returns the angle of this point as a vector in degrees
+        /// </summary>
+        public float Angle => (float)(Math.Atan2(Y, X) * 180 / Math.PI);
 
         public bool IsOrigin => X == 0.0f && Y == 0.0f;
 
@@ -46,12 +46,13 @@ namespace Engine.Geom
         }
 
         /// <summary>
-        /// Rotates by the specified angle in Radians
+        /// Rotates by the specified angle in degrees
         /// </summary>
         public void RotateBy(float angle)
         {
-            float sin = MathUtil.FastSin(angle);
-            float cos = MathUtil.FastCos(angle);
+            var angleInRadians = angle * (float) Math.PI / 180f;
+            var sin = MathUtil.FastSin(angleInRadians);
+            var cos = MathUtil.FastCos(angleInRadians);
             X = X * cos - Y * sin;
             Y = X * sin + Y * cos;
         }
@@ -98,13 +99,11 @@ namespace Engine.Geom
             if (other == this)
             {
                 return true;
-            } 
-
+            }
             if (other == null)
             {
                 return false;
             }
-
             return MathUtil.IsAlmostEqual(X, other.X) && MathUtil.IsAlmostEqual(Y, other.Y);
         }
 

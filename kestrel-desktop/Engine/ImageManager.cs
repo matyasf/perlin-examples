@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -9,23 +8,25 @@ using Veldrid.ImageSharp;
 
 namespace Engine
 {
+    // TODO only allow disposing of GPU stuff here
     /// <summary>
     /// This class manages the loading, storing and retrieving of images used in your app.
     /// </summary>
     public class ImageManager
     {
-        private readonly Dictionary<string, (ResourceSet, Texture)> _loadedImages = 
-            new Dictionary<string, (ResourceSet, Texture)>();
+        private readonly Dictionary<(string path, bool mipmap), (ResourceSet, Texture)> _loadedImages = 
+            new Dictionary<(string path, bool mipmap), (ResourceSet, Texture)>();
 
         /// <summary>
-        /// Loads an stores an image from the disk.
+        /// Loads an image from the disk and uploads it to the GPU. If called again with the same parameters,
+        /// it will return the already stored image.
         /// </summary>
         /// <param name="imagePath">the path to the image</param>
         /// <param name="mipmap">Whether to create mipmaps for the image. Images with MipMaps look better when scaled
-        /// or skewed, but take up more GPU memory (around 1.5x more).</param>
-        public (ResourceSet ret, Texture texture) Load(string imagePath, bool mipmap = false)
+        /// but take up more GPU memory (around 1.5x more).</param>
+        public (ResourceSet ret, Texture texture) Load(string imagePath, bool mipmap = false) // TODO what if someone calls it with same path but different mipmap setting?
         {
-            if (!_loadedImages.TryGetValue(imagePath, out (ResourceSet, Texture) ret))
+            if (!_loadedImages.TryGetValue((imagePath, mipmap), out (ResourceSet, Texture) ret))
             {
                 GraphicsDevice gd = KestrelApp.DefaultGraphicsDevice;
                 //var imTex = new ImageSharpTexture(imagePath, false); // does not work because we use the latest Imagesharp!
@@ -38,9 +39,26 @@ namespace Engine
                     view,
                     gd.PointSampler)); 
                 ret = (set, tex);
-                _loadedImages.Add(imagePath, ret);
+                _loadedImages.Add((imagePath, mipmap), ret);
             }
             return ret;
+        }
+
+        /// <summary>
+        /// Deletes the resource from the memory and the GPU. Does nothing if the resource does not exist.
+        /// You should call Delete after removing every object that uses this image from the display list,
+        /// if you try to use a deleted resource your code will throw an exception.
+        /// </summary>
+        /// <param name="imagePath">Should be the same path that you used with <code>Load()</code>.</param>
+        /// <param name="mipmap">whether to delete the MipMap version.</param>
+        public void Delete(string imagePath, bool mipmap)
+        {
+            if (_loadedImages.TryGetValue((imagePath, mipmap), out (ResourceSet resourceSet, Texture texture) ret))
+            {
+                ret.resourceSet.Dispose();
+                ret.texture.Dispose();
+                _loadedImages.Remove((imagePath, mipmap));
+            }
         }
 
         /// <summary>
