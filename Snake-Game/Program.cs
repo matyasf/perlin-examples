@@ -6,6 +6,7 @@ using Engine.Display;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.PixelFormats;
 using Veldrid;
+using Point = Engine.Geom.Point;
 
 namespace Snake_Game
 {
@@ -90,6 +91,25 @@ namespace Snake_Game
             bb.Y = 70;
             bb.X = 5;
             KestrelApp.Stage.AddChild(bb);
+            
+            // drag test
+            var dragging = false;
+            Point dragOffset = new Point();
+            bb.MouseDown += (target, coords, button) =>
+            {
+                dragging = true;
+                dragOffset = bb.GlobalToLocal(coords);
+            };
+            bb.MouseMoved += (target, coords) =>
+            {
+                if (dragging)
+                {
+                    bb.X = coords.X - dragOffset.X;
+                    bb.Y = coords.Y - dragOffset.Y;
+                }
+            };
+            bb.MouseUp += (target, coords, button) => dragging = false;
         }
+        
     }
 }

@@ -7,22 +7,15 @@ namespace Engine.Geom
     /// </summary>
     public class Point
     {
-        public static Point Create(float x = 0.0f, float y = 0.0f)
-        {
-            Point point = new Point {X = x, Y = y};
-            return point;
-        }
-
-        private static Point Init()
-        {
-            return new Point();
-        }
 
         public float X;
         public float Y;
 
-        private Point() {}
-
+        public Point(float x = 0, float y = 0)
+        {
+            X = x;
+            Y = y;
+        }
         public float Length
         {
             get
@@ -39,12 +32,6 @@ namespace Engine.Geom
         public float Angle => (float)Math.Atan2(Y, X);
 
         public bool IsOrigin => X == 0.0f && Y == 0.0f;
-
-        public void Invert()
-        {
-            X = -X;
-            Y = -Y;
-        }
 
         public void AddPoint(Point point)
         {
@@ -80,6 +67,11 @@ namespace Engine.Geom
             Y = Y * inverseLength;
         }
 
+        /// <summary>
+        /// Calculates the dot product of this Point and another.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns>The dot product</returns>
         public float Dot(Point other)
         {
             return X * other.X + Y * other.Y;

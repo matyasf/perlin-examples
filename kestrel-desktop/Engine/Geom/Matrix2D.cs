@@ -225,7 +225,7 @@ namespace Engine.Geom
         /// </summary>
         public Point TransformPoint(Point point)
         { 
-            return Point.Create(A * point.X + C * point.Y + Tx, B * point.X + D * point.Y + Ty);
+            return new Point(A * point.X + C * point.Y + Tx, B * point.X + D * point.Y + Ty);
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace Engine.Geom
         /// </summary>
         public Point TransformPoint(float x, float y)
         {
-            return Point.Create(A * x + C * y + Tx, B * x + D * y + Ty);
+            return new Point(A * x + C * y + Tx, B * x + D * y + Ty);
         }
         
         public Matrix2D Invert()

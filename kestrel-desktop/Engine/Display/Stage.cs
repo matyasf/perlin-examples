@@ -68,7 +68,7 @@ namespace Engine.Display
 
         internal void OnMouseMoveInternal(float x, float y)
         {
-            var p = Point.Create(x, y);
+            var p = new Point(x, y);
             DisplayObject mouseDownTarget;
             DisplayObject currentObjectUnderMouse = HitTest(p);
             if (_mouseHoverTarget != currentObjectUnderMouse) // mouse hovered over a new object
@@ -87,13 +87,13 @@ namespace Engine.Display
             {
                 mouseDownTarget = currentObjectUnderMouse;
             }
-        //    Console.WriteLine("move x:" + x + " y:" + y + " " + currentObjectUnderMouse);
+            // Console.WriteLine("move x:" + x + " y:" + y + " " + currentObjectUnderMouse);
             mouseDownTarget.DispatchMouseMoved(p); // + send local coordinates too, but calculate on-demand
         }
         
         internal DisplayObject DispatchMouseDownInternal(MouseButton button, Vector2 mousePosition)
         {
-            var p = Point.Create(mousePosition.X, mousePosition.Y);
+            var p = new Point(mousePosition.X, mousePosition.Y);
             _mouseDownTarget = HitTest(p);
             _mouseDownTarget.DispatchMouseDown(button, p); // + send local coordinates too
             //Console.WriteLine("DOWN " + p + " " + target);
@@ -102,7 +102,7 @@ namespace Engine.Display
         
         internal DisplayObject DispatchMouseUpInternal(MouseButton button, Vector2 mousePosition)
         {
-            var p = Point.Create(mousePosition.X, mousePosition.Y);
+            var p = new Point(mousePosition.X, mousePosition.Y);
             var target = HitTest(p);
             target.DispatchMouseUp(button, p); // + send local coordinates too
             //Console.WriteLine("UP " + p + " " + target);

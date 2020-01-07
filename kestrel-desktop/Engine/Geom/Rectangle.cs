@@ -9,10 +9,12 @@ namespace Engine.Geom
         public float Width;
         public float Height;
         
-        public static Rectangle Create(float x = 0.0f, float y = 0.0f, float width = 0.0f, float height = 0.0f)
+        public Rectangle (float x = 0.0f, float y = 0.0f, float width = 0.0f, float height = 0.0f)
         {
-            Rectangle rect = new Rectangle {X = x, Y = y, Width = width, Height = height};
-            return rect;
+            X = x;
+            y = y;
+            Width = width;
+            Height = height;
         }
 
         private static Rectangle Init()
@@ -48,7 +50,7 @@ namespace Engine.Geom
 
         public Point TopLeft
         {
-            get => Point.Create(X, Y);
+            get => new Point(X, Y);
             set
             { 
                 X = value.X;
@@ -58,7 +60,7 @@ namespace Engine.Geom
 
         public Point BottomRight
         {
-            get => Point.Create(X + Width, Y + Height);
+            get => new Point(X + Width, Y + Height);
             set
             { 
                 Right = value.X;
@@ -68,7 +70,7 @@ namespace Engine.Geom
 
         public Point Size
         {
-            get => Point.Create(Width, Height);
+            get => new Point(Width, Height);
             set
             {
                 Width = value.X;
@@ -124,9 +126,9 @@ namespace Engine.Geom
             float bottom = Math.Min(Y + Height, rectangle.Y + rectangle.Height);
             if (left > right || top > bottom)
             {
-                return Create();
+                return new Rectangle();
             }
-            return Create(left, top, right - left, bottom - top);
+            return new Rectangle(left, top, right - left, bottom - top);
         }
 
         /// <summary>
@@ -142,7 +144,7 @@ namespace Engine.Geom
             float right = Math.Min(X + Width, rectangle.X + rectangle.Width);
             float top = Math.Max(Y, rectangle.Y);
             float bottom = Math.Min(Y + Height, rectangle.Y + rectangle.Height);
-            return Create(left, top, right - left, bottom - top);
+            return new Rectangle(left, top, right - left, bottom - top);
         }
 
         public void Inflate(float dx, float dy)
@@ -241,7 +243,7 @@ namespace Engine.Geom
 
             for (int i = 0; i < 4; ++i)
             {
-                outP[i] = Point.Create();
+                outP[i] = new Point();
             }
             outP[0].X = Left; outP[0].Y = Top;
             outP[1].X = Right; outP[1].Y = Top;
@@ -252,7 +254,7 @@ namespace Engine.Geom
 
         public Rectangle Clone()
         {
-            return Create(X, Y, Width, Height);
+            return new Rectangle(X, Y, Width, Height);
         }
 
         /// <summary>

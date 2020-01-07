@@ -15,6 +15,12 @@ namespace Engine.Display
     {
         public delegate void EnterFrame(DisplayObject target, float elapsedTimeSecs);
         public delegate void UiEvent(DisplayObject target);
+        /// <summary>
+        /// Mouse Event
+        /// </summary>
+        /// <param name="target">The DisplayObject where the event occured</param>
+        /// <param name="coords">The global mouse coordinates</param>
+        /// <param name="button">the associated button</param>
         public delegate void MouseEvent(DisplayObject target, Point coords, MouseButton button);
         public delegate void MouseMoveEvent(DisplayObject target, Point coords);
         
@@ -365,7 +371,7 @@ namespace Engine.Display
         /// <param name="targetSpace">The bounding box relative to this DisplayObject</param>
         public virtual Rectangle GetBounds(DisplayObject targetSpace)
         {
-            Rectangle outRect = Rectangle.Create();
+            Rectangle outRect = new Rectangle();
             if (targetSpace == this) // Optimization
             {
                 outRect.Width = OriginalWidth;
@@ -373,10 +379,10 @@ namespace Engine.Display
             }
             else if (targetSpace == Parent && _rotation == 0.0) // Optimization
             {
-                outRect = Rectangle.Create(_x - _pivotX * _scaleX,
-                                           _y - _pivotY * _scaleY,
+                outRect = new Rectangle(_x - _pivotX * _scaleX,
+                                        _y - _pivotY * _scaleY,
                                         OriginalWidth * _scaleX,
-                                       OriginalHeight * _scaleY);
+                                        OriginalHeight * _scaleY);
                 if (_scaleX < 0.0f)
                 {
                     outRect.Width *= -1.0f;
@@ -419,7 +425,7 @@ namespace Engine.Display
                 minY = Math.Min(minY, childBounds.Top);
                 maxY = Math.Max(maxY, childBounds.Top + childBounds.Height);
             }
-            return Rectangle.Create(minX, minY, maxX - minX, maxY - minY);
+            return new Rectangle(minX, minY, maxX - minX, maxY - minY);
         }
         
         /// <summary>
@@ -628,6 +634,25 @@ namespace Engine.Display
                 _transformationMatrixChanged = true;
                 _pivotY = value;
             }
+        }
+        
+        /// <summary>
+        /// Transforms a point from the local coordinate system to global (stage) coordinates.
+        /// </summary>
+        public Point LocalToGlobal(Point localPoint)
+        {
+            Matrix2D matrix = GetTransformationMatrix(Root);
+            return matrix.TransformPoint(localPoint);
+        }
+
+        /// <summary>
+        /// Transforms a point from global (stage) coordinates to the local coordinate system.
+        /// </summary>
+        public Point GlobalToLocal(Point globalPoint)
+        {
+            Matrix2D matrix = GetTransformationMatrix(Root);
+            matrix.Invert();
+            return matrix.TransformPoint(globalPoint);
         }
 
         protected readonly List<DisplayObject> Children = new List<DisplayObject>();

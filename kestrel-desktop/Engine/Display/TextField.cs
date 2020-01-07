@@ -269,12 +269,12 @@ namespace Engine.Display
         {
             if (_text == null)
             {
-                return Point.Create();
+                return new Point();
             }
             var size =  TextMeasurer.Measure(_text, new RendererOptions(_font));
             size.Width = (float)Math.Ceiling(size.Width);
             size.Height = (float)Math.Ceiling(size.Height);
-            return Point.Create(size.Width, size.Height);
+            return new Point(size.Width, size.Height);
         }
 
         public override string ToString()

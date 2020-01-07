@@ -67,7 +67,7 @@ namespace Engine
                         _lastMouseDownObject == lastMouseUpObject)
                     {
                         //Console.WriteLine("CLICK " + mousePosition + " " + lastMouseUpObject);
-                        lastMouseUpObject.DispatchMouseClick(Point.Create(mousePosition.X, mousePosition.Y));
+                        lastMouseUpObject.DispatchMouseClick(new Point(mousePosition.X, mousePosition.Y));
                     }
                     _lastMouseDownObject = null;
                 }
