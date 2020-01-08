@@ -2,9 +2,18 @@ using System;
 
 namespace Perlin.Geom
 {
+    /// <summary>
+    /// This class describes a non-rotated 2D rectangle. 
+    /// </summary>
     public class Rectangle
     {
+        /// <summary>
+        /// The top left X coordinate
+        /// </summary>
         public float X;
+        /// <summary>
+        /// The top left Y coordinate
+        /// </summary>
         public float Y;
         public float Width;
         public float Height;
@@ -17,24 +26,36 @@ namespace Perlin.Geom
             Height = height;
         }
         
+        /// <summary>
+        /// The top left Y coordinate, same as Y 
+        /// </summary>
         public float Top
         {
             get => Y;
             set => Y = value;
         }
-
+        
+        /// <summary>
+        /// The Y coordinate of the bottom of this rectangle
+        /// </summary>
         public float Bottom
         {
             get => Y + Height;
             set => Height = value - Y;
         }
-
+        
+        /// <summary>
+        /// The left X coordinate
+        /// </summary>
         public float Left
         {
             get => X;
             set => X = value;
         }
-
+        
+        /// <summary>
+        /// The right X coordinate.
+        /// </summary>
         public float Right
         {
             get => X + Width;
@@ -60,7 +81,10 @@ namespace Perlin.Geom
                 Bottom = value.Y;
             }
         }
-
+        
+        /// <summary>
+        /// The Width and Height of this rectangle.
+        /// </summary>
         public Point Size
         {
             get => new Point(Width, Height);
@@ -70,34 +94,38 @@ namespace Perlin.Geom
                 Height = value.Y;
             }
         }
-
+        
+        /// <summary>
+        /// Returns true if the given point is inside the rectangle.
+        /// </summary>
         public bool Contains(float x, float y)
         {
             return x >= X && y >= Y && x <= X + Width && y <= Y + Height;
         }
 
+        /// <summary>
+        /// Returns true if the given point is inside the rectangle.
+        /// </summary>
         public bool Contains(Point point)
         {
             return Contains(point.X, point.Y);
         }
 
+        /// <summary>
+        /// Returns true if the given Rectangle is fully contained within this Rectangle.
+        /// </summary>
         public bool Contains(Rectangle rectangle)
         {
             if (rectangle == null)
             {
                 return false;
             }
-            var rX = rectangle.X;
-            var rY = rectangle.Y;
-            var rWidth = rectangle.Width;
-            var rHeight = rectangle.Height;
-
-            return rX >= X && rX + rWidth <= X + Width &&
-                   rY >= Y && rY + rHeight <= Y + Height;
+            return rectangle.X >= X && rectangle.Right <= Right &&
+                   rectangle.Y >= Y && rectangle.Bottom <= Bottom;
         }
         
         /// <summary>
-        /// Returns true if the this and the other rectangle overlap
+        /// Returns true if the this and the other rectangle overlap.
         /// </summary>
         public bool Intersects(Rectangle other)
         {
@@ -158,13 +186,27 @@ namespace Perlin.Geom
             float bottom = Math.Min(Y + Height, rectangle.Y + rectangle.Height);
             return new Rectangle(left, top, right - left, bottom - top);
         }
-
+        
+        /// <summary>
+        /// Extends the bounds of the rectangle in all four directions.
+        /// </summary>
         public void Inflate(float dx, float dy)
         {
             X -= dx;
             Y -= dy;
             Width += 2.0f * dx;
             Height += 2.0f * dy;
+        }
+        
+        /// <summary>
+        /// Extends the bounds of the rectangle in all four directions.
+        /// </summary>
+        public void Inflate(float left, float right, float top, float bottom)
+        {
+            X -= left;
+            Y -= top;
+            Width += left + right;
+            Height += top + bottom;
         }
 
         public void Empty()
@@ -181,7 +223,7 @@ namespace Perlin.Geom
         }
 
         /// <summary>
-        /// Inverts X or Y if they are negative
+        /// Inverts X and Y if they are negative
         /// </summary>
         public void Normalize()
         {
@@ -197,6 +239,10 @@ namespace Perlin.Geom
             }
         }
 
+        /// <summary>
+        /// Returns true if Width or Height are 0
+        /// </summary>
+        /// <returns></returns>
         public bool IsEmpty()
         {
             return Width == 0.0f || Height == 0.0f;
@@ -267,18 +313,6 @@ namespace Perlin.Geom
         public Rectangle Clone()
         {
             return new Rectangle(X, Y, Width, Height);
-        }
-
-        /// <summary>
-        /// Extends the bounds of the rectangle in all four directions.
-        /// </summary>
-        public void Extend(float left = 0f, float right = 0f,
-                           float top = 0f, float bottom = 0f)
-        {
-            X -= left;
-            Y -= top;
-            Width += left + right;
-            Height += top + bottom;
         }
 
         public override string ToString()

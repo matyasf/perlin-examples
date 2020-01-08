@@ -16,6 +16,10 @@ namespace Perlin.Geom
             X = x;
             Y = y;
         }
+        
+        /// <summary>
+        /// The distance of this Point from the (0,0) coordinate.
+        /// </summary>
         public float Length
         {
             get => (float)Math.Sqrt(X * X + Y * Y);
@@ -27,11 +31,11 @@ namespace Perlin.Geom
         }
         
         /// <summary>
-        /// Returns the angle of this point as a vector in degrees
+        /// Returns the angle of this point as a vector in degrees.
         /// </summary>
         public float Angle => (float)(Math.Atan2(Y, X) * 180 / Math.PI);
-
-        public bool IsOrigin => X == 0.0f && Y == 0.0f;
+        
+        public bool IsZero => X == 0.0f && Y == 0.0f;
 
         public void AddPoint(Point point)
         {
@@ -56,14 +60,17 @@ namespace Perlin.Geom
             X = X * cos - Y * sin;
             Y = X * sin + Y * cos;
         }
-
+        
+        /// <summary>
+        /// Resizes the this point to have the length of 1. If its zero length it does nothing.
+        /// </summary>
         public void Normalize()
         {
-            if (IsOrigin)
+            if (IsZero)
             {
                 return;
             }
-            float inverseLength = 1 / Length;
+            var inverseLength = 1 / Length;
             X = X * inverseLength;
             Y = Y * inverseLength;
         }

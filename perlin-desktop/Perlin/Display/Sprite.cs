@@ -4,7 +4,8 @@ namespace Perlin.Display
 {
     /// <summary>
     /// A lightweight class to create images to and colored rectangles to show on the display.
-    /// Note that you need to add the created instance to the display tree to be displayed!
+    /// Note that you need to add the created instance to the Stage or one of its children (or its children..)
+    /// for it to be displayed!
     /// </summary>
     public class Sprite : DisplayObject
     {
@@ -18,10 +19,9 @@ namespace Perlin.Display
         /// <param name="imagePath">the path to the image.</param>
         /// <param name="mipmap">Whether to create mipmaps for the image. Images with mipmaps look better when
         /// scaled, but take up ~1.5x more GPU memory.</param>
-        public Sprite(string imagePath, bool mipmap = false)
+        public Sprite(string imagePath, bool mipmap = false) : this()
         {
             LoadImage(imagePath, true, mipmap);
-            Name = "Sprite";
         }
 
         /// <summary>
@@ -30,11 +30,19 @@ namespace Perlin.Display
         /// <param name="width">Width of the Sprite</param>
         /// <param name="height">Height of the Sprite</param>
         /// <param name="color">the color + transparency (alpha) of the image</param>
-        public Sprite(float width, float height, Rgba32 color)
+        public Sprite(float width, float height, Rgba32 color) : this()
         {
             OriginalWidth = width;
             OriginalHeight = height;
             ResSet = PerlinApp.ImageManager.CreateColoredTexture((uint)width, (uint)height, color);
+        }
+        
+        /// <summary>
+        /// Creates an empty Sprite. This will not render anything, you can use it to group other DisplayObjects
+        /// together.
+        /// </summary>
+        public Sprite()
+        {
             Name = "Sprite";
         }
         

@@ -11,7 +11,7 @@ namespace Snake_Game_V2
     {
         private Snake _snake;
         
-        public Game() : base(1, 1, Rgba32.Transparent)
+        public Game()
         {
             Globals.Instance.Game = this;
             Globals.Instance.Display = new Display(this);
