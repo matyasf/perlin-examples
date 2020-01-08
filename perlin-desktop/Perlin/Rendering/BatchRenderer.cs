@@ -12,7 +12,7 @@ namespace Perlin.Rendering
     internal class BatchRenderer
     {
         private DeviceBuffer _vertexBuffer;
-        private readonly List<DisplayObject> _drawQueue = new List<DisplayObject>();
+        private readonly List<DisplayObject> _renderQueue = new List<DisplayObject>();
         internal uint DrawCount;
         private readonly Stack<RenderState> _renderStates = new Stack<RenderState>();
         
@@ -30,7 +30,7 @@ namespace Perlin.Rendering
         {
             if (displayObject.ResSet != null)
             {
-                _drawQueue.Add(displayObject);   
+                _renderQueue.Add(displayObject);   
             }
         }
         
@@ -47,11 +47,11 @@ namespace Perlin.Rendering
                 0,
                 Matrix4x4.CreateOrthographicOffCenter(0, width, height, 0, 0, 1));
 
-            EnsureBufferSize((uint)_drawQueue.Count * QuadVertex.VertexSize);
+            EnsureBufferSize((uint)_renderQueue.Count * QuadVertex.VertexSize);
             MappedResourceView<QuadVertex> writeMap = gd.Map<QuadVertex>(_vertexBuffer, MapMode.Write);
-            for (int i = 0; i < _drawQueue.Count; i++)
+            for (int i = 0; i < _renderQueue.Count; i++)
             {
-                writeMap[i] = _drawQueue[i].GetGpuVertex();
+                writeMap[i] = _renderQueue[i].GetGpuVertex();
             }
             gd.Unmap(_vertexBuffer);
             var cl = PerlinApp.CommandList;
@@ -59,10 +59,10 @@ namespace Perlin.Rendering
             cl.SetVertexBuffer(0, _vertexBuffer);
             cl.SetGraphicsResourceSet(0, PerlinApp.Pipeline.OrthoSet);
             DrawCount = 0;
-            for (int i = 0; i < _drawQueue.Count;)
+            for (int i = 0; i < _renderQueue.Count;)
             {
                 uint batchStart = (uint)i;
-                ResourceSet rs = _drawQueue[i].ResSet;
+                ResourceSet rs = _renderQueue[i].ResSet;
                 cl.SetGraphicsResourceSet(1, rs);
                 // + textField needs here an extra UpdateBuffer call?
                 // cl.UpdateBuffer(_textBuffer, 0, toDraw[0].GpuVertex);
@@ -72,11 +72,11 @@ namespace Perlin.Rendering
                     i += 1;
                     batchSize += 1;
                 }
-                while (i < _drawQueue.Count && _drawQueue[i].ResSet == rs);
+                while (i < _renderQueue.Count && _renderQueue[i].ResSet == rs);
                 DrawCount++;
-                cl.Draw(4, batchSize, 0, batchStart); // it writes different batches into the same buffer!!
+                cl.Draw(4, batchSize, 0, batchStart);
             }
-            _drawQueue.Clear();
+            _renderQueue.Clear();
         }
         
         private void EnsureBufferSize(uint size)
@@ -92,6 +92,7 @@ namespace Perlin.Rendering
         // Only the translation values are read from the matrix, others are calculated manually
         public RenderState PushRenderState(float alpha, Matrix2D matrix2D, float scaleX, float scaleY)
         {
+            // TODO cache this, lots of times its the same state.
             var rs = new RenderState();
             rs.CopyFrom(_renderStates.Peek());
             rs.Alpha *= alpha;

@@ -199,7 +199,7 @@ namespace Perlin.Display
             }
             _renderState = PerlinApp.Renderer.PushRenderState(1.0f, TransformationMatrix, _scaleX, _scaleY);
             var bounds = GetBounds();
-            if (bounds.Width > 0 && bounds.Height > 0)
+            if (!bounds.IsEmpty())
             {
                 PerlinApp.Renderer.AddToRenderQueue(this);
             }

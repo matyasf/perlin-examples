@@ -105,8 +105,8 @@ namespace Perlin
                         Stage.Tint.G/255f,
                         Stage.Tint.B/255f,
                         Stage.Tint.A/255f));
-                    Stage.Render((float)elapsed);
-                    Renderer.RenderQueue();
+                    Stage.Render((float)elapsed); // pushes and stores render state in DisplayObject.Render
+                    Renderer.RenderQueue(); // reads render state via GetGpuVertex
                     CommandList.End();
                     DefaultGraphicsDevice.SubmitCommands(CommandList);
                     DefaultGraphicsDevice.SwapBuffers(DefaultGraphicsDevice.MainSwapchain);
