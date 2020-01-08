@@ -25,9 +25,4 @@
       </None>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Src\Enemies" />
-      <Folder Include="Src\Powerups" />
-    </ItemGroup>
-
 </Project>

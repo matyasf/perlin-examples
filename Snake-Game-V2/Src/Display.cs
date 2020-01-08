@@ -5,8 +5,8 @@ namespace Snake_Game_V2
 {
     public class Display
     {
-        private Sprite _displayPane;
-        private DelayedModificationList<GameEntity> _gameObjects = new DelayedModificationList<GameEntity>();
+        private readonly Sprite _displayPane;
+        private readonly DelayedModificationList<GameEntity> _gameObjects = new DelayedModificationList<GameEntity>();
 
         public Display(Sprite pane)
         {
@@ -25,10 +25,7 @@ namespace Snake_Game_V2
             _gameObjects.Remove(entity);
         }
 
-        public IImmutableList<GameEntity> GetObjectList()
-        {
-            return _gameObjects.List;
-        }
+        public IImmutableList<GameEntity> ObjectList =>_gameObjects.List;
 
         public void FrameFinished()
         {
@@ -37,7 +34,7 @@ namespace Snake_Game_V2
 
         public void UpdateSnakeHeadDrawPosition(GameEntity snakeHead)
         {
-            _displayPane.AddChildAt(snakeHead, _displayPane.NumChildren); // TODO check if index is OK
+            _displayPane.AddChildAt(snakeHead, _displayPane.NumChildren - 1);
         }
 
         public void Clear()

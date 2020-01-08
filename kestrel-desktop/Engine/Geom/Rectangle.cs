@@ -12,18 +12,11 @@ namespace Engine.Geom
         public Rectangle (float x = 0.0f, float y = 0.0f, float width = 0.0f, float height = 0.0f)
         {
             X = x;
-            y = y;
+            Y = y;
             Width = width;
             Height = height;
         }
-
-        private static Rectangle Init()
-        {
-            return new Rectangle();
-        }
-
-        private Rectangle() {}
-
+        
         public float Top
         {
             get => Y;
@@ -94,14 +87,33 @@ namespace Engine.Geom
             {
                 return false;
             }
-
-            float rX = rectangle.X;
-            float rY = rectangle.Y;
-            float rWidth = rectangle.Width;
-            float rHeight = rectangle.Height;
+            var rX = rectangle.X;
+            var rY = rectangle.Y;
+            var rWidth = rectangle.Width;
+            var rHeight = rectangle.Height;
 
             return rX >= X && rX + rWidth <= X + Width &&
-            rY >= Y && rY + rHeight <= Y + Height;
+                   rY >= Y && rY + rHeight <= Y + Height;
+        }
+        
+        /// <summary>
+        /// Returns true if the this and the other rectangle overlap
+        /// </summary>
+        public bool Intersects(Rectangle other)
+        {
+            if (other == null || other.IsEmpty() || IsEmpty())
+            {
+                return false;
+            }
+            var left = Math.Max(X, other.X);
+            var right = Math.Min(X + Width, other.X + other.Width);
+            var top = Math.Max(Y, other.Y);
+            var bottom = Math.Min(Y + Height, other.Y + other.Height);
+            if (left > right || top > bottom)
+            {
+                return false;
+            }
+            return true;
         }
 
         public void SetTo(float x, float y, float width, float height)
@@ -112,7 +124,7 @@ namespace Engine.Geom
             Height = height;
         }
         /// <summary>
-        /// Returns the intersecting rectangle
+        /// Returns the intersecting rectangle. Returns a 0-sized rectangle if there is no intersection.
         /// </summary>
         public Rectangle Intersection(Rectangle rectangle)
         {
@@ -120,10 +132,10 @@ namespace Engine.Geom
             {
                 return null;
             }
-            float left = Math.Max(X, rectangle.X);
-            float right = Math.Min(X + Width, rectangle.X + rectangle.Width);
-            float top = Math.Max(Y, rectangle.Y);
-            float bottom = Math.Min(Y + Height, rectangle.Y + rectangle.Height);
+            var left = Math.Max(X, rectangle.X);
+            var right = Math.Min(X + Width, rectangle.X + rectangle.Width);
+            var top = Math.Max(Y, rectangle.Y);
+            var bottom = Math.Min(Y + Height, rectangle.Y + rectangle.Height);
             if (left > right || top > bottom)
             {
                 return new Rectangle();
@@ -273,22 +285,6 @@ namespace Engine.Geom
         {
             return "[x=" + X + " y=" + Y + " width=" + Width + " height=" + Height + "]";
         }
-
-        // static functions 
-
-        /// <summary>
-        /// Compares all properties of the given rectangle, returning true only if
-        /// they are equal (with the given accuracy 'e').
-        /// </summary>
-        public static bool Compare(Rectangle r1, Rectangle r2, float e = 0.0001f)
-        {
-            if (r1 == null) return r2 == null;
-            if (r2 == null) return false;
-            
-            return r1.X > r2.X - e && r1.X < r2.X + e &&
-                   r1.Y > r2.Y - e && r1.Y < r2.Y + e &&
-                   r1.Width > r2.Width  - e && r1.Width < r2.Width  + e &&
-                   r1.Height > r2.Height - e && r1.Height < r2.Height + e;
-        }
+        
     }
 }

@@ -16,7 +16,9 @@ namespace Snake_Game_V2
 
         private static void OnInit()
         {
-            
+            var g = new Game();
+            KestrelApp.Stage.AddChild(g);
+            g.Start();
         }
     }
 }

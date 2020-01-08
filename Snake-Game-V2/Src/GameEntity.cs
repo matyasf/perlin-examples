@@ -1,4 +1,5 @@
 using Engine.Display;
+using Engine.Geom;
 
 namespace Snake_Game_V2
 {
@@ -12,6 +13,16 @@ namespace Snake_Game_V2
         public void Destroy()
         {
             Globals.Instance.Display.Remove(this);
+        }
+
+        public virtual Point Position
+        {
+            get => new Point(X, Y);
+            set
+            {
+                X = value.X;
+                Y = value.Y;
+            }
         }
 
         public bool IsOutOfBounds()

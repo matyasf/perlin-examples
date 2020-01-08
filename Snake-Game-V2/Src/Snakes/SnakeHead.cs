@@ -1,5 +1,7 @@
 using System;
 using Engine.Geom;
+using Snake_Game_V2.Enemies;
+using Snake_Game_V2.Powerups;
 
 namespace Snake_Game_V2
 {
@@ -8,7 +10,7 @@ namespace Snake_Game_V2
         private static readonly float _turnRate = 2;
         private Snake Snake;
         
-        public SnakeHead(Snake snake, Point position) : base("Assets/SnakeHead")
+        public SnakeHead(Snake snake, Point position) : base("Assets/snake_head.png")
         {
             Snake = snake;
             X = position.X;
@@ -35,7 +37,7 @@ namespace Snake_Game_V2
             if (entity is Enemy)
             {
                 Console.WriteLine(GetMessage());
-                Snake.ChangeHealth((Enemy) entity.GetDamage());
+                Snake.ChangeHealth(((Enemy)entity).Damage);
             }
             if (entity is SimplePowerUp){
                 Console.WriteLine(GetMessage());

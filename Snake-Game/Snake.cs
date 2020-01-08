@@ -77,9 +77,9 @@ namespace Snake_Game
 
         private float GetRotation(Vector2 direction)
         {
-            if (direction == Vector2.UnitY) { return MathF.PI; }
-            if (direction == Vector2.UnitX) { return MathF.PI / 2; }
-            if (direction == -Vector2.UnitX) { return -MathF.PI / 2; }
+            if (direction == Vector2.UnitY) { return 180; }
+            if (direction == Vector2.UnitX) { return 90; }
+            if (direction == -Vector2.UnitX) { return -90; }
             return 0;
         }
 
