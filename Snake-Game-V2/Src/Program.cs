@@ -1,5 +1,4 @@
-﻿using System;
-using Engine;
+﻿using Perlin;
 
 namespace Snake_Game_V2
 {
@@ -7,7 +6,7 @@ namespace Snake_Game_V2
     {
         static void Main(string[] args)
         {
-            KestrelApp.Start(
+            PerlinApp.Start(
                 Globals.WindowWidth,
                 Globals.WindowHeight, 
                 "Snake Game",
@@ -17,7 +16,7 @@ namespace Snake_Game_V2
         private static void OnInit()
         {
             var g = new Game();
-            KestrelApp.Stage.AddChild(g);
+            PerlinApp.Stage.AddChild(g);
             g.Start();
         }
     }

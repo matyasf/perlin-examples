@@ -1,6 +1,8 @@
 using System.Linq;
-using Engine;
-using Engine.Display;
+using Perlin;
+using Perlin.Display;
+using Snake_Game_V2.Entities;
+using Snake_Game_V2.Entities.Snakes;
 
 namespace Snake_Game_V2
 {
@@ -15,12 +17,12 @@ namespace Snake_Game_V2
 
         public void Start()
         {
-            KestrelApp.Stage.EnterFrameEvent += Step;
+            PerlinApp.Stage.EnterFrameEvent += Step;
         }
 
         public void Stop()
         {
-            KestrelApp.Stage.EnterFrameEvent -= Step;
+            PerlinApp.Stage.EnterFrameEvent -= Step;
         }
 
         public void Step(DisplayObject target, float elapsedTimeSecs)

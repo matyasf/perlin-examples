@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using Engine;
-using Engine.Display;
+using Perlin;
+using Perlin.Display;
 using Veldrid;
 
 namespace Snake_Game
@@ -37,7 +37,7 @@ namespace Snake_Game
         {
             _world = world;
             Revive();
-            KestrelApp.Stage.EnterFrameEvent += Update;
+            PerlinApp.Stage.EnterFrameEvent += Update;
         }
 
         public void Revive()
@@ -63,7 +63,7 @@ namespace Snake_Game
                     PivotX = 8, PivotY = 8
                 };
                 _positions.Add(sp);
-                KestrelApp.Stage.AddChild(sp);
+                PerlinApp.Stage.AddChild(sp);
             }
             var headPath = Path.Combine(AppContext.BaseDirectory, "Assets", HeadSprite);
             _positions.Last().LoadImage(headPath);
@@ -150,7 +150,7 @@ namespace Snake_Game
                 Rotation = GetRotation(_direction),
                 PivotX = 8, PivotY = 8
             };
-            KestrelApp.Stage.AddChild(sp);
+            PerlinApp.Stage.AddChild(sp);
             _positions.Add(sp);
 
             if (_currentFood > 0)

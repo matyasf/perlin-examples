@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
-using Engine.Display;
+using Perlin.Display;
+using Snake_Game_V2.Entities;
 
 namespace Snake_Game_V2
 {

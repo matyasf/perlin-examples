@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\kestrel-desktop\kestrel-desktop.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Update="Assets\powerup_berry.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
@@ -23,6 +19,10 @@
       <None Update="Assets\snake_head.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\perlin-desktop\perlin-desktop.csproj" />
     </ItemGroup>
 
 </Project>

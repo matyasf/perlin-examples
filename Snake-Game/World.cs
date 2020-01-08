@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Numerics;
-using Engine;
-using Engine.Display;
+using Perlin;
+using Perlin.Display;
 
 namespace Snake_Game
 {
@@ -26,7 +26,7 @@ namespace Snake_Game
                 WidthScaled = 32, HeightScaled = 32,
                 PivotX = 32, PivotY = 32
             };
-            KestrelApp.Stage.AddChild(FoodSprite);
+            PerlinApp.Stage.AddChild(FoodSprite);
         }
 
         public void CollectFood()
