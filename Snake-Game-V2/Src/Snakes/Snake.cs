@@ -35,8 +35,8 @@ namespace Snake_Game_V2
         private SnakeControl GetUserInput()
         {
             SnakeControl turnDir = SnakeControl.Invalid;
-            if(Input.IsKeyDown(Key.Left)) turnDir = SnakeControl.TurnLeft;
-            if(Input.IsKeyDown(Key.Right)) turnDir = SnakeControl.TurnRight;
+            if(KeyboardInput.IsKeyDown(Key.Left)) turnDir = SnakeControl.TurnLeft;
+            if(KeyboardInput.IsKeyDown(Key.Right)) turnDir = SnakeControl.TurnRight;
             return turnDir;
         }
 

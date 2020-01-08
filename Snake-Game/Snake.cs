@@ -85,7 +85,7 @@ namespace Snake_Game
 
         public void Update(DisplayObject target, float deltaSeconds)
         {
-            if (Dead && Input.IsKeyPressedThisFrame(Key.Space))
+            if (Dead && KeyboardInput.IsKeyPressedThisFrame(Key.Space))
             {
                 Revive();
                 _world.CollectFood();
@@ -95,25 +95,25 @@ namespace Snake_Game
                 return;
             }
 
-            if (Input.IsKeyPressedThisFrame(Key.Left))
+            if (KeyboardInput.IsKeyPressedThisFrame(Key.Left))
             {
                 TryChangeDirection(new Vector2(-1, 0));
             }
-            else if (Input.IsKeyPressedThisFrame(Key.Right))
+            else if (KeyboardInput.IsKeyPressedThisFrame(Key.Right))
             {
                 TryChangeDirection(new Vector2(1, 0));
             }
-            else if (Input.IsKeyPressedThisFrame(Key.Up))
+            else if (KeyboardInput.IsKeyPressedThisFrame(Key.Up))
             {
                 TryChangeDirection(new Vector2(0, -1));
             }
-            else if (Input.IsKeyPressedThisFrame(Key.Down))
+            else if (KeyboardInput.IsKeyPressedThisFrame(Key.Down))
             {
                 TryChangeDirection(new Vector2(0, 1));
             }
 
             _updateTimer -= deltaSeconds;
-            if (Input.IsKeyDown(Key.Space))
+            if (KeyboardInput.IsKeyDown(Key.Space))
             {
                 _updateTimer -= deltaSeconds * 2;
             }

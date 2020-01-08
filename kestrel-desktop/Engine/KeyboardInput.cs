@@ -6,7 +6,7 @@ using Point = Engine.Geom.Point;
 
 namespace Engine
 {
-    public static class Input
+    public static class KeyboardInput
     {
         private static readonly HashSet<Key> _currentlyPressedKeys = new HashSet<Key>();
         private static readonly HashSet<Key> _newKeysThisFrame = new HashSet<Key>();
@@ -32,7 +32,7 @@ namespace Engine
         }
 
         private static DisplayObject _lastMouseDownObject;
-        public static void UpdateFrameInput(InputSnapshot snapshot, double elapsedTimeSinceStart)
+        internal static void UpdateFrameInput(InputSnapshot snapshot, double elapsedTimeSinceStart)
         {
             _newKeysThisFrame.Clear();
             _newMouseButtonsThisFrame.Clear();

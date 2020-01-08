@@ -95,7 +95,7 @@ namespace Engine
                 double newTime = sw.Elapsed.TotalSeconds;
                 double elapsed = newTime - previousTime;
                 previousTime = newTime;
-                Input.UpdateFrameInput(snapshot, newTime);
+                KeyboardInput.UpdateFrameInput(snapshot, newTime);
                 if (Window.Exists)
                 {
                     CommandList.Begin();
