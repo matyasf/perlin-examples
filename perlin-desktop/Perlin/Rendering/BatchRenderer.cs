@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Numerics;
-using Engine.Display;
-using Engine.Geom;
+using Perlin.Display;
+using Perlin.Geom;
 using Veldrid;
 
-namespace Engine.Rendering
+namespace Perlin.Rendering
 {
     /// <summary>
     /// Internal class used in rendering.
@@ -18,7 +18,7 @@ namespace Engine.Rendering
         
         public BatchRenderer()
         {
-            _vertexBuffer = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateBuffer(
+            _vertexBuffer = PerlinApp.DefaultGraphicsDevice.ResourceFactory.CreateBuffer(
                 new BufferDescription(1000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
             _renderStates.Push(new RenderState());
         }
@@ -39,11 +39,11 @@ namespace Engine.Rendering
         /// </summary>
         public void RenderQueue()
         {
-            GraphicsDevice gd = KestrelApp.DefaultGraphicsDevice;
+            GraphicsDevice gd = PerlinApp.DefaultGraphicsDevice;
             float width = gd.MainSwapchain.Framebuffer.Width;
             float height = gd.MainSwapchain.Framebuffer.Height;
             gd.UpdateBuffer(
-                KestrelApp.KestrelPipeline.OrthoBuffer,
+                PerlinApp.Pipeline.OrthoBuffer,
                 0,
                 Matrix4x4.CreateOrthographicOffCenter(0, width, height, 0, 0, 1));
 
@@ -54,10 +54,10 @@ namespace Engine.Rendering
                 writeMap[i] = _drawQueue[i].GetGpuVertex();
             }
             gd.Unmap(_vertexBuffer);
-            var cl = KestrelApp.CommandList;
-            cl.SetPipeline(KestrelApp.KestrelPipeline.Pipeline);
+            var cl = PerlinApp.CommandList;
+            cl.SetPipeline(PerlinApp.Pipeline.Pipeline);
             cl.SetVertexBuffer(0, _vertexBuffer);
-            cl.SetGraphicsResourceSet(0, KestrelApp.KestrelPipeline.OrthoSet);
+            cl.SetGraphicsResourceSet(0, PerlinApp.Pipeline.OrthoSet);
             DrawCount = 0;
             for (int i = 0; i < _drawQueue.Count;)
             {
@@ -84,7 +84,7 @@ namespace Engine.Rendering
             if (_vertexBuffer.SizeInBytes < size)
             {
                 _vertexBuffer.Dispose();
-                _vertexBuffer = KestrelApp.DefaultGraphicsDevice.ResourceFactory.CreateBuffer(
+                _vertexBuffer = PerlinApp.DefaultGraphicsDevice.ResourceFactory.CreateBuffer(
                     new BufferDescription(size, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
             }
         }
