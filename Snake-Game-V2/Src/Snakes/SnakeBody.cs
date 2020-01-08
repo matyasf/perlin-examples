@@ -5,15 +5,17 @@ namespace Snake_Game_V2
 {
     public class SnakeBody : GameEntity
     {
-        private Queue<Point> _history = new Queue<Point>();
-        private static readonly int _historySize = 10;
+        private readonly Queue<Point> _history = new Queue<Point>();
+        private const int HistorySize = 10;
 
         public SnakeBody(float xc, float yc) : base("Assets/snake_body.png")
         {
             X = xc;
             Y = yc;
-
-            for (int i = 0; i < _historySize; i++)
+            PivotX = Width / 2;
+            PivotY = Height / 2;
+            
+            for (int i = 0; i < HistorySize; i++)
             {
                 _history.Enqueue(new Point(xc, yc));
             }
@@ -23,10 +25,10 @@ namespace Snake_Game_V2
         {
             set
             {
-                var currentPos = _history.Dequeue();
+                var currentPos = _history.Dequeue();// remove the oldest item from the history
                 X = currentPos.X;
                 Y = currentPos.Y;
-                _history.Enqueue(value);
+                _history.Enqueue(value); // add the parent's current position to the beginning of the history
             }
         }
     }

@@ -11,8 +11,8 @@ namespace Snake_Game_V2.Enemies
         
         public SimpleEnemy() : base(10, "Assets/simple_enemy.png")
         {
-            X = (float)_rnd.NextDouble();
-            Y = (float)_rnd.NextDouble();
+            X = (float)_rnd.NextDouble() * Globals.WindowWidth;
+            Y = (float)_rnd.NextDouble() * Globals.WindowHeight;
 
             var direction = (float) _rnd.NextDouble() * 360f;
             Rotation = direction;

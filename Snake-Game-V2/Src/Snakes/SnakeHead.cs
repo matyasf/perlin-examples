@@ -15,6 +15,8 @@ namespace Snake_Game_V2
             Snake = snake;
             X = position.X;
             Y = position.Y;
+            PivotX = Width / 2;
+            PivotY = Height / 2;
         }
 
         public void UpdateRotation(SnakeControl turnDirection, float speed)

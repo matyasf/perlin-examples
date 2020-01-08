@@ -71,8 +71,7 @@ namespace Snake_Game_V2
             GameEntity prev = _head;
             foreach (var currentPart in _body.List)
             {
-                currentPart.X = prev.X;
-                currentPart.Y = prev.Y;
+                currentPart.Position = prev.Position;
                 prev = currentPart;
             }
         }
