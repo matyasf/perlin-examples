@@ -170,7 +170,7 @@ namespace Perlin.Display
         }
         
         /// <summary>
-        /// Removed this object from its Parent. Does nothing if it has no Parent.
+        /// Removes this object from its Parent. Does nothing if it has no Parent.
         /// </summary>
         public void RemoveFromParent()
         {
@@ -217,6 +217,10 @@ namespace Perlin.Display
         public virtual DisplayObject Parent { get; internal set; }
 
         private float _x;
+        
+        /// <summary>
+        /// The X coordinate of this object. The actual position is offset by the PivotX and PivotY values.
+        /// </summary>
         public virtual float X
         {
             get => _x;
@@ -232,6 +236,9 @@ namespace Perlin.Display
         }
 
         private float _y;
+        /// <summary>
+        /// The Y coordinate of this object. The actual position is offset by the PivotX and PivotY values.
+        /// </summary>
         public virtual float Y
         {
             get => _y;
@@ -259,7 +266,7 @@ namespace Perlin.Display
         public virtual float Height => OriginalHeight;
 
         /// <summary>
-        /// The width of the object after scaling
+        /// The width of the object after applying scaling
         /// </summary>
         public virtual float WidthScaled
         {
@@ -268,7 +275,7 @@ namespace Perlin.Display
         }
 
         /// <summary>
-        /// The height of the object after scaling
+        /// The height of the object after applying scaling
         /// </summary>
         public virtual float HeightScaled
         {
@@ -321,7 +328,8 @@ namespace Perlin.Display
         }
 
         /// <summary>
-        /// Returns the object that is found topmost on a point in local coordinates, or null if the test fails.
+        /// Returns this or one of its children (or grandchilren..) that is found topmost on the given point in local coordinates.
+        /// Returns null if there is nothing.
         /// </summary>
         public virtual DisplayObject HitTest(Point p)
         {

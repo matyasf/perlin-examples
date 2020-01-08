@@ -5,7 +5,7 @@ namespace Perlin.Display
     /// <summary>
     /// A lightweight class to create images to and colored rectangles to show on the display.
     /// Note that you need to add the created instance to the Stage or one of its children (or its children..)
-    /// for it to be displayed!
+    /// for it (or its children) to be displayed!
     /// </summary>
     public class Sprite : DisplayObject
     {
