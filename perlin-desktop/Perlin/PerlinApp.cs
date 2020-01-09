@@ -12,7 +12,12 @@ using Veldrid.StartupUtilities;
 namespace Perlin
 {
     /// <summary>
-    /// A static singleton class to access global properties of the app.
+    /// <para>
+    /// The main static class of the Perlin engine. It holds global variables and starts the engine.
+    /// </para>
+    /// To start your application call <code>PerlinApp.Start()</code>. This method has a function type parameter that
+    /// gets called when the engine finished initializing. You should put here your initialization code, do not try to
+    /// use the engine before this function is called.
     /// </summary>
     public static class PerlinApp
     {
@@ -26,7 +31,7 @@ namespace Perlin
         public static readonly ImageManager ImageManager = new ImageManager();
         
         /// <summary>
-        /// Stage is the root of the display. Anything that you want to show must be added with
+        /// Stage is the root of the display. Anything that you want to render must be added with
         /// <code>AddChild</code> to the Stage.
         /// </summary>
         public static Stage Stage { get; private set; }
@@ -34,6 +39,7 @@ namespace Perlin
         internal static BatchRenderer Renderer { get; private set; }
         internal static GraphicsDevice DefaultGraphicsDevice { get; private set; }
         internal static Sdl2Window Window { get; private set; }
+        
         private static StatsDisplay _statsDisplay;
         internal static CommandList CommandList { get; private set; }
         
@@ -44,8 +50,10 @@ namespace Perlin
 
         private static FontFamily _fontRobotoMono;
         /// <summary>
-        /// Built-in Roboto Mono Regular font.
+        /// Built-in Roboto Mono Regular font. Call <code>CreateFont</code> on the returned object to create a Font of
+        /// this type to be used e.g. with a <code>TextField</code>.
         /// </summary>
+        /// <see cref="TextField"/> 
         public static FontFamily FontRobotoMono
         {
             get

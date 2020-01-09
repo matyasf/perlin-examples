@@ -11,15 +11,10 @@ namespace Perlin.Display
     /// </summary>
     public class Stage : DisplayObject
     {
-
-        public Stage()
-        {
-            Name = "Stage";
-        }
         /// <summary>
         /// Stage cannot be rotated, this will throw an exception
         /// </summary>
-        public override float Rotation { set => throw new ArgumentException(); }
+        public override float Rotation { set => throw new ArgumentException("The Stage cannot be rotated."); }
         
         /// <summary>
         /// Sets the X coordinate of the window. Does not do anything on Android/iOS.
@@ -50,6 +45,7 @@ namespace Perlin.Display
             IsOnStageProperty = true;
             OriginalWidth = width;
             OriginalHeight = height;
+            Name = "Stage";
         }
 
         public override DisplayObject HitTest(Point p)
@@ -109,7 +105,10 @@ namespace Perlin.Display
             _mouseDownTarget = null;
             return target;
         }
-
+        
+        /// <summary>
+        /// Renders all its children recursively.
+        /// </summary>>
         public override void Render(float elapsedTimeSecs)
         {
             InvokeEnterFrameEvent(elapsedTimeSecs);

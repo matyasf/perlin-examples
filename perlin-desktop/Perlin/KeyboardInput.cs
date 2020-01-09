@@ -6,6 +6,9 @@ using Point = Perlin.Geom.Point;
 
 namespace Perlin
 {
+    /// <summary>
+    /// Helper class for easily managing keyboard input.
+    /// </summary>
     public static class KeyboardInput
     {
         private static readonly HashSet<Key> CurrentlyPressedKeys = new HashSet<Key>();

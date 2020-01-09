@@ -1,6 +1,5 @@
 using Perlin.Display;
 using Perlin.Geom;
-using SixLabors.ImageSharp.PixelFormats;
 using Snake_Game_V2.Entities.Enemies;
 using Snake_Game_V2.Entities.Powerups;
 using Snake_Game_V2.Entities.Snakes;
