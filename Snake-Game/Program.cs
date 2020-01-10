@@ -37,7 +37,8 @@ namespace Snake_Game
         {
             PerlinApp.Stage.BackgroundColor = new Rgb24(200,200,200);
             // sample snake game
-            var family = PerlinApp.Fonts.Install(Path.Combine(AppContext.BaseDirectory, "Assets", "Fonts", "Sunflower-Medium.ttf"));
+            /*
+             var family = PerlinApp.Fonts.Install(Path.Combine(AppContext.BaseDirectory, "Assets", "Fonts", "Sunflower-Medium.ttf"));
             var font = family.CreateFont(28);
             
             var highScore = 0;
@@ -87,9 +88,6 @@ namespace Snake_Game
                 if (a > 99) a = 0;
                 //Console.WriteLine(s2.Rotation + " " + s2.GetBoundsWithChildren().Width);
             };
-            PerlinApp.ShowStats(HorizontalAlignment.Right, VerticalAlignment.Bottom, 2);
-            
-            
             Button bb = new Button("Cancel");
             bb.Y = 70;
             bb.X = 5;
@@ -121,6 +119,16 @@ namespace Snake_Game
             PerlinApp.Stage.AddChild(t1);
             PerlinApp.Stage.AddChild(t2);
             PerlinApp.Stage.AddChild(t3);
+                 
+            PerlinApp.ShowStats(HorizontalAlignment.Right, VerticalAlignment.Bottom, 2);
+            */
+            
+            var transparencyBug = new Sprite(50, 50, new Rgba32(233, 12,12, 255));
+            transparencyBug.Alpha = 0.99f;
+            var transparencyBug2 = new Sprite(50, 50, new Rgba32(233, 212,12, 255));
+            transparencyBug2.Y = 20;
+            transparencyBug.AddChild(transparencyBug2);
+            PerlinApp.Stage.AddChild(transparencyBug);
         }
         
     }

@@ -109,12 +109,15 @@ namespace Perlin
                     CommandList.Begin();
                     CommandList.SetFramebuffer(DefaultGraphicsDevice.MainSwapchain.Framebuffer);
                     CommandList.ClearColorTarget(0, new RgbaFloat(
-                        Stage.Tint.R/255f,
-                        Stage.Tint.G/255f,
-                        Stage.Tint.B/255f,
-                        Stage.Tint.A/255f));
-                    Stage.Render((float)elapsed); // pushes and stores render state in DisplayObject.Render
-                    Renderer.RenderQueue(); // reads render state via GetGpuVertex
+                        Stage.BackgroundColor.R/255f,
+                        Stage.BackgroundColor.G/255f,
+                        Stage.BackgroundColor.B/255f,
+                        1));
+                    // PushRenderState: clones and updates matrix, alpha, scale
+                    Stage.Render((float)elapsed);
+                    
+                    // reads RenderState into a MappedResourceView
+                    Renderer.RenderQueue(); // Reads render state via DisplayObject.GetGpuVertex
                     CommandList.End();
                     DefaultGraphicsDevice.SubmitCommands(CommandList);
                     DefaultGraphicsDevice.SwapBuffers(DefaultGraphicsDevice.MainSwapchain);

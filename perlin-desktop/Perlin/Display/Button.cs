@@ -18,18 +18,15 @@ namespace Perlin.Display
         /// </summary>
         /// <param name="text">The text to display.</param>
         /// <param name="autoSize">Whether to size the button based on the text displayed.</param>
-        public Button(string text, bool autoSize = true) : base(10, 10, Rgba32.Transparent)
+        public Button(string text, bool autoSize = true)
         {
             Name = "buttonBase";
             var font = PerlinApp.FontRobotoMono.CreateFont(14);
             _label = new TextField(font, text, autoSize);
             _label.MouseOrTouchEnabled = false;
-
-            // TODO make setters for these Sprites
+            
             UpGraphic = new Sprite(_label.Width + 10, _label.Height + 6, Rgba32.Beige);
-
             HoverGraphic = new Sprite(_label.Width + 10, _label.Height + 6, Rgba32.LightGray);
-
             DownGraphic = new Sprite(_label.Width + 10, _label.Height + 6, Rgba32.DarkGray);
 
             _label.X = 5;
@@ -38,7 +35,6 @@ namespace Perlin.Display
 
             OriginalWidth = _label.Width + 10;
             OriginalHeight = _label.Height + 6;
-            ResSet = PerlinApp.ImageManager.CreateColoredTexture((uint)OriginalWidth, (uint)OriginalHeight, Rgba32.Transparent);
 
             MouseEnter += (target, coords) =>
             {

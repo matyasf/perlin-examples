@@ -29,13 +29,12 @@ namespace Perlin.Display
         /// </summary>
         /// <param name="width">Width of the Sprite</param>
         /// <param name="height">Height of the Sprite</param>
-        /// <param name="color">the color + transparency (alpha) of the image</param>
+        /// <param name="color">the color + transparency (alpha) of the image.</param>
         public Sprite(float width, float height, Rgba32 color) : this()
         {
             OriginalWidth = width;
             OriginalHeight = height;
             ResSet = PerlinApp.ImageManager.CreateColoredTexture((uint)width, (uint)height, color);
-            Alpha = color.A / 255f;
         }
         
         /// <summary>

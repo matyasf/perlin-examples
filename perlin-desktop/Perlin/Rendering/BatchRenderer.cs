@@ -1,8 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Perlin.Display;
 using Perlin.Geom;
-using SixLabors.ImageSharp.PixelFormats;
 using Veldrid;
 
 namespace Perlin.Rendering
@@ -97,6 +97,7 @@ namespace Perlin.Rendering
             var rs = new RenderState();
             rs.CopyFrom(_renderStates.Peek());
             rs.Alpha *= alpha;
+            Console.WriteLine(this + " " + alpha);
             rs.ScaleX *= scaleX;
             rs.ScaleY *= scaleY;
             rs.TransformModelviewMatrix(matrix2D);

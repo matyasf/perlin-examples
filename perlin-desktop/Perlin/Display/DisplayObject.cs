@@ -317,7 +317,7 @@ namespace Perlin.Display
         }
 
         /// <summary>
-        /// Returns this or one of its children (or grandchilren..) that is found topmost on the given point in local coordinates.
+        /// Returns this or one of its children (or grandchildren..) that is found topmost on the given point in local coordinates.
         /// Returns null if there is nothing.
         /// </summary>
         public virtual DisplayObject HitTest(Point p)
