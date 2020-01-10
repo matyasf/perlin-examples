@@ -2,7 +2,10 @@ using Perlin.Geom;
 
 namespace Perlin.Rendering
 {
-    public class RenderState
+    /// <summary>
+    /// Internal class to keep track of the current render state.
+    /// </summary>
+    public class RenderState  // TODO merge with GPUVertex
     {
         public float Alpha;
         public float ScaleX;

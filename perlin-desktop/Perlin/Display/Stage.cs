@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using SixLabors.ImageSharp.PixelFormats;
 using Veldrid;
 using Point = Perlin.Geom.Point;
 
@@ -15,6 +16,11 @@ namespace Perlin.Display
         /// Stage cannot be rotated, this will throw an exception
         /// </summary>
         public override float Rotation { set => throw new ArgumentException("The Stage cannot be rotated."); }
+        
+        /// <summary>
+        /// Background color of the Stage.
+        /// </summary>
+        public Rgb24 BackgroundColor = new Rgb24(255,255,255);
         
         /// <summary>
         /// Sets the X coordinate of the window. Does not do anything on Android/iOS.

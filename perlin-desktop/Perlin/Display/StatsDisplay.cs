@@ -25,7 +25,7 @@ namespace Perlin.Display
         /// <summary>
         /// Creates a new Statistics Box.
         /// </summary>
-        public StatsDisplay() : base(ComponentWidth, ComponentHeight, new Rgba32(0.6f, 0f, 0f, 0.7f))
+        public StatsDisplay() : base(ComponentWidth, ComponentHeight, new Rgba32(200, 0, 0, 250))
         {
             const string gpuLabel = "\ngpu memory:";
             const string labels = "frames/sec:\nstd memory:" + gpuLabel + "\ndraw calls:";

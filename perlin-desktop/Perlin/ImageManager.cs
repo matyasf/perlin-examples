@@ -82,7 +82,7 @@ namespace Perlin
                     textureView,
                     gd.PointSampler));
             uint size = width * height;
-            Rgba32[] arr = new Rgba32[size];
+            Rgba32[] arr = new Rgba32[size]; // TODO do not use alpha here, it needs to be set in DisplayObject
             for (int i = 0; i < size; i++)
             {
                 arr[i] = color;

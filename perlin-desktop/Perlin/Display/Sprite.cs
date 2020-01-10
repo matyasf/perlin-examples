@@ -35,6 +35,7 @@ namespace Perlin.Display
             OriginalWidth = width;
             OriginalHeight = height;
             ResSet = PerlinApp.ImageManager.CreateColoredTexture((uint)width, (uint)height, color);
+            Alpha = color.A / 255f;
         }
         
         /// <summary>
@@ -67,7 +68,7 @@ namespace Perlin.Display
         
         public override string ToString()
         {
-            return "Sprite " + _imagePath;
+            return Name;
         }
     }
 }

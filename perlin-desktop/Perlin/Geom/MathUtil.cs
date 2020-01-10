@@ -1,3 +1,5 @@
+using System;
+
 namespace Perlin.Geom
 {
     /// <summary>
@@ -45,13 +47,14 @@ namespace Perlin.Geom
 
         public static float Clamp(float value, float min, float max)
         {
-            return System.Math.Min(max, System.Math.Max(value, min));
+            return Math.Min(max, Math.Max(value, min));
         }
 
         /// <summary>
         /// Fast sine calculation with a look up table.
         /// It is less accurate than Math.Sin; the largest error is around 0.3 degrees
         /// </summary>
+        /// <param name="angle">angle in radians.</param>
         public static float FastSin(float angle)
         {
             return SinLUT[(int)(angle * 325.94932345220164765467394738691f + 0.5f) & 2047]; 
@@ -61,6 +64,7 @@ namespace Perlin.Geom
         /// Fast cosine calculation with a look up table.
         /// It is less accurate than Math.Cos; the largest error is around 0.3 degrees;
         /// </summary>
+        /// <param name="angle">angle in radians.</param>
         public static float FastCos(float angle)
         {
             return CosLUT[(int)(angle * 325.94932345220164765467394738691f + 0.5f) & 2047]; //325.949 is 2048/2PI    

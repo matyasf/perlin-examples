@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using Perlin;
 using Perlin.Display;
+using SixLabors.ImageSharp.PixelFormats;
 using Veldrid;
 
 namespace Snake_Game
@@ -196,7 +197,7 @@ namespace Snake_Game
             _dead = true;
             foreach (var sprite in _positions)
             {
-                sprite.Tint = new RgbaByte(255, 100, 100, 180);
+                sprite.Alpha = 0.8f;
             }
         }
     }

@@ -35,7 +35,7 @@ namespace Snake_Game
 
         private void OnInit()
         {
-            PerlinApp.Stage.Tint = RgbaByte.Grey;
+            PerlinApp.Stage.BackgroundColor = new Rgb24(200,200,200);
             // sample snake game
             var family = PerlinApp.Fonts.Install(Path.Combine(AppContext.BaseDirectory, "Assets", "Fonts", "Sunflower-Medium.ttf"));
             var font = family.CreateFont(28);
@@ -112,6 +112,15 @@ namespace Snake_Game
                 }
             };
             bb.MouseUp += (target, coords, button) => dragging = false;
+            
+            // transparency test
+            var t1 = new Sprite(10,50, new Rgba32(123,123,123,123)) {X = 10, Y= 200, Name = "t1"};
+            var t2 = new Sprite(20,50, new Rgba32(123,123,123,123)) {X = 10, Y= 210, Name = "t2"};
+            var t3 = new Sprite(30,50, new Rgba32(123,123,123,123)) {X = 10, Y= 220, Name = "t3"};
+            PerlinApp.Stage.AddChild(t1);
+            PerlinApp.Stage.AddChild(t1);
+            PerlinApp.Stage.AddChild(t2);
+            PerlinApp.Stage.AddChild(t3);
         }
         
     }

@@ -37,35 +37,17 @@ namespace Perlin.Geom
         public float Tx;
         public float Ty;
 
-        public float Determinant
-        {
-            get { return A * D - C * B; }
-        }
+        public float Determinant => A * D - C * B;
 
-        public float Rotation
-        {
-            get { return (float)Math.Atan2(B, A); }
-        }
+        public float Rotation => (float)Math.Atan2(B, A);
 
-        public float ScaleX
-        {
-            get { return A / (float)Math.Cos(SkewY); }
-        }
+        public float ScaleX => A / (float)Math.Cos(SkewY);
 
-        public float ScaleY
-        {
-            get { return D / (float)Math.Cos(SkewX); }
-        }
+        public float ScaleY => D / (float)Math.Cos(SkewX);
 
-        public float SkewX
-        {
-            get { return (float)Math.Atan(-C / D); }
-        }
+        public float SkewX => (float)Math.Atan(-C / D);
 
-        public float SkewY
-        {
-            get { return (float)Math.Atan(B / A); }
-        }
+        public float SkewY => (float)Math.Atan(B / A);
 
         private Matrix2D(float a = 1.0f, float b = 0.0f, float c = 0.0f, float d = 1.0f, float tx = 0.0f, float ty = 0.0f)
         {
@@ -266,25 +248,22 @@ namespace Perlin.Geom
             Ty = matrix.Ty;
         }
 
-        public bool IsEqual(Matrix2D other)
+        public bool IsAlmostEqual(Matrix2D other)
         {
             if (other == this)
             {
                 return true;
             }
-            else if (other == null)
+            if (other == null)
             {
                 return false; 
             }
-            else
-            {
-                return MathUtil.IsAlmostEqual(A, other.A) &&
-                MathUtil.IsAlmostEqual(B, other.B) &&
-                MathUtil.IsAlmostEqual(C, other.C) &&
-                MathUtil.IsAlmostEqual(D, other.D) &&
-                MathUtil.IsAlmostEqual(Tx, other.Tx) &&
-                MathUtil.IsAlmostEqual(Ty, other.Ty);
-            }
+            return MathUtil.IsAlmostEqual(A, other.A) &&
+            MathUtil.IsAlmostEqual(B, other.B) &&
+            MathUtil.IsAlmostEqual(C, other.C) &&
+            MathUtil.IsAlmostEqual(D, other.D) &&
+            MathUtil.IsAlmostEqual(Tx, other.Tx) &&
+            MathUtil.IsAlmostEqual(Ty, other.Ty);
         }
 
         public override string ToString() 

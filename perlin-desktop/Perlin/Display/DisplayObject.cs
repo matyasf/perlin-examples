@@ -74,6 +74,30 @@ namespace Perlin.Display
         /// You can use this property to give an identifier to this object for debugging.
         /// </summary>
         public string Name = "DisplayObject";
+        /// <summary>
+        /// Sets the visibility of an object.
+        /// </summary>
+        public bool Visible = true;
+
+        private float _pivotX;
+        private float _pivotY;
+        private float _scaleX = 1.0f;
+        private float _scaleY = 1.0f;
+        
+        /// <summary>
+        /// The GPU resource set for this object. This is used for rendering, if its null, the object cannot be rendered.
+        /// </summary>
+        public ResourceSet ResSet;
+        private RenderState _renderState;
+        private QuadVertex _gpuVertex;
+        private readonly Matrix2D _transformationMatrix;
+        private bool _transformationMatrixChanged = true;
+
+        protected DisplayObject()
+        {
+            _transformationMatrix = Matrix2D.Create();
+            _gpuVertex.Alpha = 1f;
+        }
         
         internal void DispatchMouseDown(MouseButton button, Point mousePosition)
         {
@@ -109,40 +133,6 @@ namespace Perlin.Display
         {
             MouseClick?.Invoke(this, mousePosition, MouseButton.Left);
         }
-        /// <summary>
-        /// Sets the visibility of an object.
-        /// </summary>
-        public bool Visible = true;
-
-        private float _pivotX;
-        private float _pivotY;
-        private float _scaleX = 1.0f;
-        private float _scaleY = 1.0f;
-        
-        /// <summary>
-        /// The GPU resource set for this object. This is used for rendering, if its null, the object cannot be rendered.
-        /// </summary>
-        public ResourceSet ResSet;
-        private RenderState _renderState;
-        private QuadVertex _gpuVertex;
-        private readonly Matrix2D _transformationMatrix;
-        private bool _transformationMatrixChanged = true;
-
-        protected DisplayObject()
-        {
-            _gpuVertex.Tint = RgbaByte.White;
-            _transformationMatrix = Matrix2D.Create();
-        }
-
-        internal ref QuadVertex GetGpuVertex()
-        {
-            _gpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
-            _gpuVertex.Position.Y = _renderState.ModelviewMatrix.Ty;
-            _gpuVertex.Size.X = OriginalWidth * _renderState.ScaleX;
-            _gpuVertex.Size.Y = OriginalHeight * _renderState.ScaleY;
-            _gpuVertex.Rotation = _renderState.ModelviewMatrix.Rotation;
-            return ref _gpuVertex;
-        }
 
         protected bool IsOnStageProperty;
         /// <summary>
@@ -168,25 +158,26 @@ namespace Perlin.Display
                 }
             }
         }
-        
-        /// <summary>
-        /// Removes this object from its Parent. Does nothing if it has no Parent.
-        /// </summary>
-        public void RemoveFromParent()
-        {
-            if (Parent != null)
-            {
-                Parent.RemoveChild(this);
-                Parent = null;
-                IsOnStage = false;
-            }
-        }
 
         /// <summary>
-        /// Renders the object. You do not need to call this, the engine calls it on every frame while
-        /// this is on the Stage
+        /// The Vertex that will be uploaded to the GPU to render this.
         /// </summary>
-        /// <param name="elapsedTimeSecs">The elapsed time in seconds since the last render call</param>
+        internal ref QuadVertex GetGpuVertex()
+        {
+            _gpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
+            _gpuVertex.Position.Y = _renderState.ModelviewMatrix.Ty;
+            _gpuVertex.Size.X = OriginalWidth * _renderState.ScaleX;
+            _gpuVertex.Size.Y = OriginalHeight * _renderState.ScaleY;
+            _gpuVertex.Rotation = _renderState.ModelviewMatrix.Rotation;
+            _gpuVertex.Alpha = _renderState.Alpha;
+            return ref _gpuVertex;
+        }
+        
+        /// <summary>
+        /// Renders the object. You do not need to call this, the engine calls it on every frame while
+        /// this is on the Stage.
+        /// </summary>
+        /// <param name="elapsedTimeSecs">The elapsed time in seconds since the last render call.</param>
         public virtual void Render(float elapsedTimeSecs)
         {
             if (IsOnStageProperty)
@@ -197,9 +188,8 @@ namespace Perlin.Display
             {
                 return;
             }
-            _renderState = PerlinApp.Renderer.PushRenderState(1.0f, TransformationMatrix, _scaleX, _scaleY);
-            var bounds = GetBounds();
-            if (!bounds.IsEmpty())
+            _renderState = PerlinApp.Renderer.PushRenderState(_gpuVertex.Alpha, TransformationMatrix, _scaleX, _scaleY);
+            if (!GetBounds().IsEmpty())
             {
                 PerlinApp.Renderer.AddToRenderQueue(this);
             }
@@ -313,13 +303,12 @@ namespace Perlin.Display
         }
         
         /// <summary>
-        /// The color modifier of this object. If its set to <code>RgbaByte.White</code> (the default) it will
-        /// apply no modification. 
+        /// The transparency value of this object. 0=fully transparent, 1=not transparent.
         /// </summary>
-        public RgbaByte Tint
+        public float Alpha
         {
-            get => _gpuVertex.Tint;
-            set => _gpuVertex.Tint = value;
+            get => _gpuVertex.Alpha;
+            set => _gpuVertex.Alpha = value;
         }
         
         internal void InvokeEnterFrameEvent(float elapsedTimeSecs)
@@ -657,7 +646,11 @@ namespace Perlin.Display
             matrix.Invert();
             return matrix.TransformPoint(globalPoint);
         }
-
+        
+        /// <summary>
+        /// The List that stores the children of this DisplayObject. Use <code>AddChild(), RemoveChild()</code>,..
+        /// to manage its contents!
+        /// </summary>
         protected readonly List<DisplayObject> Children = new List<DisplayObject>();
         
         /// <summary>
@@ -673,7 +666,8 @@ namespace Perlin.Display
         /// <param name="child">The child to add</param>
         public virtual void AddChild(DisplayObject child)
         {
-            AddChildAt(child, NumChildren);
+            var pos = child.Parent == this ? NumChildren-1 : NumChildren;
+            AddChildAt(child, pos);
         }
 
         /// <summary>
@@ -734,10 +728,21 @@ namespace Perlin.Display
         }
         
         /// <summary>
+        /// Removes this object from its Parent. Does nothing if it has no Parent.
+        /// </summary>
+        public virtual void RemoveFromParent()
+        {
+            if (Parent != null)
+            {
+                Parent.RemoveChild(this);
+                Parent = null;
+                IsOnStage = false;
+            }
+        }
+        
+        /// <summary>
         /// Swaps the rendering order of the 2 specified children.
         /// </summary>
-        /// <param name="child1"></param>
-        /// <param name="child2"></param>
         public virtual void SwapChildren(DisplayObject child1, DisplayObject child2)
         {
             var firstIndex = Children.FindIndex(o => o == child1);

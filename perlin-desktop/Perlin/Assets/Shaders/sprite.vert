@@ -7,11 +7,11 @@ layout (set = 0, binding = 0) uniform OrthographicProjection
 
 layout(location = 0) in vec2 Pos;
 layout(location = 1) in vec2 Size;
-layout(location = 2) in vec4 Tint;
+layout(location = 2) in float Alpha;
 layout(location = 3) in float Rotation;
 
 layout(location = 0) out vec2 fsin_TexCoords;
-layout(location = 1) out vec4 fsin_Tint;
+layout(location = 1) out float fsin_Alpha;
 
 const vec4 Quads[4]= vec4[4]( // pivot is top left by default
     vec4(0, 1, 0, 0), // x, y, textureX, textureY
@@ -39,5 +39,5 @@ void main() {
 
     fsin_TexCoords = src.zw;
     fsin_TexCoords.y = -fsin_TexCoords.y;
-    fsin_Tint = Tint;
+    fsin_Alpha = Alpha;
 }

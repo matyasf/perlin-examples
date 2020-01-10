@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Perlin.Display;
 using Perlin.Geom;
+using SixLabors.ImageSharp.PixelFormats;
 using Veldrid;
 
 namespace Perlin.Rendering
@@ -30,6 +31,7 @@ namespace Perlin.Rendering
         {
             if (displayObject.ResSet != null)
             {
+                // uses ResSet, GPUVertex
                 _renderQueue.Add(displayObject);   
             }
         }
@@ -47,7 +49,7 @@ namespace Perlin.Rendering
                 0,
                 Matrix4x4.CreateOrthographicOffCenter(0, width, height, 0, 0, 1));
 
-            EnsureBufferSize((uint)_renderQueue.Count * QuadVertex.VertexSize);
+            EnsureVertexBufferSize((uint)_renderQueue.Count * QuadVertex.VertexSize);
             MappedResourceView<QuadVertex> writeMap = gd.Map<QuadVertex>(_vertexBuffer, MapMode.Write);
             for (int i = 0; i < _renderQueue.Count; i++)
             {
@@ -79,7 +81,7 @@ namespace Perlin.Rendering
             _renderQueue.Clear();
         }
         
-        private void EnsureBufferSize(uint size)
+        private void EnsureVertexBufferSize(uint size)
         {
             if (_vertexBuffer.SizeInBytes < size)
             {
@@ -89,10 +91,9 @@ namespace Perlin.Rendering
             }
         }
 
-        // Only the translation values are read from the matrix, others are calculated manually
+        // Only the translation, rotation values are read from the matrix, scale and alpha are calculated manually
         public RenderState PushRenderState(float alpha, Matrix2D matrix2D, float scaleX, float scaleY)
         {
-            // TODO cache this, lots of times its the same state.
             var rs = new RenderState();
             rs.CopyFrom(_renderStates.Peek());
             rs.Alpha *= alpha;
