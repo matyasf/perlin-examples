@@ -39,7 +39,7 @@ namespace Perlin.Rendering
             MappedResourceView<QuadVertex> writeMap = gd.Map<QuadVertex>(_vertexBuffer, MapMode.Write);
             for (int i = 0; i < _renderQueue.Count; i++)
             {
-                writeMap[i] = _renderQueue[i].GetGpuVertex(); // gets from renderState
+                writeMap[i] = _renderQueue[i].GetGpuVertex();
             }
             gd.Unmap(_vertexBuffer);
             var cl = PerlinApp.CommandList;
@@ -80,8 +80,8 @@ namespace Perlin.Rendering
         public void PushRenderState(DisplayObject displayObject)
         {
             var rs = new RenderState();
-            rs.CopyFrom(_renderStates.Peek());
-            rs.ApplyNewState(displayObject);
+            //rs.CopyFrom(_renderStates.Peek());
+            rs.ApplyNewState(_renderStates.Peek(), displayObject);
             _renderStates.Push(rs);
             
             if (!displayObject.GetBounds().IsEmpty())

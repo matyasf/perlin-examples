@@ -34,8 +34,17 @@ namespace Perlin.Rendering
             else _modelviewMatrix = Matrix2D.Create();
         }
         
-        public void ApplyNewState(DisplayObject displayObject)
+        public void CopyFrom(RenderState renderState)
         {
+            Alpha = renderState.Alpha;
+            ScaleX = renderState.ScaleX;
+            ScaleY = renderState.ScaleY;
+            ModelviewMatrix = renderState.ModelviewMatrix;
+        }
+        
+        public void ApplyNewState(RenderState oldState, DisplayObject displayObject)
+        {
+            CopyFrom(oldState);
             Alpha *= displayObject.Alpha;
             ScaleX *= displayObject.ScaleX;
             ScaleY *= displayObject.ScaleY;
@@ -51,24 +60,16 @@ namespace Perlin.Rendering
             set => _modelviewMatrix.CopyFromMatrix(value);
         }
 
-        public void CopyFrom(RenderState renderState)
-        {
-            Alpha = renderState.Alpha;
-            ScaleX = renderState.ScaleX;
-            ScaleY = renderState.ScaleY;
-            ModelviewMatrix = renderState.ModelviewMatrix;
-        }
-        
         /// <summary>
         /// The Vertex that will be uploaded to the GPU to render this.
         /// </summary>
         internal ref QuadVertex GetGpuVertex()
         {
-            _gpuVertex.Position.X = ModelviewMatrix.Tx;
-            _gpuVertex.Position.Y = ModelviewMatrix.Ty;
+            _gpuVertex.Position.X = _modelviewMatrix.Tx;
+            _gpuVertex.Position.Y = _modelviewMatrix.Ty;
             _gpuVertex.Size.X = OriginalWidth * ScaleX;
             _gpuVertex.Size.Y = OriginalHeight * ScaleY;
-            _gpuVertex.Rotation = ModelviewMatrix.Rotation;
+            _gpuVertex.Rotation = _modelviewMatrix.Rotation;
             _gpuVertex.Alpha = Alpha;
             return ref _gpuVertex;
         }
