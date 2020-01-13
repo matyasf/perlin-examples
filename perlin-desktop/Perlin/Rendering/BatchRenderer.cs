@@ -97,7 +97,6 @@ namespace Perlin.Rendering
             var rs = new RenderState();
             rs.CopyFrom(_renderStates.Peek());
             rs.Alpha *= alpha;
-            Console.WriteLine(this + " " + alpha);
             rs.ScaleX *= scaleX;
             rs.ScaleY *= scaleY;
             rs.TransformModelviewMatrix(matrix2D);

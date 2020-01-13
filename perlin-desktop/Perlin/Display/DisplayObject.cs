@@ -96,7 +96,6 @@ namespace Perlin.Display
         protected DisplayObject()
         {
             _transformationMatrix = Matrix2D.Create();
-            _gpuVertex.Alpha = 1f;
         }
         
         internal void DispatchMouseDown(MouseButton button, Point mousePosition)
@@ -188,7 +187,7 @@ namespace Perlin.Display
             {
                 return;
             }
-            _renderState = PerlinApp.Renderer.PushRenderState(_gpuVertex.Alpha, TransformationMatrix, _scaleX, _scaleY);
+            _renderState = PerlinApp.Renderer.PushRenderState(Alpha, TransformationMatrix, _scaleX, _scaleY);
             if (!GetBounds().IsEmpty())
             {
                 PerlinApp.Renderer.AddToRenderQueue(this);
@@ -301,15 +300,11 @@ namespace Perlin.Display
                 _rotation = value;
             }
         }
-        
+
         /// <summary>
         /// The transparency value of this object. 0=fully transparent, 1=not transparent.
         /// </summary>
-        public float Alpha
-        {
-            get => _gpuVertex.Alpha;
-            set => _gpuVertex.Alpha = value;
-        }
+        public float Alpha;
         
         internal void InvokeEnterFrameEvent(float elapsedTimeSecs)
         {

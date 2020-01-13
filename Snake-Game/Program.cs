@@ -124,9 +124,13 @@ namespace Snake_Game
             */
             
             var transparencyBug = new Sprite(50, 50, new Rgba32(233, 12,12, 255));
-            transparencyBug.Alpha = 0.99f;
+            transparencyBug.Alpha = 0.49f;
+            transparencyBug.Name = "bottomS";
             var transparencyBug2 = new Sprite(50, 50, new Rgba32(233, 212,12, 255));
+            transparencyBug2.X = 20;
             transparencyBug2.Y = 20;
+            transparencyBug2.Alpha = 0.5f;
+            transparencyBug2.Name = "topS";
             transparencyBug.AddChild(transparencyBug2);
             PerlinApp.Stage.AddChild(transparencyBug);
         }
