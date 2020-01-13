@@ -1,15 +1,20 @@
+using Perlin.Display;
 using Perlin.Geom;
+using Veldrid;
 
 namespace Perlin.Rendering
 {
-    /// <summary>
-    /// Internal class to keep track of the current render state.
-    /// </summary>
-    public class RenderState  // TODO merge with GPUVertex
+    public class RenderState
     {
+        public QuadVertex _gpuVertex;
+        
         public float Alpha;
         public float ScaleX;
         public float ScaleY;
+        public float OriginalWidth;
+        public float OriginalHeight;
+        public ResourceSet ResSet;
+        
         private Matrix2D _modelviewMatrix;
         
         public RenderState()
@@ -29,14 +34,17 @@ namespace Perlin.Rendering
             else _modelviewMatrix = Matrix2D.Create();
         }
         
-        /// <summary>
-        /// Prepends the given matrix to the 2D modelview matrix.
-        /// </summary>
-        public void TransformModelviewMatrix(Matrix2D matrix)
+        public void ApplyNewState(DisplayObject displayObject)
         {
-            _modelviewMatrix.PrependMatrix(matrix);
+            Alpha *= displayObject.Alpha;
+            ScaleX *= displayObject.ScaleX;
+            ScaleY *= displayObject.ScaleY;
+            OriginalWidth = displayObject.Width;
+            OriginalHeight = displayObject.Height;
+            _modelviewMatrix.PrependMatrix(displayObject.TransformationMatrix);
+            ResSet = displayObject.ResSet;
         }
-        
+
         public Matrix2D ModelviewMatrix
         {
             get => _modelviewMatrix;
@@ -48,7 +56,21 @@ namespace Perlin.Rendering
             Alpha = renderState.Alpha;
             ScaleX = renderState.ScaleX;
             ScaleY = renderState.ScaleY;
-            _modelviewMatrix.CopyFromMatrix(renderState._modelviewMatrix);
+            ModelviewMatrix = renderState.ModelviewMatrix;
+        }
+        
+        /// <summary>
+        /// The Vertex that will be uploaded to the GPU to render this.
+        /// </summary>
+        internal ref QuadVertex GetGpuVertex()
+        {
+            _gpuVertex.Position.X = ModelviewMatrix.Tx;
+            _gpuVertex.Position.Y = ModelviewMatrix.Ty;
+            _gpuVertex.Size.X = OriginalWidth * ScaleX;
+            _gpuVertex.Size.Y = OriginalHeight * ScaleY;
+            _gpuVertex.Rotation = ModelviewMatrix.Rotation;
+            _gpuVertex.Alpha = Alpha;
+            return ref _gpuVertex;
         }
     }
 }

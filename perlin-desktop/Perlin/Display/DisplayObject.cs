@@ -88,14 +88,13 @@ namespace Perlin.Display
         /// The GPU resource set for this object. This is used for rendering, if its null, the object cannot be rendered.
         /// </summary>
         public ResourceSet ResSet;
-        private RenderState _renderState;
-        private QuadVertex _gpuVertex;
         private readonly Matrix2D _transformationMatrix;
         private bool _transformationMatrixChanged = true;
 
         protected DisplayObject()
         {
             _transformationMatrix = Matrix2D.Create();
+            Alpha = 1;
         }
         
         internal void DispatchMouseDown(MouseButton button, Point mousePosition)
@@ -157,20 +156,6 @@ namespace Perlin.Display
                 }
             }
         }
-
-        /// <summary>
-        /// The Vertex that will be uploaded to the GPU to render this.
-        /// </summary>
-        internal ref QuadVertex GetGpuVertex()
-        {
-            _gpuVertex.Position.X = _renderState.ModelviewMatrix.Tx;
-            _gpuVertex.Position.Y = _renderState.ModelviewMatrix.Ty;
-            _gpuVertex.Size.X = OriginalWidth * _renderState.ScaleX;
-            _gpuVertex.Size.Y = OriginalHeight * _renderState.ScaleY;
-            _gpuVertex.Rotation = _renderState.ModelviewMatrix.Rotation;
-            _gpuVertex.Alpha = _renderState.Alpha;
-            return ref _gpuVertex;
-        }
         
         /// <summary>
         /// Renders the object. You do not need to call this, the engine calls it on every frame while
@@ -187,11 +172,7 @@ namespace Perlin.Display
             {
                 return;
             }
-            _renderState = PerlinApp.Renderer.PushRenderState(Alpha, TransformationMatrix, _scaleX, _scaleY);
-            if (!GetBounds().IsEmpty())
-            {
-                PerlinApp.Renderer.AddToRenderQueue(this);
-            }
+            PerlinApp.Renderer.PushRenderState(this);
             foreach (var child in Children)
             {
                 child.Render(elapsedTimeSecs);

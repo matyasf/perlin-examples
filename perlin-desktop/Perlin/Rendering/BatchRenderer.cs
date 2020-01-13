@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Perlin.Display;
-using Perlin.Geom;
 using Veldrid;
 
 namespace Perlin.Rendering
@@ -13,7 +11,7 @@ namespace Perlin.Rendering
     internal class BatchRenderer
     {
         private DeviceBuffer _vertexBuffer;
-        private readonly List<DisplayObject> _renderQueue = new List<DisplayObject>();
+        private readonly List<RenderState> _renderQueue = new List<RenderState>();
         internal uint DrawCount;
         private readonly Stack<RenderState> _renderStates = new Stack<RenderState>();
         
@@ -23,19 +21,7 @@ namespace Perlin.Rendering
                 new BufferDescription(1000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
             _renderStates.Push(new RenderState());
         }
-        
-        /// <summary>
-        /// Called from each render call. Only things in the render queue are rendered. 
-        /// </summary>
-        public void AddToRenderQueue(DisplayObject displayObject)
-        {
-            if (displayObject.ResSet != null)
-            {
-                // uses ResSet, GPUVertex
-                _renderQueue.Add(displayObject);   
-            }
-        }
-        
+
         /// <summary>
         /// Called when everything is added to the queue once per frame
         /// </summary>
@@ -53,7 +39,7 @@ namespace Perlin.Rendering
             MappedResourceView<QuadVertex> writeMap = gd.Map<QuadVertex>(_vertexBuffer, MapMode.Write);
             for (int i = 0; i < _renderQueue.Count; i++)
             {
-                writeMap[i] = _renderQueue[i].GetGpuVertex();
+                writeMap[i] = _renderQueue[i].GetGpuVertex(); // gets from renderState
             }
             gd.Unmap(_vertexBuffer);
             var cl = PerlinApp.CommandList;
@@ -90,18 +76,21 @@ namespace Perlin.Rendering
                     new BufferDescription(size, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
             }
         }
-
-        // Only the translation, rotation values are read from the matrix, scale and alpha are calculated manually
-        public RenderState PushRenderState(float alpha, Matrix2D matrix2D, float scaleX, float scaleY)
+        
+        public void PushRenderState(DisplayObject displayObject)
         {
             var rs = new RenderState();
             rs.CopyFrom(_renderStates.Peek());
-            rs.Alpha *= alpha;
-            rs.ScaleX *= scaleX;
-            rs.ScaleY *= scaleY;
-            rs.TransformModelviewMatrix(matrix2D);
+            rs.ApplyNewState(displayObject);
             _renderStates.Push(rs);
-            return rs;
+            
+            if (!displayObject.GetBounds().IsEmpty())
+            {
+                if (rs.ResSet != null)
+                {
+                    _renderQueue.Add(rs);   
+                }
+            }
         }
 
         public void PopRenderState()

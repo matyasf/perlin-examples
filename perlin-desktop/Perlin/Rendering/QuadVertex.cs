@@ -3,9 +3,9 @@ using System.Numerics;
 namespace Perlin.Rendering
 {
     /// <summary>
-    /// The data structure that stores a single Vertex on the GPU.
+    /// The internal data structure that stores a single Vertex on the GPU.
     /// </summary>
-    internal struct QuadVertex
+    public struct QuadVertex
     {
         public const uint VertexSize = 24; // in bytes
 
