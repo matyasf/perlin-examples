@@ -238,7 +238,7 @@ namespace Perlin.Geom
             return this;
         }
 
-        public void CopyFromMatrix(Matrix2D matrix)
+        public Matrix2D CopyFromMatrix(Matrix2D matrix)
         {
             A = matrix.A;
             B = matrix.B;
@@ -246,6 +246,7 @@ namespace Perlin.Geom
             D = matrix.D;
             Tx = matrix.Tx;
             Ty = matrix.Ty;
+            return this;
         }
 
         public bool IsAlmostEqual(Matrix2D other)

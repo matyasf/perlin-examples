@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Perlin.Geom;
-using Perlin.Rendering;
 using Veldrid;
 using Point = Perlin.Geom.Point;
 using Rectangle = Perlin.Geom.Rectangle;

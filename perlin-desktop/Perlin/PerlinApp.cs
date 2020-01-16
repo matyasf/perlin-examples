@@ -113,11 +113,10 @@ namespace Perlin
                         Stage.BackgroundColor.G/255f,
                         Stage.BackgroundColor.B/255f,
                         1));
-                    // PushRenderState: clones and updates matrix, alpha, scale
+                    // adds elements to the render queue using a helper render state stack
                     Stage.Render((float)elapsed);
-                    
-                    // reads RenderState into a MappedResourceView
-                    Renderer.RenderQueue(); // Reads render state via DisplayObject.GetGpuVertex
+                    // iterates the render queue and send it to the GPU for rendering
+                    Renderer.RenderQueue();
                     CommandList.End();
                     DefaultGraphicsDevice.SubmitCommands(CommandList);
                     DefaultGraphicsDevice.SwapBuffers(DefaultGraphicsDevice.MainSwapchain);
