@@ -12,7 +12,7 @@ Perlin (named from a [bird](https://en.wikipedia.org/wiki/Perlin_(falconry))) is
 
 ## The display tree
 
-![painter's algorithm in steps](Painters_algorithm.png)
+![painter's algorithm in steps. Image from Wikipedia](Painters_algorithm.png)
 
 Perlin puts the objects to render in a display tree similar to other rendering engines (HTML rendering, Android'd UI, Microsoft's WPF,..). The root of the display tree (called Stage) has children, these can also have children and so on creating a tree data structure. Every object in the display tree is a subclass of DisplayObject, here lie the common properties, like width, height, rotation,... Transformations in the display tree are cumulative, e.g. if you set the transparency/rotation/position/scale of an object its every descendant (child, grandchild,..) will be affected as well.
 
