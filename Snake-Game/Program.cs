@@ -3,10 +3,12 @@ using System.IO;
 using System.Numerics;
 using Perlin;
 using Perlin.Display;
+using Perlin.Geom;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.PixelFormats;
 using Veldrid;
 using Point = Perlin.Geom.Point;
+using Rectangle = Perlin.Geom.Rectangle;
 
 namespace Snake_Game
 {
@@ -133,6 +135,14 @@ namespace Snake_Game
             transparencyBug2.Name = "topS";
             transparencyBug.AddChild(transparencyBug2);
             PerlinApp.Stage.AddChild(transparencyBug);
+            
+            // test texture sub-region
+            // TODO buggy, shows the bottom of the image when it should show the top
+            var subTex = new Sprite(
+                    Path.Combine(AppContext.BaseDirectory, "Assets", "grizzly.png"), false, 
+                    new Rectangle(0, 0, 50, 25)) 
+                {X = 400, Y = 10};
+            PerlinApp.Stage.AddChild(subTex);
         }
         
     }

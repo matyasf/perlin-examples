@@ -1,3 +1,4 @@
+using Perlin.Geom;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Perlin.Display
@@ -9,21 +10,21 @@ namespace Perlin.Display
     /// </summary>
     public class Sprite : DisplayObject
     {
-        private string _imagePath;
-        
         /// <summary>
         /// Creates a Sprite that displays the given image, its size will be the image's dimensions.
-        /// Note that it uses the <code>ImageManager</code> class to load the image, the image will stay there
-        /// even if this Sprite is removed from the Stage.
+        /// Note that it uses the <code>ImageManager</code> class to load and store the image in the memory,
+        /// the image will stay there even if this Sprite is removed from the Stage.
         /// </summary>
-        /// <param name="imagePath">the path to the image.</param>
+        /// <param name="imagePath">The path to the image.</param>
         /// <param name="mipmap">Whether to create mipmaps for the image. Images with mipmaps look better when
         /// scaled, but take up ~1.5x more GPU memory.</param>
-        public Sprite(string imagePath, bool mipmap = false) : this()
+        /// <param name="textureSubRegion">A region of the image that should be displayed. The rectangle must be
+        /// inside the image's dimensions. If null the whole image is displayed.</param>
+        public Sprite(string imagePath, bool mipmap = false, Rectangle textureSubRegion = null) : this()
         {
-            LoadImage(imagePath, true, mipmap);
+            LoadImage(imagePath, mipmap, textureSubRegion);
         }
-
+        
         /// <summary>
         /// Creates a Sprite with the given color.
         /// </summary>
@@ -50,19 +51,30 @@ namespace Perlin.Display
         /// Loads the given image to the Sprite.
         /// </summary>
         /// <param name="path">The path to the image</param>
-        /// <param name="resizeToImage">Whether to resize this Sprite to the given image's dimensions.</param>
         /// <param name="mipmap">Whether to create mipmaps for the image. Images with mipmaps look better when
         /// scaled, but take up ~1.5x more GPU memory.</param>
-        public void LoadImage(string path, bool resizeToImage = true, bool mipmap = false)
+        /// <param name="textureSubRegion">A region of the image that should be displayed. The rectangle must be
+        /// inside the image's dimensions. If null the whole image is displayed.</param>
+        public void LoadImage(string path, bool mipmap = false, Rectangle textureSubRegion = null)
         {
             var set = PerlinApp.ImageManager.Load(path, mipmap);
             ResSet = set.ret;
-            _imagePath = path;
-            if (resizeToImage)
+            if (textureSubRegion != null)
+            {
+                OriginalWidth = textureSubRegion.Width;
+                OriginalHeight = textureSubRegion.Height;
+                TextureSubRegionNormalized.X = textureSubRegion.X / set.texture.Width;
+                TextureSubRegionNormalized.Y = textureSubRegion.Y / set.texture.Height;
+                TextureSubRegionNormalized.Width = textureSubRegion.Width / set.texture.Width;
+                TextureSubRegionNormalized.Height = textureSubRegion.Height / set.texture.Height;
+            }
+            else
             {
                 OriginalWidth = set.texture.Width;
                 OriginalHeight = set.texture.Height;
+                TextureSubRegionNormalized = new Rectangle(0,0,1,1);
             }
+            TextureSubRegion = textureSubRegion;
         }
         
         public override string ToString()

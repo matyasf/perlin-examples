@@ -24,7 +24,7 @@ namespace Perlin
         /// <param name="imagePath">the path to the image</param>
         /// <param name="mipmap">Whether to create mipmaps for the image. Images with MipMaps look better when scaled
         /// but take up more GPU memory (around 1.5x more).</param>
-        public (ResourceSet ret, Texture texture) Load(string imagePath, bool mipmap = false) // TODO what if someone calls it with same path but different mipmap setting?
+        public (ResourceSet ret, Texture texture) Load(string imagePath, bool mipmap = false)
         {
             if (!_loadedImages.TryGetValue((imagePath, mipmap), out (ResourceSet, Texture) ret))
             {

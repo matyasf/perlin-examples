@@ -73,16 +73,25 @@ namespace Perlin.Display
         /// You can use this property to give an identifier to this object for debugging.
         /// </summary>
         public string Name = "DisplayObject";
+        
         /// <summary>
         /// Sets the visibility of an object.
         /// </summary>
         public bool Visible = true;
+        
+        internal Rectangle TextureSubRegionNormalized = new Rectangle(0,0,1,1); // Shaders need it in 0..1 coordinates.
+
+        /// <summary>
+        /// The sub-region of this object's Texture to render. If set to null or there is no <code>ResSet</code>,
+        /// its ignored. Should have an greater than 0 area, and the Rectangle should be inside the Texture's borders.
+        /// </summary>
+        public Rectangle TextureSubRegion;
 
         private float _pivotX;
         private float _pivotY;
         private float _scaleX = 1.0f;
         private float _scaleY = 1.0f;
-        
+
         /// <summary>
         /// The GPU resource set for this object. This is used for rendering, if its null, the object cannot be rendered.
         /// </summary>
