@@ -137,7 +137,6 @@ namespace Snake_Game
             PerlinApp.Stage.AddChild(transparencyBug);
             
             // test texture sub-region
-            // TODO buggy, shows the bottom of the image when it should show the top
             var subTex = new Sprite(
                     Path.Combine(AppContext.BaseDirectory, "Assets", "grizzly.png"), false, 
                     new Rectangle(50, 50, 50, 50)) 
