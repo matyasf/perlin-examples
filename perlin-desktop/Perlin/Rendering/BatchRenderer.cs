@@ -79,12 +79,13 @@ namespace Perlin.Rendering
         
         public void PushRenderState(DisplayObject displayObject)
         {
-            var rs = new RenderState(); // use an object pool for these!
-            rs.ApplyNewState(_renderStates.Peek(), displayObject);
-            _renderStates.Push(rs);
-            if (rs.ResSet != null && !displayObject.GetBounds().IsEmpty())
+            // this function gets called for every renderable object, in the future use an object pool for renderState
+            var renderState = new RenderState();
+            renderState.ApplyNewState(_renderStates.Peek(), displayObject);
+            _renderStates.Push(renderState);
+            if (renderState.ResSet != null && !displayObject.GetBounds().IsEmpty())
             {
-                _renderQueue.Add(rs);
+                _renderQueue.Add(renderState);
             }
         }
 

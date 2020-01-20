@@ -140,7 +140,7 @@ namespace Snake_Game
             // TODO buggy, shows the bottom of the image when it should show the top
             var subTex = new Sprite(
                     Path.Combine(AppContext.BaseDirectory, "Assets", "grizzly.png"), false, 
-                    new Rectangle(0, 0, 50, 25)) 
+                    new Rectangle(50, 50, 50, 50)) 
                 {X = 400, Y = 10};
             PerlinApp.Stage.AddChild(subTex);
         }

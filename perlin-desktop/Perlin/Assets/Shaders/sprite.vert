@@ -15,10 +15,10 @@ layout(location = 0) out vec2 fsin_TexCoords;
 layout(location = 1) out float fsin_Alpha;
 
 const vec4 Quads[4]= vec4[4]( // pivot is top left by default
-    vec4(0, 1, 0, 0), // x, y, textureX, textureY
-    vec4(1, 1, 1, 0),
-    vec4(0, 0, 0, 1),
-    vec4(1, 0, 1, 1)
+    vec4(0, 1, 0, 0), // x, y, textureX, textureY. Texture coords are set in main()
+    vec4(1, 1, 0, 0),
+    vec4(0, 0, 0, 0),
+    vec4(1, 0, 0, 0)
 );
 vec2 rotate(vec2 pos, float rot) {
     float s = sin(rot);
@@ -35,25 +35,25 @@ void main() {
     quadPos = rotate(quadPos, -Rotation);
     quadPos.x = quadPos.x + Pos.x;
     quadPos.y = quadPos.y + Pos.y;
-    if (gl_VertexIndex == 0) { // 0,0
+    
+    // sub-texture support
+    if (gl_VertexIndex == 0) { // 0,1
         src.z = TextureSubRegion.x;
-        src.w = TextureSubRegion.y; 
+        src.w = TextureSubRegion.y + TextureSubRegion.w;
     }
-    else if (gl_VertexIndex == 1) { // 1,0
+    else if (gl_VertexIndex == 1) { // 1,1
+        src.z = TextureSubRegion.x + TextureSubRegion.z;
+        src.w = TextureSubRegion.y + TextureSubRegion.w;
+    }
+    else if (gl_VertexIndex == 2) { // 0,0
+        src.z = TextureSubRegion.x;
+        src.w = TextureSubRegion.y;
+    }
+    else if (gl_VertexIndex == 3) { // 1,0
         src.z = TextureSubRegion.x + TextureSubRegion.z;
         src.w = TextureSubRegion.y;
     }
-    else if (gl_VertexIndex == 2) { // 0,1
-        src.z = TextureSubRegion.x;
-        src.w = TextureSubRegion.y + TextureSubRegion.w;
-    }
-    else if (gl_VertexIndex == 3) { // 1,1
-        src.z = TextureSubRegion.x + TextureSubRegion.z;
-        src.w = TextureSubRegion.y + TextureSubRegion.w;
-    }
-    
     gl_Position = Projection * vec4(quadPos, 0, 1);
     fsin_TexCoords = src.zw;
-    fsin_TexCoords.y = -fsin_TexCoords.y;
     fsin_Alpha = Alpha;
 }
