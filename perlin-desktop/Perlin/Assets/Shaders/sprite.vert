@@ -31,7 +31,9 @@ void main() {
     vec2 quadPos = Quads[gl_VertexIndex]; 
     quadPos.x = (quadPos.x * Size.x);
     quadPos.y = (quadPos.y * Size.y);
-    quadPos = rotate(quadPos, -Rotation);
+    if (Rotation != 0) {
+        quadPos = rotate(quadPos, -Rotation);   
+    }
     quadPos.x = quadPos.x + Pos.x;
     quadPos.y = quadPos.y + Pos.y;
     
