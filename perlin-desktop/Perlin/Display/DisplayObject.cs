@@ -85,7 +85,7 @@ namespace Perlin.Display
         /// The sub-region of this object's Texture to render. If set to null or there is no <code>ResSet</code>,
         /// its ignored. Should have an greater than 0 area, and the Rectangle should be inside the Texture's borders.
         /// </summary>
-        public Rectangle TextureSubRegion;
+        internal Rectangle TextureSubRegion;
 
         private float _pivotX;
         private float _pivotY;
