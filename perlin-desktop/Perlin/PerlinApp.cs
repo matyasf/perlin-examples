@@ -1,13 +1,14 @@
 using System;
 using System.Diagnostics;
-using System.IO;
 using Perlin.Display;
 using Perlin.Rendering;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Memory;
 using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
+using Path = System.IO.Path;
 
 namespace Perlin
 {
@@ -77,7 +78,7 @@ namespace Perlin
         /// you can add things to the stage, add event listeners etc.</param>
         public static void Start(int width, int height, string windowTitle, Action onInit)
         {
-            Configuration.Default.MemoryAllocator = new SixLabors.Memory.SimpleGcMemoryAllocator();
+            Configuration.Default.MemoryAllocator = new SimpleGcMemoryAllocator();
             GraphicsDeviceOptions options = new GraphicsDeviceOptions();
             Window = new Sdl2Window(windowTitle, 50, 50, width, height, SDL_WindowFlags.OpenGL, false);
 #if DEBUG

@@ -6,7 +6,6 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 using Veldrid;
 using Point = Perlin.Geom.Point;
 
@@ -272,9 +271,7 @@ namespace Perlin.Display
                 return new Point();
             }
             var size =  TextMeasurer.Measure(_text, new RendererOptions(_font));
-            size.Width = (float)Math.Ceiling(size.Width);
-            size.Height = (float)Math.Ceiling(size.Height);
-            return new Point(size.Width, size.Height);
+            return new Point( (float)Math.Ceiling(size.Width),  (float)Math.Ceiling(size.Height) );
         }
 
         public override string ToString()
