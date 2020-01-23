@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <RootNamespace>Codecool.Quest</RootNamespace>
+        <AssemblyName>Codecool.Quest</AssemblyName>
+		<CodeAnalysisRuleSet>..\Codecool.ruleset</CodeAnalysisRuleSet>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\perlin-desktop\perlin-desktop.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Content Include="..\..\data\map.txt">
+        <Link>map.txt</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\data\tiles.png">
+        <Link>tiles.png</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+</Project>

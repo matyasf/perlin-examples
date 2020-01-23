@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <RootNamespace>Snake_Game_V2</RootNamespace>
+		<CodeAnalysisRuleSet>..\Codecool.ruleset</CodeAnalysisRuleSet>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\perlin-desktop\perlin-desktop.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\data\powerup_berry.png">
+        <Link>powerup_berry.png</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\data\simple_enemy.png">
+        <Link>simple_enemy.png</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\data\snake_body.png">
+        <Link>snake_body.png</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\data\snake_head.png">
+        <Link>snake_head.png</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+</Project>
