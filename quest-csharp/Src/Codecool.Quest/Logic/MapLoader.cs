@@ -7,7 +7,7 @@ namespace Codecool.Quest.Logic
     {
         public static GameMap LoadMap()
         {
-            var lines = File.ReadAllLines("data/map.txt");
+            var lines = File.ReadAllLines("map.txt");
             var dimensions = lines[0].Split(" ");
             var width = int.Parse(dimensions[0]);
             var height = int.Parse(dimensions[1]);
