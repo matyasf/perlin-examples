@@ -48,12 +48,12 @@ namespace Codecool.Quest
             stage.AddChild(_mapContainer);
             DrawMap();
             
-            var skeletonGfx = new Sprite("data/tiles.png", false, Tiles.SkeletonTile);
+            var skeletonGfx = new Sprite("tiles.png", false, Tiles.SkeletonTile);
             skeletonGfx.X = _map.Skeleton.X * Tiles.TileWidth;
             skeletonGfx.Y = _map.Skeleton.Y * Tiles.TileWidth;
             stage.AddChild(skeletonGfx);
             
-            _playerGfx = new Sprite("data/tiles.png", false, Tiles.PlayerTile);
+            _playerGfx = new Sprite("tiles.png", false, Tiles.PlayerTile);
             stage.AddChild(_playerGfx);
         }
 
@@ -65,9 +65,9 @@ namespace Codecool.Quest
                 for (int y = 0; y < _map.Height; y++)
                 {
                     var cell = _map.GetCell(x, y);
-                    var tile = Tiles.GetTile(cell);
+                    var tile = Tiles.GetMapTile(cell);
                     // tiles are 16x16 pixels
-                    var sp = new Sprite("data/tiles.png", false, tile);
+                    var sp = new Sprite("tiles.png", false, tile);
                     sp.X = x * Tiles.TileWidth;
                     sp.Y = y * Tiles.TileWidth;
                     _mapContainer.AddChild(sp);

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Numerics;
 using Perlin;
 using Perlin.Display;
-using SixLabors.ImageSharp.PixelFormats;
 using Veldrid;
 
 namespace Snake_Game

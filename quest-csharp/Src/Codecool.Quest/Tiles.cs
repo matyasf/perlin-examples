@@ -20,7 +20,7 @@ namespace Codecool.Quest
             TileMap["floor"] = CreateTile(2, 0);
         }
 
-        public static Rectangle GetTile(IDrawable d)
+        public static Rectangle GetMapTile(IDrawable d)
         {
             return TileMap[d.Tilename.ToLower()];
         }
