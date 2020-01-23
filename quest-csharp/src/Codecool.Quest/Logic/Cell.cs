@@ -1,4 +1,3 @@
-using System;
 using Codecool.Quest.Logic.Actors;
 
 namespace Codecool.Quest.Logic

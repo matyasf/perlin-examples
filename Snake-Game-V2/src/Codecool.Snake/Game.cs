@@ -9,7 +9,7 @@ namespace Snake_Game_V2
     public class Game : Sprite
     {
         private Snake _snake;
-        
+
         public Game()
         {
             Globals.Instance.Game = this;
