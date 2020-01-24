@@ -3,8 +3,11 @@ using Perlin;
 using Veldrid;
 using Point = Perlin.Geom.Point;
 
-namespace Snake_Game_V2.Entities.Snakes
+namespace Codecool.Snake.Entities.Snakes
 {
+    /// <summary>
+    /// Snake
+    /// </summary>
     public class Snake : IAnimatable
     {
         private static readonly float _speed = 2;
@@ -13,11 +16,19 @@ namespace Snake_Game_V2.Entities.Snakes
         private SnakeHead _head;
         private DelayedModificationList<GameEntity> _body;
 
+        /// <summary>
+        /// Changes health by the given value
+        /// </summary>
+        /// <param name="diff">Health change value</param>
         public void ChangeHealth(int diff)
         {
             _health += diff;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Snake"/> class.
+        /// </summary>
+        /// <param name="position">starting position</param>
         public Snake(Point position)
         {
             _head = new SnakeHead(this, position);
@@ -26,6 +37,10 @@ namespace Snake_Game_V2.Entities.Snakes
             AddPart(4);
         }
 
+        /// <summary>
+        /// Adds the given number of parts to the snake
+        /// </summary>
+        /// <param name="numParts">number of parts to add</param>
         public void AddPart(int numParts)
         {
             var parent = GetLastPart();
@@ -39,6 +54,7 @@ namespace Snake_Game_V2.Entities.Snakes
             Globals.Instance.Display.UpdateSnakeHeadDrawPosition(_head);
         }
 
+        /// <inheritdoc/>
         public void Step()
         {
             var turnDir = GetUserInput();

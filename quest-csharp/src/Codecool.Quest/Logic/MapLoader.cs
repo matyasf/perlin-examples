@@ -3,8 +3,16 @@ using Codecool.Quest.Logic.Actors;
 
 namespace Codecool.Quest.Logic
 {
+    /// <summary>
+    /// Helper class to load the map from the disk
+    /// </summary>
     public static class MapLoader
     {
+        /// <summary>
+        /// Load the map from the disk
+        /// </summary>
+        /// <returns>The loaded map</returns>
+        /// <exception cref="InvalidDataException">The map has unrecognized character(s)</exception>
         public static GameMap LoadMap()
         {
             var lines = File.ReadAllLines("map.txt");

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace Snake_Game_V2
+namespace Codecool.Snake
 {
     /// <summary>
     /// A special container which maintains a list of objects. If any modification (addition, removal)
@@ -14,11 +14,19 @@ namespace Snake_Game_V2
         private LinkedList<T> _newObjects = new LinkedList<T>(); // Holds game objects created in this frame.
         private LinkedList<T> _oldObjects = new LinkedList<T>(); // Holds game objects that will be destroyed this frame.
 
+        /// <summary>
+        /// Adds an element to the end of the list
+        /// </summary>
+        /// <param name="obj">The object to add</param>
         public void Add(T obj)
         {
             _newObjects.AddLast(obj);
         }
 
+        /// <summary>
+        /// Adds all elements from the list to the end of this list.
+        /// </summary>
+        /// <param name="objs">The objects to add</param>
         public void AddAll(IEnumerable<T> objs)
         {
             foreach (T obj in objs)
@@ -27,21 +35,35 @@ namespace Snake_Game_V2
             }
         }
 
+        /// <summary>
+        /// Queues an object for removing
+        /// </summary>
+        /// <param name="obj">The object to remove</param>
         public void Remove(T obj)
         {
             _oldObjects.AddLast(obj);
         }
 
+        /// <summary>
+        /// Gets this object as a List.
+        /// </summary>
         public IImmutableList<T> List => _objects.ToImmutableList();
 
-        public bool IsEmpty()
+        /// <summary>
+        /// Gets a value indicating whether this list is empty.
+        /// </summary>
+        /// <returns>True if empty</returns>
+        public bool IsEmpty
         {
-            if (_newObjects.Count > 0 || _objects.Count > 0)
+            get
             {
-                return false;
-            }
+                if (_newObjects.Count > 0 || _objects.Count > 0)
+                {
+                    return false;
+                }
 
-            return true;
+                return true;
+            }
         }
 
         /// <summary>
@@ -63,6 +85,9 @@ namespace Snake_Game_V2
             _oldObjects.Clear();
         }
 
+        /// <summary>
+        /// Gets the last element of this list
+        /// </summary>
         public T Last
         {
             get
@@ -73,6 +98,9 @@ namespace Snake_Game_V2
             }
         }
 
+        /// <summary>
+        /// Removes every element from this list.
+        /// </summary>
         public void Clear()
         {
             _objects.Clear();

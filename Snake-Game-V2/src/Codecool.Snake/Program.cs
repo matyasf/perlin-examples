@@ -1,10 +1,16 @@
 ﻿using Perlin;
 
-namespace Snake_Game_V2
+namespace Codecool.Snake
 {
+    /// <summary>
+    /// Main class
+    /// </summary>
     public class Program
     {
-        public static void Main(string[] args)
+        /// <summary>
+        /// Entry point
+        /// </summary>
+        public static void Main()
         {
             PerlinApp.Start(
                 Globals.WindowWidth,

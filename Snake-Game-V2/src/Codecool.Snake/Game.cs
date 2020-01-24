@@ -1,15 +1,20 @@
+using Codecool.Snake.Entities.Enemies;
+using Codecool.Snake.Entities.Powerups;
 using Perlin.Display;
 using Perlin.Geom;
-using Snake_Game_V2.Entities.Enemies;
-using Snake_Game_V2.Entities.Powerups;
-using Snake_Game_V2.Entities.Snakes;
 
-namespace Snake_Game_V2
+namespace Codecool.Snake
 {
+    /// <summary>
+    /// The initial class to start the game.
+    /// </summary>
     public class Game : Sprite
     {
-        private Snake _snake;
+        private Entities.Snakes.Snake _snake;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Game"/> class.
+        /// </summary>
         public Game()
         {
             Globals.Instance.Game = this;
@@ -17,6 +22,9 @@ namespace Snake_Game_V2
             Init();
         }
 
+        /// <summary>
+        /// Initializes the game.
+        /// </summary>
         public void Init()
         {
             SpawnSnake();
@@ -27,6 +35,9 @@ namespace Snake_Game_V2
             Globals.Instance.GameLoop = gameLoop;
         }
 
+        /// <summary>
+        /// Starts the game.
+        /// </summary>
         public void Start()
         {
             Globals.Instance.StartGame();
@@ -34,7 +45,7 @@ namespace Snake_Game_V2
 
         private void SpawnSnake()
         {
-            _snake = new Snake(new Point(500, 500));
+            _snake = new Entities.Snakes.Snake(new Point(500, 500));
         }
 
         private void SpawnEnemies(int numEnemies)

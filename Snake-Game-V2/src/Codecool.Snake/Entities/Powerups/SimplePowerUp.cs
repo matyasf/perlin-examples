@@ -1,18 +1,26 @@
 using System;
-using Snake_Game_V2.Entities.Snakes;
+using Codecool.Snake.Entities.Snakes;
 
-namespace Snake_Game_V2.Entities.Powerups
+namespace Codecool.Snake.Entities.Powerups
 {
+    /// <summary>
+    /// Example implementation of a powerup
+    /// </summary>
     public class SimplePowerUp : GameEntity, IInteractable
     {
         private static readonly Random _rnd = new Random();
 
-        public SimplePowerUp() : base("powerup_berry.png")
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SimplePowerUp"/> class.
+        /// </summary>
+        public SimplePowerUp()
+            : base("powerup_berry.png")
         {
             X = (float)_rnd.NextDouble() * Globals.WindowWidth;
             Y = (float)_rnd.NextDouble() * Globals.WindowHeight;
         }
 
+        /// <inheritdoc/>
         public void Apply(GameEntity entity)
         {
             if (entity is SnakeHead)
@@ -22,6 +30,7 @@ namespace Snake_Game_V2.Entities.Powerups
             }
         }
 
+        /// <inheritdoc/>
         public string GetMessage()
         {
             return "Got power-up :)";

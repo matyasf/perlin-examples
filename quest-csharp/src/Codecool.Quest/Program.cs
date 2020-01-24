@@ -6,6 +6,9 @@ using Veldrid;
 
 namespace Codecool.Quest
 {
+    /// <summary>
+    /// The main class and entry point.
+    /// </summary>
     public class Program
     {
         private GameMap _map;
@@ -13,7 +16,10 @@ namespace Codecool.Quest
         private Sprite _mapContainer;
         private Sprite _playerGfx;
 
-        public static void Main(string[] args)
+        /// <summary>
+        /// Entry point
+        /// </summary>
+        public static void Main()
         {
             new Program();
         }

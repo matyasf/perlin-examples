@@ -1,15 +1,22 @@
 using System;
+using Codecool.Snake.Entities.Snakes;
 using Perlin.Geom;
-using Snake_Game_V2.Entities.Snakes;
 
-namespace Snake_Game_V2.Entities.Enemies
+namespace Codecool.Snake.Entities.Enemies
 {
-    public class SimpleEnemy : Enemy, IAnimatable, IInteractable
+    /// <summary>
+    /// Simple enemy that just moves in a line
+    /// </summary>
+    public sealed class SimpleEnemy : Enemy, IAnimatable, IInteractable
     {
         private Point _heading;
         private Random _rnd = new Random();
 
-        public SimpleEnemy() : base(10, "simple_enemy.png")
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SimpleEnemy"/> class.
+        /// </summary>
+        public SimpleEnemy()
+            : base(10, "simple_enemy.png")
         {
             X = (float)_rnd.NextDouble() * Globals.WindowWidth;
             Y = (float)_rnd.NextDouble() * Globals.WindowHeight;
@@ -21,6 +28,7 @@ namespace Snake_Game_V2.Entities.Enemies
             _heading = Utils.DirectionToVector(direction, speed);
         }
 
+        /// <inheritdoc/>
         public void Step()
         {
             if (IsOutOfBounds())
@@ -32,6 +40,7 @@ namespace Snake_Game_V2.Entities.Enemies
             Y += _heading.Y;
         }
 
+        /// <inheritdoc/>
         public void Apply(GameEntity entity)
         {
             if (entity is SnakeHead)
@@ -41,6 +50,7 @@ namespace Snake_Game_V2.Entities.Enemies
             }
         }
 
+        /// <inheritdoc/>
         public string GetMessage()
         {
             return Damage + " damage";

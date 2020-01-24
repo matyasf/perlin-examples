@@ -1,5 +1,8 @@
-namespace Snake_Game_V2.Entities.Snakes
+namespace Codecool.Snake.Entities.Snakes
 {
+    /// <summary>
+    /// Snake turn directions.
+    /// </summary>
     public enum SnakeControl
     {
         TurnLeft,

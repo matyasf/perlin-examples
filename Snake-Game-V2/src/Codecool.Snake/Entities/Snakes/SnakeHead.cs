@@ -1,16 +1,25 @@
 using System;
+using Codecool.Snake.Entities.Enemies;
+using Codecool.Snake.Entities.Powerups;
 using Perlin.Geom;
-using Snake_Game_V2.Entities.Enemies;
-using Snake_Game_V2.Entities.Powerups;
 
-namespace Snake_Game_V2.Entities.Snakes
+namespace Codecool.Snake.Entities.Snakes
 {
+    /// <summary>
+    /// Head of the snake
+    /// </summary>
     public class SnakeHead : GameEntity, IInteractable
     {
         private static readonly float _turnRate = 2;
-        private Snake _snake;
+        private readonly Snake _snake;
 
-        public SnakeHead(Snake snake, Point position) : base("snake_head.png")
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SnakeHead"/> class.
+        /// </summary>
+        /// <param name="snake">Refernce to the Snake</param>
+        /// <param name="position">position</param>
+        public SnakeHead(Snake snake, Point position)
+            : base("snake_head.png")
         {
             _snake = snake;
             X = position.X;
@@ -19,6 +28,11 @@ namespace Snake_Game_V2.Entities.Snakes
             PivotY = Height / 2;
         }
 
+        /// <summary>
+        /// Update rotation
+        /// </summary>
+        /// <param name="turnDirection">Turn direction</param>
+        /// <param name="speed">speed in points</param>
         public void UpdateRotation(SnakeControl turnDirection, float speed)
         {
             if (turnDirection == SnakeControl.TurnLeft)
@@ -36,6 +50,7 @@ namespace Snake_Game_V2.Entities.Snakes
             Y += heading.Y;
         }
 
+        /// <inheritdoc/>
         public void Apply(GameEntity entity)
         {
             if (entity is Enemy)
@@ -51,6 +66,7 @@ namespace Snake_Game_V2.Entities.Snakes
             }
         }
 
+        /// <inheritdoc/>
         public string GetMessage()
         {
             return "IMMA SNAEK HED! SPITTIN' MAH WENOM! SPITJU-SPITJU!";

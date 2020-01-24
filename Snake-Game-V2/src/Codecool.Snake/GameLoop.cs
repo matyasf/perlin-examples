@@ -1,31 +1,46 @@
 using System.Linq;
+using Codecool.Snake.Entities;
 using Perlin;
 using Perlin.Display;
-using Snake_Game_V2.Entities;
-using Snake_Game_V2.Entities.Snakes;
 
-namespace Snake_Game_V2
+namespace Codecool.Snake
 {
+    /// <summary>
+    /// The game loop, you can start/stop the game here.
+    /// </summary>
     public class GameLoop
     {
-        private Snake _snake;
+        private Entities.Snakes.Snake _snake;
 
-        public GameLoop(Snake snake)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameLoop"/> class.
+        /// </summary>
+        /// <param name="snake">The snake to display</param>
+        public GameLoop(Entities.Snakes.Snake snake)
         {
             _snake = snake;
         }
 
+        /// <summary>
+        /// Adds an event listener that executes the Step() method every frame
+        /// </summary>
         public void Start()
         {
             PerlinApp.Stage.EnterFrameEvent += Step;
         }
 
+        /// <summary>
+        /// Stops the Step() method executing every frame.
+        /// </summary>
         public void Stop()
         {
             PerlinApp.Stage.EnterFrameEvent -= Step;
         }
 
-        public void Step(DisplayObject target, float elapsedTimeSecs)
+        /// <summary>
+        /// This code gets executed every frame.
+        /// </summary>
+        private void Step(DisplayObject target, float elapsedTimeSecs)
         {
             _snake.Step();
             foreach (GameEntity gameObject in Globals.Instance.Display.ObjectList)

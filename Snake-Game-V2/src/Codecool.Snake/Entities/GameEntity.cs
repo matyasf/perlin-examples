@@ -1,20 +1,34 @@
 using Perlin.Display;
 using Perlin.Geom;
 
-namespace Snake_Game_V2.Entities
+namespace Codecool.Snake.Entities
 {
+    /// <summary>
+    /// Base class for every entity in the game.
+    /// </summary>
     public abstract class GameEntity : Sprite
     {
-        protected GameEntity(string imagePath) : base(imagePath)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameEntity"/> class.
+        /// </summary>
+        /// <param name="imagePath">file path for the graphic of this entity</param>
+        protected GameEntity(string imagePath)
+            : base(imagePath)
         {
             Globals.Instance.Display.Add(this);
         }
 
-        public void Destroy()
+        /// <summary>
+        /// Removes this enemy from the display
+        /// </summary>
+        public virtual void Destroy()
         {
             Globals.Instance.Display.Remove(this);
         }
 
+        /// <summary>
+        /// Gets or sets the position of this entity
+        /// </summary>
         public virtual Point Position
         {
             get => new Point(X, Y);
@@ -25,6 +39,10 @@ namespace Snake_Game_V2.Entities
             }
         }
 
+        /// <summary>
+        /// Return whether this entity is outside of the game's window.
+        /// </summary>
+        /// <returns>Whether this is outside the window</returns>
         public bool IsOutOfBounds()
         {
             if (X > Globals.WindowWidth || X < 0 ||

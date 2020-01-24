@@ -1,14 +1,23 @@
 using System.Collections.Generic;
 using Perlin.Geom;
 
-namespace Snake_Game_V2.Entities.Snakes
+namespace Codecool.Snake.Entities.Snakes
 {
+    /// <summary>
+    /// Body of the snake
+    /// </summary>
     public class SnakeBody : GameEntity
     {
         private const int HistorySize = 10;
         private readonly Queue<Point> _history = new Queue<Point>();
 
-        public SnakeBody(float xc, float yc) : base("snake_body.png")
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SnakeBody"/> class.
+        /// </summary>
+        /// <param name="xc">X coordinate</param>
+        /// <param name="yc">Y coordinate</param>
+        public SnakeBody(float xc, float yc)
+            : base("snake_body.png")
         {
             X = xc;
             Y = yc;
@@ -21,6 +30,7 @@ namespace Snake_Game_V2.Entities.Snakes
             }
         }
 
+        /// <inheritdoc/>
         public override Point Position
         {
             set
