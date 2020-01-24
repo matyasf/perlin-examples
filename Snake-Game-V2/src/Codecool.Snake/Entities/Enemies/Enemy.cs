@@ -15,7 +15,8 @@ namespace Codecool.Snake.Entities.Enemies
         /// </summary>
         /// <param name="damage">How much damage this enemy can inflict</param>
         /// <param name="imagePath">The file path for the graphic of this enemy.</param>
-        public Enemy(int damage, string imagePath) : base(imagePath)
+        public Enemy(int damage, string imagePath)
+            : base(imagePath)
         {
             Damage = damage;
         }

@@ -13,6 +13,8 @@ namespace Codecool.Snake
         /// The length of this vector is the second parameter
         /// </summary>
         /// <returns>the direction vector</returns>
+        /// <param name="directionInDegrees">Direction in degrees</param>
+        /// <param name="length">length</param>
         public static Point DirectionToVector(float directionInDegrees, float length)
         {
             float directionInRadians = directionInDegrees / 180 * (float)Math.PI;

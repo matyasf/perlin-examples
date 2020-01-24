@@ -8,7 +8,7 @@ namespace Codecool.Snake.Entities.Powerups
     /// </summary>
     public class SimplePowerUp : GameEntity, IInteractable
     {
-        private static readonly Random _rnd = new Random();
+        private static readonly Random Rnd = new Random();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SimplePowerUp"/> class.
@@ -16,8 +16,8 @@ namespace Codecool.Snake.Entities.Powerups
         public SimplePowerUp()
             : base("powerup_berry.png")
         {
-            X = (float)_rnd.NextDouble() * Globals.WindowWidth;
-            Y = (float)_rnd.NextDouble() * Globals.WindowHeight;
+            X = (float)Rnd.NextDouble() * Globals.WindowWidth;
+            Y = (float)Rnd.NextDouble() * Globals.WindowHeight;
         }
 
         /// <inheritdoc/>

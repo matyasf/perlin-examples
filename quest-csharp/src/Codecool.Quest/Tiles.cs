@@ -45,8 +45,7 @@ namespace Codecool.Quest
 
         private static Rectangle CreateTile(int i, int j)
         {
-            return new Rectangle(i * (TileWidth + 1), j * (TileWidth + 1),
-                TileWidth, TileWidth);
+            return new Rectangle(i * (TileWidth + 1), j * (TileWidth + 1), TileWidth, TileWidth);
         }
     }
 }

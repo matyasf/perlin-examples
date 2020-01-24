@@ -69,8 +69,16 @@ namespace Codecool.Snake.Entities.Snakes
         private SnakeControl GetUserInput()
         {
             SnakeControl turnDir = SnakeControl.Invalid;
-            if (KeyboardInput.IsKeyDown(Key.Left)) turnDir = SnakeControl.TurnLeft;
-            if (KeyboardInput.IsKeyDown(Key.Right)) turnDir = SnakeControl.TurnRight;
+            if (KeyboardInput.IsKeyDown(Key.Left))
+            {
+                turnDir = SnakeControl.TurnLeft;
+            }
+
+            if (KeyboardInput.IsKeyDown(Key.Right))
+            {
+                turnDir = SnakeControl.TurnRight;
+            }
+
             return turnDir;
         }
 
@@ -96,7 +104,11 @@ namespace Codecool.Snake.Entities.Snakes
         private GameEntity GetLastPart()
         {
             var result = _body.Last;
-            if (result != null) return result;
+            if (result != null)
+            {
+                return result;
+            }
+
             return _head;
         }
     }

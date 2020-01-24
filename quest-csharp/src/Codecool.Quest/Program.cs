@@ -45,7 +45,7 @@ namespace Codecool.Quest
             _healthTextField.HorizontalAlign = HorizontalAlignment.Center;
             _healthTextField.Width = 100;
             _healthTextField.Height = 20;
-            _healthTextField.X = (_map.Width * Tiles.TileWidth) / 2 - 50;
+            _healthTextField.X = _map.Width * Tiles.TileWidth / 2 - 50;
             stage.AddChild(_healthTextField);
 
             stage.EnterFrameEvent += StageOnEnterFrameEvent;
