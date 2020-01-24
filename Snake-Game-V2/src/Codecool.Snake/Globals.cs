@@ -2,25 +2,27 @@ namespace Snake_Game_V2
 {
     public class Globals
     {
-        private static Globals _instance;
-
         public static readonly int WindowWidth = 1000;
         public static readonly int WindowHeight = 700;
 
         public Display Display;
         public Game Game;
         public GameLoop GameLoop;
-        
-        public static Globals Instance {
+        private static Globals _instance;
+
+        public static Globals Instance
+        {
             get
             {
                 if (_instance == null) _instance = new Globals();
-                return _instance;   
+                return _instance;
             }
         }
-        
+
         // singleton needs the class to have private constructor
-        private Globals() {}
+        private Globals()
+        {
+        }
 
         public void StartGame()
         {
@@ -31,6 +33,5 @@ namespace Snake_Game_V2
         {
             GameLoop.Stop();
         }
-        
     }
 }

@@ -32,6 +32,7 @@ namespace Snake_Game_V2.Entities
             {
                 return true;
             }
+
             return false;
         }
     }

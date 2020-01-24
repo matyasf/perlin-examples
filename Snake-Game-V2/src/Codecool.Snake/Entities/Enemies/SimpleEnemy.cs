@@ -6,16 +6,15 @@ namespace Snake_Game_V2.Entities.Enemies
 {
     public class SimpleEnemy : Enemy, IAnimatable, IInteractable
     {
-
         private Point _heading;
         private Random _rnd = new Random();
-        
+
         public SimpleEnemy() : base(10, "simple_enemy.png")
         {
             X = (float)_rnd.NextDouble() * Globals.WindowWidth;
             Y = (float)_rnd.NextDouble() * Globals.WindowHeight;
 
-            var direction = (float) _rnd.NextDouble() * 360f;
+            var direction = (float)_rnd.NextDouble() * 360f;
             Rotation = direction;
 
             int speed = 1;
@@ -28,6 +27,7 @@ namespace Snake_Game_V2.Entities.Enemies
             {
                 Destroy();
             }
+
             X += _heading.X;
             Y += _heading.Y;
         }

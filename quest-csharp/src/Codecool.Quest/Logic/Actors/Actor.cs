@@ -1,9 +1,9 @@
-
 namespace Codecool.Quest.Logic.Actors
 {
     public abstract class Actor : IDrawable
     {
         public Cell Cell { get; private set; }
+
         public int Health { get; private set; }
 
         public Actor(Cell cell)
@@ -19,7 +19,7 @@ namespace Codecool.Quest.Logic.Actors
             nextCell.Actor = this;
             Cell = nextCell;
         }
-        
+
         public int X => Cell.X;
 
         public int Y => Cell.Y;

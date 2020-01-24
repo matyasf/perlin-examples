@@ -2,13 +2,13 @@
 
 namespace Snake_Game_V2
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             PerlinApp.Start(
                 Globals.WindowWidth,
-                Globals.WindowHeight, 
+                Globals.WindowHeight,
                 "Snake Game",
                 OnInit);
         }

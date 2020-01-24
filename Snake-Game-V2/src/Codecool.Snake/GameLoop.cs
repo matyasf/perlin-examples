@@ -32,9 +32,10 @@ namespace Snake_Game_V2
             {
                 if (gameObject is IAnimatable)
                 {
-                    ((IAnimatable) gameObject).Step();
+                    ((IAnimatable)gameObject).Step();
                 }
             }
+
             CheckCollisions();
             Globals.Instance.Display.FrameFinished();
         }
@@ -54,8 +55,8 @@ namespace Snake_Game_V2
                         {
                             if (objToCheck.GetBounds(objToCheck.Parent).Intersects(otherObj.GetBounds(otherObj.Parent)))
                             {
-                                ((IInteractable) objToCheck).Apply(otherObj);
-                                ((IInteractable) otherObj).Apply(objToCheck);
+                                ((IInteractable)objToCheck).Apply(otherObj);
+                                ((IInteractable)otherObj).Apply(objToCheck);
                             }
                         }
                     }

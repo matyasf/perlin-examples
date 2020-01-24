@@ -7,12 +7,11 @@ namespace Codecool.Quest
     public class Tiles
     {
         public const int TileWidth = 16;
-        
-        private static readonly Dictionary<string, Rectangle> TileMap = new Dictionary<string, Rectangle>();
-        
         public static readonly Rectangle PlayerTile = CreateTile(27, 0);
         public static readonly Rectangle SkeletonTile = CreateTile(29, 6);
-        
+
+        private static readonly Dictionary<string, Rectangle> TileMap = new Dictionary<string, Rectangle>();
+
         static Tiles()
         {
             TileMap["empty"] = CreateTile(0, 0);
@@ -27,7 +26,7 @@ namespace Codecool.Quest
 
         private static Rectangle CreateTile(int i, int j)
         {
-            return new Rectangle( i * (TileWidth + 1), j * (TileWidth + 1),
+            return new Rectangle(i * (TileWidth + 1), j * (TileWidth + 1),
                 TileWidth, TileWidth);
         }
     }

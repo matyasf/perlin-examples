@@ -81,9 +81,9 @@ namespace Perlin
             Configuration.Default.MemoryAllocator = new SimpleGcMemoryAllocator();
             GraphicsDeviceOptions options = new GraphicsDeviceOptions();
             Window = new Sdl2Window(windowTitle, 50, 50, width, height, SDL_WindowFlags.OpenGL, false);
-#if DEBUG
+
             options.Debug = true;
-#endif
+
             options.SyncToVerticalBlank = true;
             options.ResourceBindingModel = ResourceBindingModel.Improved;
             //options.PreferStandardClipSpaceYDirection = true;

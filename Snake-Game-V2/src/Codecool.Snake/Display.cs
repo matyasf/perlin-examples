@@ -26,7 +26,7 @@ namespace Snake_Game_V2
             _gameObjects.Remove(entity);
         }
 
-        public IImmutableList<GameEntity> ObjectList =>_gameObjects.List;
+        public IImmutableList<GameEntity> ObjectList => _gameObjects.List;
 
         public void FrameFinished()
         {

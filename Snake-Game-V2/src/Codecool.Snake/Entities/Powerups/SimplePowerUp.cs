@@ -9,8 +9,8 @@ namespace Snake_Game_V2.Entities.Powerups
 
         public SimplePowerUp() : base("powerup_berry.png")
         {
-            X = (float) _rnd.NextDouble() * Globals.WindowWidth;
-            Y = (float) _rnd.NextDouble() * Globals.WindowHeight;
+            X = (float)_rnd.NextDouble() * Globals.WindowWidth;
+            Y = (float)_rnd.NextDouble() * Globals.WindowHeight;
         }
 
         public void Apply(GameEntity entity)

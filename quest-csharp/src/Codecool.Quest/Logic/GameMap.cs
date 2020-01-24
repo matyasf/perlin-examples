@@ -4,10 +4,10 @@ namespace Codecool.Quest.Logic
 {
     public class GameMap
     {
-        private readonly Cell[,] _cells;
         public Player Player;
         public Skeleton Skeleton;
-        
+        private readonly Cell[,] _cells;
+
         public GameMap(int width, int height, CellType defaultCellType)
         {
             Width = width;
@@ -17,7 +17,7 @@ namespace Codecool.Quest.Logic
             {
                 for (var y = 0; y < height; y++)
                 {
-                    _cells[x,y] = new Cell(this, x, y, defaultCellType);
+                    _cells[x, y] = new Cell(this, x, y, defaultCellType);
                 }
             }
         }
@@ -25,7 +25,7 @@ namespace Codecool.Quest.Logic
         public Cell GetCell(int x, int y) => _cells[x, y];
 
         public int Width { get; }
-        
+
         public int Height { get; }
     }
 }

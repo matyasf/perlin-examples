@@ -13,31 +13,17 @@ namespace Snake_Game_V2.Entities.Snakes
         private SnakeHead _head;
         private DelayedModificationList<GameEntity> _body;
 
+        public void ChangeHealth(int diff)
+        {
+            _health += diff;
+        }
+
         public Snake(Point position)
         {
             _head = new SnakeHead(this, position);
             _body = new DelayedModificationList<GameEntity>();
 
             AddPart(4);
-        }
-        
-        public void Step()
-        {
-            var turnDir = GetUserInput();
-            _head.UpdateRotation(turnDir, _speed);
-
-            UpdateSnakeBodyHistory();
-            CheckForGameOverConditions();
-            
-            _body.DoPendingModifications();
-        }
-
-        private SnakeControl GetUserInput()
-        {
-            SnakeControl turnDir = SnakeControl.Invalid;
-            if(KeyboardInput.IsKeyDown(Key.Left)) turnDir = SnakeControl.TurnLeft;
-            if(KeyboardInput.IsKeyDown(Key.Right)) turnDir = SnakeControl.TurnRight;
-            return turnDir;
         }
 
         public void AddPart(int numParts)
@@ -49,12 +35,27 @@ namespace Snake_Game_V2.Entities.Snakes
                 var newPart = new SnakeBody(parent.X, parent.Y);
                 _body.Add(newPart);
             }
+
             Globals.Instance.Display.UpdateSnakeHeadDrawPosition(_head);
         }
 
-        public void ChangeHealth(int diff)
+        public void Step()
         {
-            _health += diff;
+            var turnDir = GetUserInput();
+            _head.UpdateRotation(turnDir, _speed);
+
+            UpdateSnakeBodyHistory();
+            CheckForGameOverConditions();
+
+            _body.DoPendingModifications();
+        }
+
+        private SnakeControl GetUserInput()
+        {
+            SnakeControl turnDir = SnakeControl.Invalid;
+            if (KeyboardInput.IsKeyDown(Key.Left)) turnDir = SnakeControl.TurnLeft;
+            if (KeyboardInput.IsKeyDown(Key.Right)) turnDir = SnakeControl.TurnRight;
+            return turnDir;
         }
 
         private void CheckForGameOverConditions()
