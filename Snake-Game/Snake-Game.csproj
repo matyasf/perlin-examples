@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\perlin-desktop\perlin-desktop.csproj" />
+      <PackageReference Include="Matyasf.Perlin" Version="1.0.0" />
     </ItemGroup>
 
 </Project>
