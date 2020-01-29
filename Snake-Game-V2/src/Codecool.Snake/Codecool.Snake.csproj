@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\perlin-desktop\perlin-desktop.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Content Include="..\..\data\powerup_berry.png">
         <Link>powerup_berry.png</Link>
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>

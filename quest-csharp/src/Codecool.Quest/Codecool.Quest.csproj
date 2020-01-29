@@ -7,10 +7,6 @@
         <AssemblyName>Codecool.Quest</AssemblyName>
 		<CodeAnalysisRuleSet>..\Codecool.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\..\perlin-desktop\perlin-desktop.csproj" />
-    </ItemGroup>
     
     <ItemGroup>
       <Content Include="..\..\data\map.txt">
