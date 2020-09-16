@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake-Game-V2", "Snake-Game
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "quest-csharp", "quest-csharp\src\Codecool.Quest\Codecool.Quest.csproj", "{C5531D4E-3182-4E4F-AA71-FC410F4E5B96}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "perlin", "..\Perlin\perlin.csproj", "{76F10036-6E42-4A28-BCA4-075207EE9D24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{C5531D4E-3182-4E4F-AA71-FC410F4E5B96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5531D4E-3182-4E4F-AA71-FC410F4E5B96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5531D4E-3182-4E4F-AA71-FC410F4E5B96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76F10036-6E42-4A28-BCA4-075207EE9D24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76F10036-6E42-4A28-BCA4-075207EE9D24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76F10036-6E42-4A28-BCA4-075207EE9D24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76F10036-6E42-4A28-BCA4-075207EE9D24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

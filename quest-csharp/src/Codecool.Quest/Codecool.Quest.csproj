@@ -2,10 +2,10 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>netcoreapp3.0</TargetFramework>
         <RootNamespace>Codecool.Quest</RootNamespace>
         <AssemblyName>Codecool.Quest</AssemblyName>
 		<CodeAnalysisRuleSet>..\Codecool.ruleset</CodeAnalysisRuleSet>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
     
     <ItemGroup>
@@ -20,8 +20,11 @@
     </ItemGroup>
     
     <ItemGroup>
-      <PackageReference Include="Matyasf.Perlin" Version="1.0.0" />
       <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\..\Perlin\perlin.csproj" />
     </ItemGroup>
 
 </Project>

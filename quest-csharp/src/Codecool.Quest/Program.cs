@@ -2,6 +2,7 @@
 using Perlin;
 using Perlin.Display;
 using SixLabors.Fonts;
+using SixLabors.ImageSharp;
 using Veldrid;
 
 namespace Codecool.Quest
@@ -27,7 +28,8 @@ namespace Codecool.Quest
         private Program()
         {
             _map = MapLoader.LoadMap();
-            PerlinApp.Start(_map.Width * Tiles.TileWidth,
+            PerlinApp.Start(
+                _map.Width * Tiles.TileWidth,
                 _map.Height * Tiles.TileWidth,
                 "Codecool Quest",
                 OnStart);
@@ -39,14 +41,15 @@ namespace Codecool.Quest
 
             // health textField
             _healthTextField = new TextField(
-                PerlinApp.FontRobotoMono.CreateFont(14),
+                PerlinApp.FontRobotoMono.CreateFont(20),
                 _map.Player.Health.ToString(),
                 false);
             _healthTextField.HorizontalAlign = HorizontalAlignment.Center;
-            _healthTextField.Width = 100;
-            _healthTextField.Height = 20;
-            _healthTextField.X = _map.Width * Tiles.TileWidth / 2 - 50;
-            stage.AddChild(_healthTextField);
+            _healthTextField.FontColor = Color.White;
+            _healthTextField.BackgroundColor = Color.Blue;
+            _healthTextField.Width = 60;
+            _healthTextField.Height = 30;
+            _healthTextField.X = _map.Width * Tiles.TileWidth / 2 - _healthTextField.Width / 2;
 
             stage.EnterFrameEvent += StageOnEnterFrameEvent;
 
@@ -61,6 +64,8 @@ namespace Codecool.Quest
 
             _playerGfx = new Sprite("tiles.png", false, Tiles.PlayerTile);
             stage.AddChild(_playerGfx);
+
+            stage.AddChild(_healthTextField);
         }
 
         private void DrawMap()

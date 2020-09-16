@@ -1,4 +1,8 @@
-﻿namespace Snake_Game
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Processing;
+
+namespace Snake_Game
 {
     using System;
     using System.IO;
@@ -39,27 +43,24 @@
         private void OnInit()
         {
             PerlinApp.Stage.BackgroundColor = new Rgb24(200, 200, 200);
+            //TextFieldTests();
+            
+            var scoreTextField = new TextField(PerlinApp.FontRobotoMono.CreateFont(18));
+            scoreTextField.BackgroundColor = Color.Coral;
+            scoreTextField.X = 260;
+            scoreTextField.Y = 5;
+            scoreTextField.FontColor = Color.White;
+            PerlinApp.Stage.AddChild(scoreTextField);
 
             // sample snake game
-            var family = PerlinApp.Fonts.Install(Path.Combine(AppContext.BaseDirectory, "Assets", "Fonts", "Sunflower-Medium.ttf"));
-            var font = family.CreateFont(28);
-
             var highScore = 0;
             var worldSize = new Vector2(Width, Height);
             var world = new World(worldSize, _cellSize);
             var snake = new Snake(world);
-            var scoreTextField = new TextField(font, "0", false)
-            {
-                Width = 50,
-                Height = 25,
-                BackgroundColor = Rgba32.Coral
-            };
-            scoreTextField.X = PerlinApp.Stage.Width / 2f - scoreTextField.Width / 2f;
-            scoreTextField.Y = 0;
-            scoreTextField.FontColor = Rgba32.White;
-            scoreTextField.HorizontalAlign = HorizontalAlignment.Center;
+            
+            PerlinApp.ShowStats(HorizontalAlignment.Right, VerticalAlignment.Bottom, 2);
 
-            PerlinApp.Stage.AddChild(scoreTextField);
+            
             snake.ScoreChanged += () => scoreTextField.Text = snake.Score.ToString();
             snake.ScoreChanged += () => highScore = Math.Max(highScore, snake.Score);
             var headPath = Path.Combine(AppContext.BaseDirectory, "Assets", "snake-head.png");
@@ -85,6 +86,7 @@
                 BackgroundColor = new Rgba32(255, 0, 0, 200)
             };
             PerlinApp.Stage.AddChild(tf2);
+            
             PerlinApp.Stage.AddChild(s2);
             s2.AddChild(s3);
             s3.AddChild(s4);
@@ -95,7 +97,6 @@
                 s2.Rotation += 1f;
                 a++;
                 if (a > 99) a = 0;
-
                 // Console.WriteLine(s2.Rotation + " " + s2.GetBoundsWithChildren().Width);
             };
             Button bb = new Button("Cancel");
@@ -130,9 +131,6 @@
             PerlinApp.Stage.AddChild(t2);
             PerlinApp.Stage.AddChild(t3);
 
-            PerlinApp.ShowStats(HorizontalAlignment.Right, VerticalAlignment.Bottom, 2);
-
-
             var transparencyBug = new Sprite(50, 50, new Rgba32(233, 12, 12, 255));
             transparencyBug.Alpha = 0.49f;
             transparencyBug.Name = "bottomS";
@@ -150,6 +148,55 @@
                     new Rectangle(50, 50, 50, 50))
             { X = 400, Y = 10 };
             PerlinApp.Stage.AddChild(subTex);
+        }
+
+        private void TextFieldTests()
+        {
+            var font = PerlinApp.FontRobotoMono.CreateFont(18);
+            
+            var tf1 = new TextField(font, "jMÍ", false)
+            {
+                BackgroundColor = Color.Azure,
+                Width = 50,
+                Height = 50,
+                X = 5,
+                Y = 5,
+                VerticalAlign = VerticalAlignment.Top,
+                HorizontalAlign = HorizontalAlignment.Left
+            };
+            PerlinApp.Stage.AddChild(tf1);
+            
+            var tf2 = new TextField(font, "jMÍ", false)
+            {
+                BackgroundColor = Color.Azure,
+                Width = 50,
+                Height = 50,
+                X = 60,
+                Y = 5,
+                VerticalAlign = VerticalAlignment.Center,
+                HorizontalAlign = HorizontalAlignment.Center
+            };
+            PerlinApp.Stage.AddChild(tf2);
+            
+            var tf3 = new TextField(font, "jee", false)
+            {
+                BackgroundColor = Color.Azure,
+                Width = 50,
+                Height = 50,
+                X = 115,
+                Y = 5,
+                VerticalAlign = VerticalAlignment.Bottom,
+                HorizontalAlign = HorizontalAlignment.Right
+            };
+            PerlinApp.Stage.AddChild(tf3);
+            
+            var tf4 = new TextField(font, "ŐŰÍÉÁautosizedj")
+            {
+                BackgroundColor = Color.Azure,
+                X = 170,
+                Y = 5
+            };
+            PerlinApp.Stage.AddChild(tf4);
         }
 
     }
